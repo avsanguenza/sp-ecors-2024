@@ -1,5 +1,5 @@
 import firebase_app from "../config";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile,getAuth } from "firebase/auth";
 import {getFirestore} from 'firebase/firestore';
 import { collection, doc, setDoc } from "firebase/firestore"; 
 
@@ -12,11 +12,13 @@ export default async function signUp(name,email, password) { //name,email,passwo
         error = null;
   
     try {
-        await createUserWithEmailAndPassword(auth, email, password).then( cred =>{
-            setUserData(db,cred.user.uid, name);
-        }
-         );
-
+        await createUserWithEmailAndPassword(auth, email, password).catch((err)=>
+        console.log(err)
+    );
+        await updateProfile(auth.currentUser,{displayName: name}).catch((err)=>
+            console.log(err)
+        );
+        //console.log(auth.currentUser.displayName);
     } catch (e) {
         error = e;
     }

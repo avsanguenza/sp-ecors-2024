@@ -69,10 +69,7 @@ export default function Page(){
 
   //WARNING DO NOT F5 THE BROWSER YET 
 
-     let uid = auth.currentUser?.uid;
-  var u = new User(uid);
-  let name = u.displayName
-     console.log(name);
+    
  
     return (
         <header className="bg-teal-500">
@@ -93,7 +90,7 @@ export default function Page(){
                       </a>
                     ))}
                   </div>
-                  Welcome {name}
+                  Welcome {auth.currentUser?.email}
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                           
                   <button
