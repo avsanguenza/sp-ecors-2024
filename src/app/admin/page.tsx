@@ -27,15 +27,10 @@ function currUser(){
   var activeUser = "";
  auth.onAuthStateChanged((auth) =>{
   if (auth){
-    const user = auth.uid;
-    if(user!== null){
-      activeUser=user;
-     // return activeUser;
-    }
   }
     else{
-      console.log('protected');
       router.push("/");
+      alert("Please log-in to continue!");
   }
  }
 
@@ -67,9 +62,8 @@ function pageProtect(){
 
 export default function Page(){
 
-  //WARNING DO NOT F5 THE BROWSER YET 
-
-    
+//add stuff here , figure out how to load the database first before the page
+    currUser();
  
     return (
         <header className="bg-teal-500">
@@ -90,6 +84,7 @@ export default function Page(){
                       </a>
                     ))}
                   </div>
+                  
                   Welcome {auth.currentUser?.email}
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                           

@@ -1,46 +1,52 @@
 import Image from 'next/image';
-import {getUser} from '@/firebase/auth/signin'
 
 export default function Page() {
-  console.log("test");
   return (
-    <main className="flex min-h-screen flex-col p-6">
-      <nav class ="flex items-center justify-between flex-wrap bg-zinc-500 p-6">
-             <div class="block lg:hidden">
-    <button class="flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400 hover:text-white hover:border-white">
-      <svg class="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Menu</title><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/></svg>
-    </button>
-  </div>
-  <div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto"></div>
-  <div class="text-sm lg:flex-grow">
-      <a href="#responsive-header" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
-        Home
+    <nav className="relative flex flex-wrap items-center justify-between px-2 py-3 bg-pink-500 mb-3">
+  <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
+    <div className="w-full relative flex justify-between lg:w-auto  px-4 lg:static lg:block lg:justify-start">
+      <a className="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white" href="#pablo">
+        ECORS
       </a>
-      <a href="#responsive-header" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
-        Examples
-      </a>
-      <a href="#responsive-header" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white">
-        Blog
-      </a>
+      <button className="cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none" type="button">
+        <span className="block relative w-6 h-px rounded-sm bg-white"></span>
+        <span className="block relative w-6 h-px rounded-sm bg-white mt-1"></span>
+        <span className="block relative w-6 h-px rounded-sm bg-white mt-1"></span>
+      </button>
     </div>
-    <div>
-      <a href="/login" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0">Login/Signup</a>
-    </div>
-      </nav>
-      {/* get an icon later */}
-      <div class="bg-sky-200">
-        <img class ="h-48 w-full object-cover" src="/events0.jpg"></img>
+    <div className="lg:flex flex-grow items-center" id="example-navbar-warning">
+      <ul className="flex flex-col lg:flex-row list-none mr-auto">
+        <li className="nav-item">
+          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="#pablo">
+            <i className="fab fa-facebook-square text-lg leading-lg text-white opacity-75" /> 
+          </a>
+        </li>
+        <li className="nav-item">
+          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="#pablo">
+            <i className="fab fa-twitter text-lg leading-lg text-white opacity-75" /> <span className="ml-2">Events</span>
+          </a>
+        </li>
+        <li className="nav-item">
+          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="#pablo">
+            <span className="ml-2">Opportunities</span>
+          </a>
+        </li>
+      </ul>
+      <div className="relative flex w-full sm:w-7/12 md:w-5/12 px-4 flex-wrap items-stretch lg:ml-auto">
+        <div className="flex">
+          <span className="font-normal leading-snug flex text-center white-space-no-wrap border border-solid border-pink-600 rounded-full text-sm bg-pink-100 items-center rounded-r-none pl-2 py-1 text-pink-800 border-r-0 placeholder-pink-300">
+            <i className="fas fa-search"></i>
+          </span>
+        </div>
+        <input type="text" className="px-2 py-1 h-8 border border-solid  border-pink-600 rounded-full text-sm leading-snug text-pink-700 bg-pink-100 shadow-none outline-none focus:outline-none w-full font-normal rounded-l-none flex-1 border-l-0 placeholder-pink-300" placeholder="Search pink" />
       </div>
-      
-    <div className="bg-white">
-    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-    <h2 className="text-2xl font-bold tracking-tight text-gray-900">Find your vision</h2>
 
-
+      <div>
+      <a href="/login" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-pink-500 hover:bg-white mt-4 lg:mt-0">Login/Signup</a>
     </div>
-
     </div>
-    </main>     
+  </div>
+</nav>
   );
 
 }

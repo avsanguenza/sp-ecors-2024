@@ -3,6 +3,57 @@
 import React from 'react'
 import signIn from "@/firebase/auth/signin";
 import {useRouter} from 'next/navigation';
+
+const top= () =>{
+  return(
+    <>
+          <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+            <img
+              className="mx-auto h-10 w-auto"
+              src="https://tailwindui.com/img/logos/mark.svg?color=pink&shade=500"
+              alt="Your Company"
+            />
+            
+              
+            <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+              Sign in to your account
+            </h2>
+          </div>
+    </>
+  )
+};
+
+const Alert = ({ color }) => {
+  const [showAlert, setShowAlert] = React.useState(true);
+  return (
+    <>
+      {showAlert ? (
+        <div
+          className={
+            "text-white px-6 py-4 border-0 rounded relative mb-4 bg-" +
+            color +
+            "-500"
+          }
+        >
+          <span className="text-xl inline-block mr-5 align-middle">
+            <i className="fas fa-bell" />
+          </span>
+          <span className="inline-block align-middle mr-8">
+            Error message
+          </span>
+          <button
+            className="absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none"
+            onClick={() => setShowAlert(false)}
+          >
+            <span>×</span>
+          </button>
+        </div>
+      ) : null}
+    </>
+  );
+};
+
+
 function Page(){
 
   const [email, setEmail] = React.useState('')
@@ -11,13 +62,14 @@ function Page(){
 
   const handleForm = async (event) => {
       event.preventDefault()
-      
 
       let { result, errorMsg } = await signIn(email, password);
       console.log(errorMsg);
       if (typeof(errorMsg)!= "undefined") {
-         console.log("error dialogue") //CATCH PROPERLY
-         return router.push("/login")
+        alert("Login error"); //try to personalize the error
+         console.log("error dialogue") 
+        
+         //return router.push("/login")
       }
       else{
       return router.push("/admin")
@@ -29,27 +81,12 @@ function Page(){
 
     
   return (
+
       <>
-        {/*
-          This example requires updating your template:
-  
-          ```
-          <html class="h-full bg-white">
-          <body class="h-full">
-          ```
-        */}
+        
         <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-          <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-            <img
-              className="mx-auto h-10 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-              alt="Your Company"
-            />
-            <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-              Sign in to your account
-            </h2>
-          </div>
-  
+         {top()}
+         
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <form onSubmit={handleForm} className="space-y-6">
               <div>
@@ -75,7 +112,7 @@ function Page(){
                     Password
                   </label>
                   <div className="text-sm">
-                    <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                    <a href="#" className="font-semibold text-pink-600 hover:text-pink-500">
                       Forgot password?
                     </a>
                   </div>
@@ -96,7 +133,7 @@ function Page(){
               <div>
                 <button
                   type="submit"
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="flex w-full justify-center rounded-md bg-pink-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-pink-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Sign in
                 </button>
@@ -105,7 +142,7 @@ function Page(){
   
             <p className="mt-10 text-center text-sm text-gray-500">
               Not a member?{' '}
-              <a href="/signup" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+              <a href="/signUpPrompt" className="font-semibold leading-6 text-pink-500 hover:text-pink-700">
                 Sign up!
               </a>
             </p>
