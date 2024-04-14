@@ -5,8 +5,38 @@ import React from "react";
 import signUp from "@/firebase/auth/signup";
 import { useRouter } from 'next/navigation'
 
-function Page() {
+function getRole(userType){
+    if(userType=="eOrganizer"){
+        return "recruit talents"
+    }
+    else{
+        return "find opportunities"
+    }
+}
+function normalize(userType){
+    if(userType=="eOrganizer"){
+        return "Event Organizer"
+    } 
+    else{
+        return "Event Concessionaire"
+    }   
+}
+function reverse(userType){
+    if(userType=="eOrganizer"){
+        return "eConcess"
+    }
+    else{
+        return "eOrganizer"
+    }
+}
+function Page(userType) {
     //name, location, name of company, email, address, contact number
+    const [accType,setAccType]= React.useState(userType)
+    const[role,setRole] = React. useState(getRole(userType))
+    const [readableName, setReadableName] = React.useState(normalize(userType));
+    const [reverseName, setReverseName] = React.useState(reverse(userType));
+
+
     const [name, setName] = React.useState('')
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
@@ -15,24 +45,30 @@ function Page() {
     const handleForm = async (event) => {
         event.preventDefault()
 
-        const { result, error } = await signUp(name,email, password);
+     //   const { result, error } = await signUp(name,email, password);
         
-        if (error) {
-            return console.log(error);
-        }
+    //    if (error) {
+     //       return console.log(error);
+      //  }
 
             // else successful
-        console.log(result)
+       // console.log(result)
         //get uid, to server
-        return router.push("/")
+       // return router.push("/")
         
     }
 
-    return (
+const onOptionChange = (f)=>{
+    setAccType(f.target.value)
+    setReadableName(normalize(f.target.value))
+    setRole(getRole(f.target.value))
+    setReverseName(reverse(f.target.value))
+}
+return (
     
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <div className="form-wrapper">
-                <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign up</h2>
+                <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign up to {role}</h2>
                 <form onSubmit={handleForm} className="space-y-6 mt-16" >
                     
                     <div>
@@ -101,8 +137,13 @@ function Page() {
                 </button>
                </div>
 
+
+             
               </div>
                 </form>
+                <div>
+                    Register as  <button type="reset" onClick={onOptionChange} value ={reverseName} className="mt-10 text-pink-500 underline underline-offset-1">  {readableName}</button> instead
+                </div> 
             </div>
         </div>
         

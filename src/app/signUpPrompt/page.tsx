@@ -5,13 +5,20 @@
 
 //i'm an event organize hiring people for my event 
 //im a concessionaire looking for events to partner with 
-
+import React from 'react'
+import {useState} from 'react'
 function Page(){
+const[registerType,setRegisterType] = useState('eOrganizer')
 const handleChoice =(type)=>{
     type.preventDefault()
-
+    console.log(registerType);
 
 }
+
+const onOptionChange= (e)=>{
+    setRegisterType(e.target.value)
+}
+
    return(
        <><h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign up as a:</h2>
          <form onSubmit={handleChoice}>
@@ -19,7 +26,7 @@ const handleChoice =(type)=>{
              <ul className="mt-64 grid w-full gap-6 md:grid-cols-2 p-6">
             <li>        
             
-                    <input type="radio" id="eOrganizer" value="eOrganizer" name="signUpChoice" className="hidden peer" required/>
+                    <input type="radio" id="eOrganizer" value="eOrganizer" name="signUpChoice" className="hidden peer" checked={registerType==="eOrganizer"} onChange={onOptionChange} />
                     <label htmlFor="eOrganizer" className="inline-flex items-center justify-between w-full p-5 text-pink-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-pink-500 dark:border-gray-700 dark:peer-checked:text-pink-500 peer-checked:border-pink-500 peer-checked:text-pink-500 hover:text-white hover:bg-pink-200 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
 
                         <div className="block">
@@ -34,7 +41,7 @@ const handleChoice =(type)=>{
                  </li> 
                  <li>
                     
-                 <input type="radio" id="eConcess" value="eConess" name="signUpChoice" className="hidden peer" required/>
+                 <input type="radio" id="eConcess" value="eConcess" name="signUpChoice" className="hidden peer" checked={registerType==="eConcess"} onChange={onOptionChange}/>
                     <label htmlFor="eConcess" className="inline-flex items-center justify-between w-full p-5 text-pink-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-pink-500 dark:border-gray-700 dark:peer-checked:text-pink-500 peer-checked:border-pink-500 peer-checked:text-pink-500 hover:text-white hover:bg-pink-200 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
 
                         <div className="block">
@@ -49,7 +56,7 @@ const handleChoice =(type)=>{
                 </li>  
        </ul>
             <div className="text-center">
-            <button type="button" className="mt-10 text-2xl font-bold text-white bg-pink-500 hover:bg-pink-700 tracking-normal rounded-full px-24 py-8">Register</button>
+            <button type="submit" className="mt-10 text-2xl font-bold text-white bg-pink-500 hover:bg-pink-700 tracking-normal rounded-full px-24 py-8">Register</button>
 
             </div>
        </form>
