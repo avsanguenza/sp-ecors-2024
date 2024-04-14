@@ -1,4 +1,5 @@
 import Image from 'next/image';
+//make sure you can change the navbar from login -> logged in 
 
 export default function Page() {
   return (
