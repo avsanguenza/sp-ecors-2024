@@ -29,19 +29,28 @@ function reverse(userType){
         return "eOrganizer"
     }
 }
-function Page(userType) {
+function getTypeOfEmail(userType){
+    if(userType=="eOrganizer"){
+        return "Work E-mail Address"
+    }
+    else{
+        return "E-mail Address"
+    }
+}
+function Page() {
+    var userType = localStorage.getItem('fromSUPage');
     //name, location, name of company, email, address, contact number
     const [accType,setAccType]= React.useState(userType)
     const[role,setRole] = React. useState(getRole(userType))
     const [readableName, setReadableName] = React.useState(normalize(userType));
     const [reverseName, setReverseName] = React.useState(reverse(userType));
-
+    const[typeOfEmail, setTypeOfEmail] = React.useState(getTypeOfEmail(userType));
 
     const [name, setName] = React.useState('')
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
     const router = useRouter()
-
+  //  console.log(localStorage.getItem('SUType'))
     const handleForm = async (event) => {
         event.preventDefault()
 
@@ -59,10 +68,13 @@ function Page(userType) {
     }
 
 const onOptionChange = (f)=>{
+ 
     setAccType(f.target.value)
     setReadableName(normalize(f.target.value))
     setRole(getRole(f.target.value))
     setReverseName(reverse(f.target.value))
+    setTypeOfEmail(getTypeOfEmail(f.target.value))
+   localStorage.setItem('fromSUPage',f.target.value);
 }
 return (
     
@@ -93,7 +105,7 @@ return (
                         
                         <div>
                         <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900 mt-4">
-                                E-mail                
+                               {typeOfEmail}                
                         </label>
 
                         <div className="mt-4">
@@ -142,7 +154,7 @@ return (
               </div>
                 </form>
                 <div>
-                    Register as  <button type="reset" onClick={onOptionChange} value ={reverseName} className="mt-10 text-pink-500 underline underline-offset-1">  {readableName}</button> instead
+                    Register as  <button type="reset" onClick={onOptionChange} value = {reverseName} className="mt-10 text-pink-500 underline underline-offset-1">  {normalize(reverseName)}</button> instead
                 </div> 
             </div>
         </div>

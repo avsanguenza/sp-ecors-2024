@@ -7,7 +7,9 @@
 //im a concessionaire looking for events to partner with 
 import React from 'react'
 import {useState} from 'react'
-function Page(){
+import Page from '@/app/signup/page';
+import { register } from 'module';
+function SUPage(){
 const[registerType,setRegisterType] = useState('eOrganizer')
 const handleChoice =(type)=>{
     type.preventDefault()
@@ -56,14 +58,22 @@ const onOptionChange= (e)=>{
                 </li>  
        </ul>
             <div className="text-center">
-            <button type="submit" className="mt-10 text-2xl font-bold text-white bg-pink-500 hover:bg-pink-700 tracking-normal rounded-full px-24 py-8">Register</button>
+            <button type="submit" onClick={()=>{
+                if(localStorage.getItem('fromSUPage')==null){
+                    localStorage.setItem('fromSUPage',registerType);
+                }
+                else{
+                    localStorage.setItem('fromSUPage',registerType);
+                }
+                window.location='/signup'}} className="mt-10 text-2xl font-bold text-white bg-pink-500 hover:bg-pink-700 tracking-normal rounded-full px-24 py-8">Register</button>
 
             </div>
        </form>
+       
        </>
        )
     }
-    export default Page;
+    export default SUPage;
 
 
 function concessionaireSign(){
