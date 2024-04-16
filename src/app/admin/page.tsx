@@ -9,6 +9,8 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import firebase_app from '@/firebase/config';
 import test from '@/firebase/data/userDB';
 import User from '@/firebase/data/userClass';
+const auth = getAuth(firebase_app);
+
 const navigation = [
     { name: 'Dashboard', href: '#', current: true },
     { name: 'Team', href: '#', current: false },
@@ -16,8 +18,6 @@ const navigation = [
     { name: 'Calendar', href: '#', current: false },
   ]
 
-const auth = getAuth(firebase_app);
-const activeUser =""
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
@@ -37,34 +37,10 @@ function currUser(){
  );
 } 
 
-function getCurrUser(){
-  var name = (function (){
-    return "test";
-  })
-  return name;
-}
-
-//create customer page (oop)
-function pageProtect(){
-  const {user} = auth.uid;
-  const router = useRouter()
-  React.useEffect( () =>{
-    if(user == null){
-      router.push("/")
-      console.log("protected page");
-
-    }
-  }, [user]
-
-  )
-}
-
-
 export default function Page(){
 
 //add stuff here , figure out how to load the database first before the page
     currUser();
- 
     return (
         <header className="bg-teal-500">
                   <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
@@ -85,7 +61,7 @@ export default function Page(){
                     ))}
                   </div>
                   
-                  Welcome {auth.currentUser?.email}
+                  Welcome {localStorage.getItem('currentUser')}
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                           
                   <button

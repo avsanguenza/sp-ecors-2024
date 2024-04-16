@@ -7,7 +7,7 @@ import { collection, doc, setDoc } from "firebase/firestore";
 const auth = getAuth(firebase_app);
 const db = getFirestore(firebase_app);
 
-export default async function signUp(name,email, password) { //name,email,password
+export default async function signUp(type,name,email, password) { //name,email,password
     let result = null,
         error = null;
   
@@ -15,15 +15,24 @@ export default async function signUp(name,email, password) { //name,email,passwo
         await createUserWithEmailAndPassword(auth, email, password).catch((err)=>
         console.log(err)
     );
-        await updateProfile(auth.currentUser,{displayName: name}).catch((err)=>
+        await updateProfile(auth.currentUser,{displayName: name}).then(()=>{
+            var isOrganizerValue = (type=="eOrganizer")? true : false
+            var isConcessValue = (type=="eConcess") ? true : false
+            setDoc(doc(db,'users',auth.currentUser.uid),{
+                isAdmin: false,
+                isConcess: isConcessValue,
+                isOrganizer: isOrganizerValue
+            })
+         
+        }).catch((err)=>
             console.log(err)
         );
         //console.log(auth.currentUser.displayName);
     } catch (e) {
         error = e;
     }
-
-    return { result, error };
+    localStorage.setItem('fromSUPage',null)
+    return { result };
 }
 
 function setUserData(db,userid,accName){
@@ -31,6 +40,7 @@ function setUserData(db,userid,accName){
         result = setDoc(doc(db, 'users', userid),{
             displayName:accName
         });
+        
     }
     catch(e){
         console.log(e);

@@ -12,6 +12,9 @@ function Page(){
         console.log("error")
     }
     else{
+        var obj={'name':null, 'accountType':null}
+        var value = JSON.stringify(obj)
+        localStorage.setItem('currentUser',value)
         return router.push("/")
     }   
 

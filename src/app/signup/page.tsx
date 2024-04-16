@@ -4,6 +4,13 @@
 import React from "react";
 import signUp from "@/firebase/auth/signup";
 import { useRouter } from 'next/navigation'
+import firebase_app from "@/firebase/config";
+import { getAuth } from "firebase/auth";
+import  userDBClass from '@/firebase/data/userDB';
+
+
+
+const auth = getAuth(firebase_app);
 
 function getRole(userType){
     if(userType=="eOrganizer"){
@@ -53,17 +60,26 @@ function Page() {
   //  console.log(localStorage.getItem('SUType'))
     const handleForm = async (event) => {
         event.preventDefault()
+       try{
+        const result= await signUp(accType,name,email, password).then(() =>{
 
-     //   const { result, error } = await signUp(name,email, password);
-        
-    //    if (error) {
-     //       return console.log(error);
-      //  }
+          var udbc = new userDBClass(auth.currentUser?.uid,auth.currentUser?.displayName);
+           udbc.setAccValues()
+           }
+    
+            ).catch((err)=>{console.log(err)})
+           ;
+       }
+        catch(error){
+            return console.log(error);
 
-            // else successful
+        }
+
        // console.log(result)
         //get uid, to server
-       // return router.push("/")
+       // console.log(auth.currentUser?.displayName)
+
+       return router.push("/dashboard")
         
     }
 

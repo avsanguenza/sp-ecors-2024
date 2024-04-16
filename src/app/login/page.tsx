@@ -3,6 +3,12 @@
 import React from 'react'
 import signIn from "@/firebase/auth/signin";
 import {useRouter} from 'next/navigation';
+import firebase_app from '@/firebase/config';
+import { getAuth } from 'firebase/auth';
+
+import  userDBClass from '@/firebase/data/userDB';
+
+const auth = getAuth(firebase_app);
 
 const top= () =>{
   return(
@@ -64,15 +70,19 @@ function Page(){
       event.preventDefault()
 
       let { result, errorMsg } = await signIn(email, password);
-      console.log(errorMsg);
-      if (typeof(errorMsg)!= "undefined") {
-        alert("Login error"); //try to personalize the error
+      if (typeof(errorMsg)!= "undefined") { //improve this one
+        alert("Login error"); //try to make it a useState
          console.log("error dialogue") 
         
          //return router.push("/login")
       }
+
       else{
-      return router.push("/admin")
+        //getData(auth.currentUser?.uid)
+      //  console.log(auth.currentUser?.displayName)
+        var udbc = new userDBClass(auth.currentUser.uid,auth.currentUser?.displayName);
+        udbc.setAccValues()
+         return router.push("/dashboard")
  
       }
     }
@@ -142,7 +152,7 @@ function Page(){
   
             <p className="mt-10 text-center text-sm text-gray-500">
               Not a member?{' '}
-              <a href="/signup" className="font-semibold leading-6 text-pink-500 hover:text-pink-700">
+              <a href="/signUpPrompt" className="font-semibold leading-6 text-pink-500 hover:text-pink-700">
                 Sign up!
               </a>
             </p>
@@ -152,4 +162,6 @@ function Page(){
     );
   }
     export default Page;
+  
+
   

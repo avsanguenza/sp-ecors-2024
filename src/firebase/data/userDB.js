@@ -6,22 +6,30 @@ import firebase_app from "../config";
 import {getFirestore,doc, getDoc} from 'firebase/firestore';
 
 import { collection, query,where, onSnapshot} from 'firebase/firestore';
-import { getDisplayName } from "next/dist/shared/lib/utils";
 
 const firebase_app_init = firebase_app;
 const db = getFirestore(firebase_app);
-var dName="";
-/**
- * 
- * @param {*} data 
- * @returns dbToArrayList - a map containg key = index value = firebase value
- */
-function dbToArray(data){
-    const dbToArrayList = Object.keys(data).map(d =>{
-        return data[d];
-    });
-    return dbToArrayList;
+
+export default class userDBClass{
+  constructor(uid,value){
+    this.uid = uid
+    this.name = value;
+  }
+  setAccValues (){
+    const unsub = onSnapshot(doc(db,"users",this.uid),(doc)=>{
+      const userData = doc.data()
+      let data = (doc.data().isOrganizer== true ? 'Event Organizer' : 'User');
+      var obj = {
+        'name' : this.name,
+        'accountType' : data
+      }
+      var toJSON = JSON.stringify(obj);
+      localStorage.setItem('currentUser', toJSON);
+      //console.log(data);
+  });
 }
+  }
+
 
 function getDatatoDB(uid){
     const unsub = onSnapshot(doc(db,"users",uid),(doc)=>{
@@ -34,53 +42,17 @@ function getDatatoDB(uid){
     });
 }
 
-export default function test(uid){
-    let name; 
+
+
+
+export function getData(){
     const unsub = onSnapshot(doc(db,"users",uid),(doc)=>{
-        const docData = doc.data();
-        const dataArray = dbToArray(docData);
-        console.log(dataArray[0]);
-      //  name = getUserDisplayName(dataArray);
-        //return name;
-      //  console.log(getUserDisplayName(dataArray));
+        const userData = doc.data()
+       var value = (doc.data().isOrganizer == true) ? 'eOrganizer' : 'eConcess'
+       this.accTypeValue = value;
     });
 }
 
-
-export function getUserDisplayName(uid){
-    const unsub = onSnapshot(doc(db,"users",uid),(doc)=>{
-        const docData = doc.data();
-        const dataArray = dbToArray(docData);
-        dName = dataArray[0];
-       
-      //  name = getUserDisplayName(dataArray);
-        //return name;
-      //  console.log(getUserDisplayName(dataArray));
-    });
-    return dName;
+export function getAccTypeValue(){
+  return accTypeValue;
 }
-
-//update function here
-
-function privGetUserImage(dataArray){
-    return dataArray[3];
-}
-
-export function getUserImage(dataArray){
-    return privGetUserImage(dataArray);
-}
-
-function isUserOrganizer(dataArray){
-    return ((dataArray[1]== true) ? true :false);
-}
-
-export function getUserType(dataArray){
-    return isUserOrganizer(dataArray);
-}
-//update function here 
-
- 
-//getuserAccessPriv
-//update getPriv
-
-//construct a class for user then extend that 
