@@ -1,4 +1,4 @@
-//TODO: send to firebase, update the firebase
+//TODO: Change localStorage > sessionStorage
 
 'use client'
 import React from "react";
