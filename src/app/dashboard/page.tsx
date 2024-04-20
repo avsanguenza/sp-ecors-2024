@@ -47,7 +47,7 @@ function currUser(){
 //    : db setup/fetch from setup
 export default function Page(){
   
-  currUser();
+  //currUser(); //DISABLED BECAUSE TESTING
   var obj = localStorage.getItem('currentUser')
   var accInfo = JSON.parse(obj)
     return (
