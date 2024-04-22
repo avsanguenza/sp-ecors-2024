@@ -43,8 +43,10 @@ function currUser(){
  );
 } 
 
-//TODO: dialogue for details -- later
-//    : db setup/fetch from setup
+//TODO get panel switching two using states -> async get firebase data -> fire data
+//  
+
+
 export default function Page(){
   const[activeIndex, setActiveIndex] = useState(0);
 
@@ -182,10 +184,7 @@ export default function Page(){
         
 
 <div class="mt-10 ml-5  max-w-sm p-6 text-center bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-
-<div class="animate-pulse flex space-x-4" disabled={false}>
-  
-<img className="h-auto max-w-full rounded-lg" src="https://www.peerspace.com/resources/wp-content/uploads/atlanta-Beautiful-Urban-Garden.webp"/>
+  <Panel  isActive={activeIndex===0}><img className="h-auto max-w-full rounded-lg" src="https://www.peerspace.com/resources/wp-content/uploads/atlanta-Beautiful-Urban-Garden.webp"/>
 
 <a href="#">
     <h5 class="mt-4 text-2xl text-center font-semibold tracking-tight text-gray-900 dark:text-white">Event Name</h5>
@@ -203,9 +202,7 @@ export default function Page(){
                     4.0
  </a>
 </li>
-</ul>
-
-  </div>
+</ul> </Panel>
     {
       //fetchDatainDatabaseFirst.then(forEveryEventUID: LoadCard)
     }   
@@ -237,22 +234,44 @@ export default function Page(){
     );
 
 }
+async function fetchEventData(){
+//call events 
+//fetch (all?) event uid == isOpen, true 
+//.then()
+}
+
 function Panel({
   children,
   isActive
 }){
   return(
     <div className='text-center'>
-        {isActive ? (children): spinnerAnimation()}
+        {isActive ? skeleton() : (children) }
     </div>
   )
 }
-function spinnerAnimation(){
+
+function skeleton(){
   return(
-    <div className="animate-pulse flex space-x-4" disabled={true}>
+    <>
+    <div role="status" class="flex items-center justify-center h-56 max-w-sm bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700">
+    <svg class="w-10 h-10 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
+    <path d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.98 2.98 0 0 0 .13 5H5Z"/>
+    <path d="M14.066 0H7v5a2 2 0 0 1-2 2H0v11a1.97 1.97 0 0 0 1.934 2h12.132A1.97 1.97 0 0 0 16 18V2a1.97 1.97 0 0 0-1.934-2ZM9 13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2Zm4 .382a1 1 0 0 1-1.447.894L10 13v-2l1.553-1.276a1 1 0 0 1 1.447.894v2.764Z"/>
+  </svg>
   
-  
-    </div>
+    <span class="sr-only">Loading...</span>
+    
+</div>
+<h2 className="mt-3 text-center h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></h2>
+<hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
+<ul className="flex items-center w-full me-4">
+  <li><p class="mt-2  text-left h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></p></li>
+  <li>
+
+</li>
+</ul>
+</>
   )
 }
 function EditInactiveIcon(props) {
