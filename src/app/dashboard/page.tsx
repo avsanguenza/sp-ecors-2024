@@ -1,11 +1,12 @@
 'use client'
-import {Fragment, useState} from 'react';
+import {Fragment, useState,useEffect} from 'react';
 import { Disclosure, Dialog, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import firebase_app from '@/firebase/config';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from "next/navigation";
 
+import {appData, eventData} from '@/firebase/data/event'
 
 const auth = getAuth(firebase_app);
 
@@ -30,7 +31,7 @@ function classNames(...classes) {
 
 function currUser(){
   const router = useRouter()
-  var activeUser = "";
+  var activeUser = ""
  auth.onAuthStateChanged((auth) =>{
   if (auth){
   }
@@ -49,8 +50,9 @@ function currUser(){
 
 export default function Page(){
   const[activeIndex, setActiveIndex] = useState(0);
-
+  const [data,setData] = useState('')
   const [isOpen, setIsOpen] = useState(false)
+
   function closeModal(){
      setIsOpen(false)
   }
@@ -64,6 +66,17 @@ export default function Page(){
   //currUser(); //DISABLED BECAUSE TESTING
   var obj = localStorage.getItem('currentUser')
   var accInfo = JSON.parse(obj)
+  var edata = new eventData();
+
+  useEffect(()=>{
+    //fetch all possible eventUID ->procedurally create cards -> update states
+    //
+    edata.getData('events','isOpen','==',true).then(()=>{
+      setData(edata.getEventName())
+      setActiveIndex(1)
+    },[data])
+  })
+
     return (
       <>
         <header className="bg-pink-500">
@@ -187,9 +200,9 @@ export default function Page(){
   <Panel  isActive={activeIndex===0}><img className="h-auto max-w-full rounded-lg" src="https://www.peerspace.com/resources/wp-content/uploads/atlanta-Beautiful-Urban-Garden.webp"/>
 
 <a href="#">
-    <h5 class="mt-4 text-2xl text-center font-semibold tracking-tight text-gray-900 dark:text-white">Event Name</h5>
+    <h5 class="mt-4 text-2xl text-center font-semibold tracking-tight text-gray-900 dark:text-white">{data}</h5>
 </a>
-<h2 className="mt-2">Event Place</h2>
+<h2 className="mt-2">Event place</h2>
 <hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
 
 <ul className="flex items-center w-full me-4">
