@@ -216,9 +216,7 @@ export default function Page(){
  </a>
 </li>
 </ul> </Panel>
-    {
-      //fetchDatainDatabaseFirst.then(forEveryEventUID: LoadCard)
-    }   
+     
     <button type="button" onClick={() =>openModal()} className="mt-4 text-white bg-pink-500 hover:bg-pink-700 focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none">Apply</button>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={()=>closeModal()}>
@@ -247,10 +245,9 @@ export default function Page(){
     );
 
 }
-async function fetchEventData(){
-//call events 
-//fetch (all?) event uid == isOpen, true 
-//.then()
+
+function proceduralCard(){
+  
 }
 
 function Panel({
