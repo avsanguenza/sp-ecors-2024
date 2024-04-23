@@ -34,6 +34,7 @@ export  class eventData extends appData{
     constructor(){
       super()
       this.eventName="";
+      this.eventDoc = new Map();
     }
 
     async setData(collectionRef,eventNameInput, eventDescriptionInput){ //override
@@ -47,17 +48,24 @@ export  class eventData extends appData{
     async getData(collectionRef,arg0, queryOp, arg1){
         const q = query(collection(this.db,collectionRef),where(arg0,queryOp,arg1))
        const qsnapshot = await getDocs(q);
-       qsnapshot.forEach((doc)=>{
-       //  console.log(doc.data().eventName)
+        qsnapshot.forEach((doc)=>{
         this.eventName= doc.data().eventName;
+        this.eventDoc.set({id: doc.id},doc.data())
        })
-       
+       this.eventDoc.keys().forEach((key)=>{
+      //  console.log(this.eventDoc.get(key).eventName)
+       })
+
      }
 
      getEventName(){
         var temp = this.eventName;
         return temp;
 
+     }
+
+     getEventDoc(){
+        return this.eventDoc
      }
 
 }
