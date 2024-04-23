@@ -15,7 +15,7 @@ export default class appData{
         this.docFieldData = [];
     }
     
-   async getData(collectionRef,arg0, queryOp, arg1){
+   async getData(collectionRef,arg0, queryOp, arg1){//REWRITE ASG GET()
        const q = query(collection(this.db,collectionRef),where(arg0,queryOp,arg1))
       const qsnapshot = await getDocs(q);
       qsnapshot.forEach((doc)=>{
@@ -34,6 +34,7 @@ export  class eventData extends appData{
     constructor(){
       super()
       this.eventName="";
+      this.eventUID = new Array()
       this.eventDoc = new Map();
     }
 
@@ -50,11 +51,10 @@ export  class eventData extends appData{
        const qsnapshot = await getDocs(q);
         qsnapshot.forEach((doc)=>{
         this.eventName= doc.data().eventName;
+        this.eventUID.push(doc.id);
         this.eventDoc.set({id: doc.id},doc.data())
        })
-       this.eventDoc.keys().forEach((key)=>{
-      //  console.log(this.eventDoc.get(key).eventName)
-       })
+      
 
      }
 
@@ -63,6 +63,10 @@ export  class eventData extends appData{
         return temp;
 
      }
+
+    getEventUID(){
+        return this.eventUID;
+    }
 
      getEventDoc(){
         return this.eventDoc
