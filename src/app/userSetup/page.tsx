@@ -20,7 +20,7 @@ const [personalName, setPersonalName] = React.useState("")
               <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-blue-600 rounded-full shrink-0 dark:border-pink-500">
                   1
               </span>
-              Personal <span class="hidden sm:inline-flex sm:ms-2">Info</span>
+              Professional <span class="hidden sm:inline-flex sm:ms-2">Info</span>
               <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
               </svg>
@@ -29,7 +29,7 @@ const [personalName, setPersonalName] = React.useState("")
               <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-500 rounded-full shrink-0 dark:border-gray-400">
                   2
               </span>
-              Professional <span class="hidden sm:inline-flex sm:ms-2">Info</span>
+              Personal <span class="hidden sm:inline-flex sm:ms-2">Info</span>
               <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
               </svg>
@@ -58,7 +58,7 @@ const [personalName, setPersonalName] = React.useState("")
               <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-pink-500 rounded-full shrink-0 dark:border-pink-500">
                   1
               </span>
-              Personal <span class="hidden sm:inline-flex sm:ms-2">Info</span>
+              Professional<span class="hidden sm:inline-flex sm:ms-2">Info</span>
               <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
               </svg>
@@ -68,7 +68,7 @@ const [personalName, setPersonalName] = React.useState("")
               <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-pink-500 rounded-full shrink-0 dark:border-pink-500">
                 2
               </span>
-              Professional<span class="hidden sm:inline-flex sm:ms-2">Info</span>
+              Personal<span class="hidden sm:inline-flex sm:ms-2">Info</span>
               <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
               </svg>
@@ -85,7 +85,7 @@ const [personalName, setPersonalName] = React.useState("")
       </div>
       <div>
       <div className="mt-10  mx-auto">
-          {userForm2()}
+          {userForm1()}
         <button className="mx-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={()=>setActiveIndex(0)}>Back</button>
         <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={()=>setActiveIndex(2)}>Next</button>
       </div>
@@ -100,7 +100,7 @@ const [personalName, setPersonalName] = React.useState("")
             <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-pink-500 rounded-full shrink-0 dark:border-pink-500">
                 1
             </span>
-            Personal <span class="hidden sm:inline-flex sm:ms-2">Info</span>
+            Professional <span class="hidden sm:inline-flex sm:ms-2">Info</span>
             <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
             </svg>
@@ -110,7 +110,7 @@ const [personalName, setPersonalName] = React.useState("")
             <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-pink-500 rounded-full shrink-0 dark:border-pink-500">
               2
             </span>
-            Professional<span class="hidden sm:inline-flex sm:ms-2">Info</span>
+            Personal<span class="hidden sm:inline-flex sm:ms-2">Info</span>
             <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
             </svg>
@@ -161,31 +161,41 @@ function Panel({
 }
 function professionalForm(textPlaceholder, isDisabled){
   //add function to dynamically add work experience 
-  var baseDoc = document.getElementById("jobExperience form")
+  const additionalExp = () =>{
+    <div id='form'>
+        <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"  type="text" placeholder="First Name"></input>
+    </div>
+    document.getElementById('form').wrap
+  }
 
 return(
-  <form id = "jobExperienceForm">
-  <div>
+  <form>
+  <div id= "jobExperienceForm">
     <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Merchant Name </label>
     <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-second-name" type="text" placeholder="First Name"></input>
-    {//line here}
+    {//line here}d
     }
     </div>
     <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
-    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name">  </label>
-    <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-second-name" type="text" placeholder="First Name"></input>
-    <button className="text-white bg-pink-500 hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-16 py-2.5 text-center me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"><a className='mt-3 inline-flex items-center' onClick={()=> jobExperience('jobExperienceForm')}>
-     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-6 h-6">
-  <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clipRule="evenodd" />
-</svg>
-      Add Work/Event Experience
-      </a>
-      </button>
-
+    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name">  Main service you offer</label>
+    <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-second-name" type="text" placeholder="(e.g. Photography)"></input>
     </div>
-
+    <div>
+  
+      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="file_input">Work Experience</label>
+      <input class=" text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer rounded py-3 px-4 mb-3 " aria-describedby="file_input_help" id="file_input" type="file"/>
+  <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">DOCX or PDF</p>
+    </div>
+    <div>
+    <label class="mt-6 block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Choose how you'd like to display your page's pricing: </label>
+    <input className="bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-second-name" type="text" placeholder=""></input>
+    </div>
+    <div>
+    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"></label>
+    </div>
   </div>
+
 </form>
 
 
@@ -199,6 +209,12 @@ function userForm1(textPlaceholder, isDisabled){
   return(
       <form>
     <div>
+      <div>
+        
+        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_input">Upload Profile Picture</label>
+        <input class="mb-5 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file"/>
+
+      </div>
       <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
         <div className="flex items-center mb-5 space-x-10">
         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name" > First Name</label>

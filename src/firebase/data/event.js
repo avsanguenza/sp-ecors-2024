@@ -16,8 +16,8 @@ export default class appData{
     }
     
    async getData(collectionRef,arg0, queryOp, arg1){//REWRITE ASG GET()
-       const q = query(collection(this.db,collectionRef),where(arg0,queryOp,arg1))
-      const qsnapshot = await getDocs(q);
+       //const q = query(collection(this.db,collectionRef),where(arg0,queryOp,arg1))
+      const qsnapshot = this.db.collection(collectionref).where(arg0,queryOp,arg1).get()
       qsnapshot.forEach((doc)=>{
         console.log(doc.data().eventName)
       })
