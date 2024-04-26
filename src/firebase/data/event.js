@@ -38,11 +38,15 @@ export  class eventData extends appData{
       this.eventDoc = new Map();
     }
 
-    async setData(collectionRef,eventNameInput, eventDescriptionInput){ //override
+    async setData(collectionRef,eventNameInput, eventDateInfo, eventLocInfo, eventDescriptionInput){ //override
         const res = await this.db.collection('events').add({
-            eventAuthor: this.uid,
+            userid: this.uid,
             eventName: eventNameInput,
+            eventDate: eventDateInfo,
+            eventLocation:eventLoc,
             description:eventDescriptionInput,
+            eventWageType:'',
+            eventWageTypeValue:'',
             isOpen: true
         })
     }
@@ -85,10 +89,6 @@ export class eventFormData extends appData{
     }
 
     async setData(collectionRef){
-        {
-            eventApplicant: this.uid;
-            eventUID:this.eventUID;
-
-        }
+       
     }
 }
