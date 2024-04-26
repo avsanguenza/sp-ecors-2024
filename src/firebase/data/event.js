@@ -79,6 +79,7 @@ export  class eventData extends appData{
 
 export class eventFormData extends appData{
     constructor(uid,eventUID){
+        super()
         this.uid= uid;
         this.eventUID = eventUID;
     }
