@@ -19,8 +19,13 @@ function reviewInfo(){
   setCreateEName( document.getElementById('eventName').value)
   setCreateDate( document.getElementById('eventDate').value);
   setCreateLoc( document.getElementById('eventWork').value)
-  setCWageType(document.querySelector('input[name=jobWageType]:checked').value)
-  setCWTypeVal ((createWageType == 'hourly')? document.getElementById('jobWageHourly').value: document.getElementById('jobWageSum').value)
+  setCWageType(document.querySelector('input[type=radio][name=jobWageType]:checked').value)
+  if(createWageType == 'hourly'){
+    setCWTypeVal(document.getElementById('jobWageHourly').value )
+  }
+  else{
+    setCWTypeVal(document.getElementById('jobWageSum').value)
+  }
   setCreateDescription(document.getElementById('jobDescription').value);
 }
   return(
@@ -256,7 +261,7 @@ function showJobInfoToConfirm(createEventName, createDate, createLocation, creat
         </li>
         
         <li>
-        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Wage: {createWageTypeValue} </label>
+        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Wage: {createWageTypeValue} PHP </label>
     
         </li>
       </ul>
