@@ -35,10 +35,9 @@ export  class eventData extends appData{
       super()
       this.eventName="";
       this.eventUID = new Array()
-      this.eventDoc = new Map();
     }
 
-    async setData(collectionRef,eventNameInput, eventDateInfo, eventLocInfo, eventDescriptionInput){ //override
+    async setData(eventNameInput, eventDateInfo, eventLocInfo, eventDescriptionInput){ //override
         const res = await this.db.collection('events').add({
             userid: this.uid,
             eventName: eventNameInput,
@@ -56,7 +55,7 @@ export  class eventData extends appData{
         qsnapshot.forEach((doc)=>{
         this.eventName= doc.data().eventName;
         this.eventUID.push(doc.id);
-        this.eventDoc.set({id: doc.id},doc.data())
+        //this.eventDoc.set({id: doc.id},doc.data())
        })
       
 
