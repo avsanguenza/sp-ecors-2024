@@ -6,28 +6,10 @@ import type { DropdownOptions, DropdownInterface } from 'flowbite';
 import type { InstanceOptions } from 'flowbite';
 import { create } from "domain";
 
+import jobRegistrationForm from './forms'
+
 function userSetupPage(){
 const [activeIndex, setActiveIndex] = useState(0);
-const [createEventName, setCreateEName] = useState('')
-const [createDate, setCreateDate] = useState('')
-const [createLoc, setCreateLoc] = useState('')
-const [createDescription, setCreateDescription] = useState('')
-const [createWageType, setCWageType] = useState('')
-const [createWageTypeVal, setCWTypeVal] = useState('')
-function reviewInfo(){
-  setActiveIndex(1)
-  setCreateEName( document.getElementById('eventName').value)
-  setCreateDate( document.getElementById('eventDate').value);
-  setCreateLoc( document.getElementById('eventWork').value)
-  setCWageType(document.querySelector('input[type=radio][name=jobWageType]:checked').value)
-  if(createWageType == 'hourly'){
-    setCWTypeVal(document.getElementById('jobWageHourly').value )
-  }
-  else{
-    setCWTypeVal(document.getElementById('jobWageSum').value)
-  }
-  setCreateDescription(document.getElementById('jobDescription').value);
-}
   return(
     <>
  
@@ -55,8 +37,8 @@ function reviewInfo(){
       </div>
       
      <div className="mt-10  mx-auto">
-     {jobInformationForm(" ", false)}
-      <button className="mx-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={()=>  reviewInfo()}>Next</button>
+     {jobRegistrationForm()}
+      <button  type='submit' className="mx-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={()=>  setActiveIndex(1)}>Next</button>
      </div>
       </Panel>
 
@@ -81,7 +63,7 @@ function reviewInfo(){
             Review Information
         </li>
     </ol>
-   {showJobInfoToConfirm(createEventName,createDate,createLoc,createDescription,createWageType,createWageTypeVal)}
+   {showJobInfoToConfirm()}
       </div>
       <div>
       <div className="mt-10  mx-auto">
@@ -205,18 +187,18 @@ return(
       <label className=" mt-4 block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Job Wage</label>
       <ul>
         <li>
-      <input type='radio' id='jobWType'name='jobWageType' value='hourly' onClick={()=>fieldHandler('jobWageSum','jobWageHourly')}></input>
+          
+      <input type='radio' id='jobWType' name='jobWageType' value='hourly' onClick={()=>fieldHandler('jobWageSum','jobWageHourly')}></input>
       <label className="ml-3">Hourly Rate:</label>
 
-      <input type="number" id="jobWageHourly" name ='jobWageValue' className="ml-3 w-24 ring-2" disabled placeholder="PHP" required/>
+      <input type="number" id="jobWageHourly" name ='jobWageValue' className="ml-3 w-24 ring-2" placeholder="PHP" required/>
       <label> per Hour</label></li>
       <li>
       <input type='radio' id='jobWType' name='jobWageType' value='fixed' onClick={()=> fieldHandler('jobWageHourly','jobWageSum')}>
 
       </input>
       <label className="ml-3">Fixed Rate:</label>
-
-      <input type="number" id="jobWageSum" name ='jobWageValue' aria-describedby="helper-text-explanation" className="mt-4 mb-5 ml-3 w-24" disabled placeholder="PHP"/>
+      <input type="number" id="jobWageSum" name ='jobWageValue' className="ml-3 w-24 ring-2" placeholder="PHP" required/>
 
       <label className='ml-3'>PHP</label></li>
       </ul>
