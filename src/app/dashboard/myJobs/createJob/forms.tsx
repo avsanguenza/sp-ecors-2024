@@ -1,33 +1,26 @@
 import React, {useRef} from 'react';
+import { eventData } from '@/firebase/data/event';
 
-const jobRegistrationForm = () =>{
+
+ const jobRegistrationForm = () =>{
+  //GET UID FIRST 
     const eventName = useRef(null);
     const createDate = useRef(null);
     const createLoc = useRef(null);
     const createDescription = useRef(null)
     const createWageType = useRef(null)
     const createWageTypeVal = useRef(null)
-
-    const handleSubmit = (event) =>{
+    
+    
+      const handleSubmit = (event) =>{
         event.preventDefault();
     
         const eName = eventName.current.value;
         const cDate = createDate.current.value;
         const cLoc = createLoc.current.value;
         const cDescription = createDescription.current.value;
-        const cWageType = createWageType.current.value;
+        const cWageType = document.querySelector('input[name="jobWageType"]:checked').value
         const cWageTypeVal = createWageTypeVal.current.value;
-        
-        
-        eventName.current.value= '';
-        createDate.current.value  = '';
-        createLoc.current.value = '';
-        createDescription.current.value = '';
-        createWageType.current.value='';
-        createWageTypeVal.current.value=''
-
-        console.log(eName)
-
     }
 
     function dateHandler(eventDate){
@@ -64,13 +57,13 @@ const jobRegistrationForm = () =>{
         <form onSubmit={handleSubmit}>
           <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
           <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Name </label>
-          <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="eventName" type="text" placeholder="Event Name (e.g. Anime Expo)" ref={eventName}></input>
+          <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="eventName" placeholder="Event Name (e.g. Anime Expo)"  ref={eventName}></input>
        
           </div>
           <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
           <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold" for="grid-first-name"> Event Date</label>
              
-          <input type='date' id='eventDate' className='mt-3 mb-4 rounded py-3 px-4  bg-gray-200 border border-blue-500 focus:ring-blue-500 focus:border-blue-500 ' onChange={()=>dateHandler(document.getElementById('eventDate').value)}placeholder="Select a date" ref={createDate}></input>
+          <input type='date' id='eventDate' className='mt-3 mb-4 rounded py-3 px-4  bg-gray-200 border border-blue-500 focus:ring-blue-500 focus:border-blue-500 ' onChange={()=>dateHandler(document.getElementById('eventDate').value)} placeholder="Select a date" ref={createDate}></input>
           </div>
           <div>
         
@@ -91,22 +84,22 @@ const jobRegistrationForm = () =>{
             <input type='radio' id='jobWType' name='jobWageType' value='hourly' onClick={()=>fieldHandler('jobWageSum','jobWageHourly')} ref={createWageType}></input>
             <label className="ml-3">Hourly Rate:</label>
       
-            <input type="number" id="jobWageHourly" name ='jobWageValue' className="ml-3 w-24 ring-2" placeholder="PHP" required ref={createWageTypeVal}/>
+            <input type="number" min="0" id="jobWageHourly" name ='jobWageValue' className="ml-3 w-24 ring-2" placeholder="PHP" required ref={createWageTypeVal}/>
             <label> per Hour</label></li>
             <li>
             <input type='radio' id='jobWType' name='jobWageType' value='fixed' onClick={()=> fieldHandler('jobWageHourly','jobWageSum') } ref={createWageType}>
       
             </input>
             <label className="ml-3">Fixed Rate:</label>
-            <input type="number" id="jobWageSum" name ='jobWageValue' className="ml-3 w-24 ring-2" placeholder="PHP" required ref={createWageTypeVal}/>
+            <input type="number" min="0" id="jobWageSum" name ='jobWageValue' className="ml-3 w-24 ring-2" placeholder="PHP" required ref={createWageTypeVal}/>
       
             <label className='ml-3'>PHP</label></li>
             </ul>
           </div>      
+          <button  type='submit' className="mx-auto mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Next</button>
       </form>
       
     )
 }
 
 export default jobRegistrationForm;
-

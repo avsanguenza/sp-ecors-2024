@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 import {appData, eventData} from '@/firebase/data/event'
 import userSetupPage from '../userSetup/page';
+import jobRegistrationForm from './createJob/forms';
 const auth = getAuth(firebase_app);
 
 
@@ -186,12 +187,41 @@ export default function Page(){
         </header>
         
         <div className='mt-4 mx-auto '>
-        <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2"  onClick={()=>window.location.href='/dashboard/myJobs/createJob'}>
+        <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2"  onClick={()=>openModal()}>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 me-2">
   <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" />
 </svg>
   Create Event
 </button>
+<Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={()=>closeModal()}>
+
+        <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom='opacity-100' leaveTo='opacity-0'>
+          <div className='fixed inset-0 bg-black/25'/>
+        </Transition.Child>
+        <div className="fixed inset-0 overfly-auto">
+          <div className='flex min-h-full items-center justify-center p-8 text-center'>
+            <Transition.Child as={Fragment} enter='ease-out duration-300' enterFrom='opacity-0 scale-95' enterTo='opacity-100 scale-100' leave='ease-in duration-200' leaveFrom='opacity-100 scale-100' leaveTo='opacity-0 scale-95'>
+              <Dialog.Panel className='w-full max-w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+              <div className='inset-x-0'> <button type='button' onClick={()=>closeModal()} className=" rounded-md border"> x </button></div>
+
+                <div className="text-center">
+                <Dialog.Title as="h3"> Dialog Title</Dialog.Title>
+                </div>
+                <div className='mt-8 text-center space-x-2'>
+                {
+                //GET UID + SKELETON + FETCH 1 DATA + ITERATE
+                //CONFIRM - CLOSE MODAL - NEW TRANSITION :> 
+                jobRegistrationForm()}
+
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+        </Dialog>
+
+    </Transition>
         </div>
         {eventApplicationTabs()}
         {eventDataTabs()}
@@ -237,16 +267,16 @@ function eventDataTabs(){
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th scope="col" class="px-6 py-3">
-                    Product name
+                   Event name
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Color
+                    Location
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Category
+                    Wage Type
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Price
+                    Wage Posted
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Action

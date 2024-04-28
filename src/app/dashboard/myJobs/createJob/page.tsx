@@ -1,6 +1,6 @@
 'use client'
-import React from "react";
-import { useState } from "react";
+import React, { useEffect } from "react";
+import { useState,useRef } from "react";
 import { Dropdown } from 'flowbite';
 import type { DropdownOptions, DropdownInterface } from 'flowbite';
 import type { InstanceOptions } from 'flowbite';
@@ -8,75 +8,25 @@ import { create } from "domain";
 
 import jobRegistrationForm from './forms'
 
-function userSetupPage(){
+function userSetupPage(currentUID){
 const [activeIndex, setActiveIndex] = useState(0);
+const [jobWType, setjobWType] = useState('')
+function reviewContents(){
+  //just push the thing to 
+  setActiveIndex(1)
+}
+//actually restructure this page into this: THIS page is to check if authorized user, main header GET THE DAMN UID
+//jobForm = own .tsx file 
+//confirm = own .tsx file -> there to summon database instance too 
   return(
     <>
- 
-      <div className="">
-      <Panel title="User Information" isActive={activeIndex===0} onShow={()=>setActiveIndex(0)}>
-           <div className="">
-      <ol class=" mt-10 flex items-center w-full p-3 space-x-2 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-400 sm:text-base dark:bg-white dark:border-pink-500 sm:p-4 sm:space-x-4 rtl:space-x-reverse">
-          <li class="flex items-center text-pink-500 dark:text-pink-500">
-              <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-pink-500 rounded-full shrink-0 dark:border-pink-500">
-                  1
-              </span>
-              Job Information<span class="hidden sm:inline-flex sm:ms-2"></span>
-              <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
-              </svg>
-          </li>
-          <li class="flex items-center">
-              <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-500 rounded-full shrink-0 dark:border-gray-400">
-                  2
-              </span>
-              Review Information
-          </li>
-      </ol>
-      
-      </div>
-      
-     <div className="mt-10  mx-auto">
-     {jobRegistrationForm()}
-      <button  type='submit' className="mx-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={()=>  setActiveIndex(1)}>Next</button>
-     </div>
-      </Panel>
-
-      <Panel title="Company Information" isActive={activeIndex===1} onShow={()=>setActiveIndex(1)}>
-    
-      <div className="mx-auto">
-      <ol class="flex items-center w-full p-3 space-x-2 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-400 sm:text-base dark:bg-white dark:border-pink-500 sm:p-4 sm:space-x-4 ">
-        <li class="flex items-center text-pink-500 dark:text-pink-500">
-            <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-pink-500 rounded-full shrink-0 dark:border-pink-500">
-                1
-            </span>
-           Job Information <span class="hidden sm:inline-flex sm:ms-2"></span>
-            <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
-            </svg>
-        </li>
-
-        <li class="flex items-center text-pink-500 dark:text-pink-500">
-            <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-pink-500 rounded-full shrink-0 dark:border-pink-500">
-                2
-            </span>
-            Review Information
-        </li>
-    </ol>
-   {showJobInfoToConfirm()}
-      </div>
-      <div>
-      <div className="mt-10  mx-auto">
-        <button className="mx-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={()=>setActiveIndex(0)}>Back</button>
-        <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Submit</button>
-      </div>
-      </div>
-      </Panel>
-
-      </div>
-      
+   
+    <div className=" mt-8 text-center space-x-2">
+    {
+    //PASS THE UID
+    jobRegistrationForm()}
+    </div>
     </>
-  
       )
 }
 
@@ -97,6 +47,30 @@ function Panel({
   )
 }
 
+
+function processIndicator(){
+  return(
+    <div className="">
+    <ol class=" mt-10 flex items-center w-full p-3 space-x-2 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-400 sm:text-base dark:bg-white dark:border-pink-500 sm:p-4 sm:space-x-4 rtl:space-x-reverse">
+        <li class="flex items-center text-pink-500 dark:text-pink-500">
+            <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-pink-500 rounded-full shrink-0 dark:border-pink-500">
+                1
+            </span>
+            Job Information<span class="hidden sm:inline-flex sm:ms-2"></span>
+            <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 9 4-4-4-4M1 9l4-4-4-4"/>
+            </svg>
+        </li>
+        <li class="flex items-center">
+            <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-500 rounded-full shrink-0 dark:border-gray-400">
+                2
+            </span>
+            Review Information
+        </li>
+    </ol>
+    </div>
+  )
+}
 
 function eventSkill(){
   return(
@@ -125,91 +99,6 @@ function eventSkill(){
 
     </div>
   )
-}
-function jobInformationForm(textPlaceholder, isDisabled){
-  //add function to dynamically add work experience 
-  const [date, setDate] = React.useState<Date>();
-
-  function fieldHandler(id1, id2){
-    document.getElementById(id1).disabled=true;
-    document.getElementById(id1).value='';
-    document.getElementById(id2).disabled=false;
-    document.getElementById('jobWType').value=id2
-  }
-
-  function dateHandler(eventDate){
-    const date  = new Date();
-    let currDate = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()
-    if(Date.parse(eventDate) < Date.parse(currDate)){
-      alert('You cannot set an event in the past.')
-    }
-  }
-  function eventPlaceHandler(){
-    var cities = ['Caloocan', 'Manila','Malabon','Makati']
-    const select = document.getElementById('eventWork')
-
-    return(
-      <div>
-         <select id="eventWork" className='bg-gray-200 rounded px-3 py-4' placeholder='select city'>
-          <option value='Caloocan'> Caloocan </option>
-          <option value='Manila'> Manila</option>
-        </select>
-      </div>
-    )
-  }
-return(
-  
-  <form>
-    
-  <div id= "jobExperienceForm">
-    <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
-    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Name </label>
-    <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="eventName" type="text" placeholder="Event Name (e.g. Anime Expo)"></input>
- 
-    </div>
-    <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
-    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold" for="grid-first-name"> Event Date</label>
-       
-    <input type='date' id='eventDate' className='mt-3 mb-4 rounded py-3 px-4  bg-gray-200 border border-blue-500 focus:ring-blue-500 focus:border-blue-500 ' onChange={()=>dateHandler(document.getElementById('eventDate').value)}placeholder="Select a date"></input>
-    </div>
-    <div>
-  
-      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="file_input">Event Location</label>
-      {eventPlaceHandler()}
-    </div>
-    <div>
-      
-    <label class="mt-4 block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="file_input">Event Job Description</label>
-    <textarea id="message" rows="4" id='jobDescription' className=" text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Job Description"></textarea>
-
-    </div>
-    <div>
-      <label className=" mt-4 block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Job Wage</label>
-      <ul>
-        <li>
-          
-      <input type='radio' id='jobWType' name='jobWageType' value='hourly' onClick={()=>fieldHandler('jobWageSum','jobWageHourly')}></input>
-      <label className="ml-3">Hourly Rate:</label>
-
-      <input type="number" id="jobWageHourly" name ='jobWageValue' className="ml-3 w-24 ring-2" placeholder="PHP" required/>
-      <label> per Hour</label></li>
-      <li>
-      <input type='radio' id='jobWType' name='jobWageType' value='fixed' onClick={()=> fieldHandler('jobWageHourly','jobWageSum')}>
-
-      </input>
-      <label className="ml-3">Fixed Rate:</label>
-      <input type="number" id="jobWageSum" name ='jobWageValue' className="ml-3 w-24 ring-2" placeholder="PHP" required/>
-
-      <label className='ml-3'>PHP</label></li>
-      </ul>
-    </div>
-
-  </div>
-
-</form>
-
-
-)
 }
 
 
