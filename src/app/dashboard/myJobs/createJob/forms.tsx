@@ -1,6 +1,9 @@
+import { useState } from 'react';
 import React, {useRef} from 'react';
 import { eventData } from '@/firebase/data/event';
-
+import { Disclosure, Dialog, Menu, Transition } from '@headlessui/react'
+import { Fragment } from 'react';
+import { create } from 'domain';
 
  const jobRegistrationForm = () =>{
   //GET UID FIRST 
@@ -10,17 +13,27 @@ import { eventData } from '@/firebase/data/event';
     const createDescription = useRef(null)
     const createWageType = useRef(null)
     const createWageTypeVal = useRef(null)
+    var arrayVal =[]
+
+    let [isOpen, setIsOpen] = useState(false)
+
+        
+      function closeModal(){
+        setIsOpen(false)
+    }
     
-    
+    function openModal(){
+      setIsOpen(true)
+    }
+
       const handleSubmit = (event) =>{
         event.preventDefault();
-    
-        const eName = eventName.current.value;
-        const cDate = createDate.current.value;
-        const cLoc = createLoc.current.value;
-        const cDescription = createDescription.current.value;
-        const cWageType = document.querySelector('input[name="jobWageType"]:checked').value
-        const cWageTypeVal = createWageTypeVal.current.value;
+        sessionStorage.setItem('eventName',eventName.current.value)
+        sessionStorage.setItem('createLoc',createLoc.current.value);
+        sessionStorage.setItem('createDate', createDate.current.value)
+        sessionStorage.setItem('createDesc', createDescription.current.value)
+        sessionStorage.setItem('createWageType',document.querySelector('input[name="jobWageType"]:checked').value)
+        sessionStorage.setItem('createWageTypeVal',createWageTypeVal.current.value)
     }
 
     function dateHandler(eventDate){
@@ -51,10 +64,9 @@ import { eventData } from '@/firebase/data/event';
           </div>
         )
       }
-
-    return(
-
-        <form onSubmit={handleSubmit}>
+      function form(){
+        return(
+          <form onSubmit={handleSubmit}>
           <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
           <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Name </label>
           <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="eventName" placeholder="Event Name (e.g. Anime Expo)"  ref={eventName}></input>
@@ -96,10 +108,108 @@ import { eventData } from '@/firebase/data/event';
             <label className='ml-3'>PHP</label></li>
             </ul>
           </div>      
-          <button  type='submit' className="mx-auto mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Next</button>
+          <button  type='submit' className="mx-auto mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={()=>openModal()}>Next</button>
       </form>
+        )
+      }
       
+function showJobInfoToConfirm(){
+  return(
+    <div className="mt-4">
+      <ul>
+        <li>
+        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"> Event Name :  {sessionStorage.getItem('eventName')}</label>
+        </li>
+
+        <li>
+        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Date :{sessionStorage.getItem('createLoc')} </label>
+    
+        </li>
+
+        
+        <li>
+        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Location: {} </label>
+    
+        </li>
+        
+        <li>
+        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Description: {}</label>
+    
+        </li>
+        
+        <li>
+        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Wage Type: {arrayVal[5]}</label>
+    
+        </li>
+        
+        <li>
+        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Wage: {} PHP </label>
+    
+        </li>
+      </ul>
+    </div>
+  )
+}
+    const [activeIndex, setActiveIndex] = useState(0);
+
+    return(
+        <>
+      {form()}
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={()=>closeModal()}>
+
+        <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom='opacity-100' leaveTo='opacity-0'>
+          <div className='fixed inset-0 bg-black/25'/>
+        </Transition.Child>
+        <div className="fixed inset-0 overfly-auto">
+          <div className='flex min-h-full items-center justify-center p-8 text-center'>
+            <Transition.Child as={Fragment} enter='ease-out duration-300' enterFrom='opacity-0 scale-95' enterTo='opacity-100 scale-100' leave='ease-in duration-200' leaveFrom='opacity-100 scale-100' leaveTo='opacity-0 scale-95'>
+              <Dialog.Panel className='w-full max-w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+              <div className='inset-x-0'> <button type='button' onClick={()=>closeModal()} className=" rounded-md border"> x </button></div>
+
+                <div className="text-center">
+                <Dialog.Title as="h3"> Dialog Title</Dialog.Title>
+                </div>
+                <div className='mt-8 text-center space-x-2'>
+                  {showJobInfoToConfirm()}
+              
+                </div>
+                <div className="mt-4">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={closeModal}
+                    >
+                      Confirm
+                    </button>
+                  </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+        </Dialog>
+
+    </Transition>
+      </>
     )
 }
 
 export default jobRegistrationForm;
+
+function Panel({
+  title,
+  children,
+  isActive,
+  onShow
+}){
+  return(
+    <div className="text-center space-x-2">
+    
+      {isActive?(children):null}
+    </div>
+
+  )
+}
+
+
+

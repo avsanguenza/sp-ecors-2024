@@ -7,7 +7,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from "next/navigation";
 
 import {appData, eventData} from '@/firebase/data/event'
-import userSetupPage from '../userSetup/page';
+import appDialog from './dialog';
 import jobRegistrationForm from './createJob/forms';
 const auth = getAuth(firebase_app);
 
@@ -55,10 +55,12 @@ export default function Page(){
   async function getEventData(){
     //call from a different file
   }
+
   //currUser(); //DISABLED BECAUSE TESTING
   var obj = localStorage.getItem('currentUser')
   var accInfo = JSON.parse(obj)
   var edata = new eventData();
+  
 
   useEffect(()=>{
     //fetch all possible eventUID ->procedurally create cards -> update states
@@ -187,12 +189,13 @@ export default function Page(){
         </header>
         
         <div className='mt-4 mx-auto '>
-        <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2"  onClick={()=>openModal()}>
+        <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2"  onClick={()=>window.location.href="/dashboard/myJobs/createJob"}>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 me-2">
   <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" />
 </svg>
   Create Event
 </button>
+
 <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={()=>closeModal()}>
 
@@ -213,7 +216,7 @@ export default function Page(){
                 //GET UID + SKELETON + FETCH 1 DATA + ITERATE
                 //CONFIRM - CLOSE MODAL - NEW TRANSITION :> 
                 jobRegistrationForm()}
-
+              
                 </div>
               </Dialog.Panel>
             </Transition.Child>
@@ -433,8 +436,6 @@ function EditActiveIcon(props) {
   
   )
 }
-
-
 
 function ArchiveInactiveIcon(props) {
   return (
