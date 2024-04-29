@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import React, {useRef} from 'react';
 import { eventData } from '@/firebase/data/event';
+import userData from '@/app/dashboard/user'
 import { Disclosure, Dialog, Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react';
-import { create } from 'domain';
+import { useRouter } from "next/navigation";
+
 
  const jobRegistrationForm = () =>{
   //GET UID FIRST 
@@ -13,7 +15,10 @@ import { create } from 'domain';
     const createDescription = useRef(null)
     const createWageType = useRef(null)
     const createWageTypeVal = useRef(null)
-    var arrayVal =[]
+    //event instance
+    let edata = new eventData();
+    let udata = new userData();
+    udata.parseData();
 
     let [isOpen, setIsOpen] = useState(false)
 
@@ -112,11 +117,14 @@ import { create } from 'domain';
       </form>
         )
       }
-      
+
 function showJobInfoToConfirm(){
   return(
     <div className="mt-4">
       <ul>
+      <li>
+        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"> Event Organizer :  {udata.getName()}</label>
+        </li>
         <li>
         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"> Event Name :  {sessionStorage.getItem('eventName')}</label>
         </li>
@@ -138,7 +146,7 @@ function showJobInfoToConfirm(){
         </li>
         
         <li>
-        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Wage Type: {arrayVal[5]}</label>
+        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Wage Type: {}</label>
     
         </li>
         
@@ -150,8 +158,16 @@ function showJobInfoToConfirm(){
     </div>
   )
 }
-    const [activeIndex, setActiveIndex] = useState(0);
+  function sendData(){
+    closeModal()
 
+    let edata = new eventData();
+    edata.setData(udata.getUserUID(),udata.getName(),sessionStorage.getItem("eventName"),sessionStorage.getItem("createDate"),sessionStorage.getItem("createLoc"),sessionStorage.getItem("createDesc"),sessionStorage.getItem("createWageType"),sessionStorage.getItem('createWageTypeVal'))
+
+    alert("Successfully created event!")
+    useRouter().push('/dashboard/myJobs')
+    sessionStorage.clear()
+  }
     return(
         <>
       {form()}
@@ -168,7 +184,7 @@ function showJobInfoToConfirm(){
               <div className='inset-x-0'> <button type='button' onClick={()=>closeModal()} className=" rounded-md border"> x </button></div>
 
                 <div className="text-center">
-                <Dialog.Title as="h3"> Dialog Title</Dialog.Title>
+                <Dialog.Title as="h3">{sessionStorage.getItem("eventName")} Confirmation</Dialog.Title>
                 </div>
                 <div className='mt-8 text-center space-x-2'>
                   {showJobInfoToConfirm()}
@@ -178,7 +194,7 @@ function showJobInfoToConfirm(){
                     <button
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={closeModal}
+                      onClick={()=> sendData()}
                     >
                       Confirm
                     </button>

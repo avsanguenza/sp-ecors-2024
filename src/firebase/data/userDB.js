@@ -21,6 +21,7 @@ export default class userDBClass{
       let data = (doc.data().isOrganizer== true ? 'Event Organizer' : 'User');
       var obj = {
         'name' : this.name,
+        'uid' : this.uid,
         'accountType' : data
       }
       var toJSON = JSON.stringify(obj);

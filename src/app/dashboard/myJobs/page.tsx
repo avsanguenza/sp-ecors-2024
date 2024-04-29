@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import {appData, eventData} from '@/firebase/data/event'
 import appDialog from './dialog';
 import jobRegistrationForm from './createJob/forms';
+import { tab } from '@material-tailwind/react';
+import { table } from 'console';
 const auth = getAuth(firebase_app);
 
 
@@ -38,11 +40,10 @@ function currUser(){
 
  );
 } 
-
 export default function Page(){
   const[activeIndex, setActiveIndex] = useState(0);
-  const [data,setData] = useState('')
-  const [eData, setEData] = useState('');
+  const [data,setData] = useState({"":""})
+  const [eKeys, setEKeys] = useState([]);
   const [isOpen, setIsOpen] = useState(false)
 
   function closeModal(){
@@ -64,12 +65,21 @@ export default function Page(){
 
   useEffect(()=>{
     //fetch all possible eventUID ->procedurally create cards -> update states
-    edata.getData('events','isOpen','==',true).then(()=>{
-      setData(edata.getEventName())
+    edata.getData('events','userid','==', accInfo.uid).then(()=>{
+      var keys = edata.eventKeys
+   //   console.log(keys)
+        keys.forEach((key)=>{
+          let dataobj = JSON.parse(edata.dataobjMap.get(key))
+          //setData(dataobj)
+        })
       setActiveIndex(1)
     },[data])
   })
+  useEffect(()=>{
 
+   //  setEKeys(edata.eventKeys)
+    
+    },[eKeys])
     return (
       <>
         <header className="bg-pink-500">
@@ -226,8 +236,8 @@ export default function Page(){
 
     </Transition>
         </div>
-        {eventApplicationTabs()}
-        {eventDataTabs()}
+        {} 
+        {eventDataTabs(data.eventName,data.eventLocation,data.eventWageType,data.eventWageTypeVal)}
 </>
     );
 
@@ -260,7 +270,8 @@ function eventApplicationTabs(){
   )
 }
 
-function eventDataTabs(){
+function eventDataTabs(eventName, eventLocation,eventWageType, eventPosted){
+  const[activeIndex, setActiveIndex] = useState(0);
   return(
     <div>
       
@@ -286,96 +297,14 @@ function eventDataTabs(){
                 </th>
             </tr>
         </thead>
-
-        {
-          //fetch event-application 
-        }
+        
         <tbody>
-            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    Apple MacBook Pro 17"
-                </th>
-                <td class="px-6 py-4">
-                    Silver
-                </td>
-                <td class="px-6 py-4">
-                    Laptop
-                </td>
-                <td class="px-6 py-4">
-                    $2999
-                </td>
-                <td class="px-6 py-4">
-                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                </td>
-            </tr>
-            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    Microsoft Surface Pro
-                </th>
-                <td class="px-6 py-4">
-                    White
-                </td>
-                <td class="px-6 py-4">
-                    Laptop PC
-                </td>
-                <td class="px-6 py-4">
-                    $1999
-                </td>
-                <td class="px-6 py-4">
-                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                </td>
-            </tr>
-            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    Magic Mouse 2
-                </th>
-                <td class="px-6 py-4">
-                    Black
-                </td>
-                <td class="px-6 py-4">
-                    Accessories
-                </td>
-                <td class="px-6 py-4">
-                    $99
-                </td>
-                <td class="px-6 py-4">
-                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                </td>
-            </tr>
-            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    Google Pixel Phone
-                </th>
-                <td class="px-6 py-4">
-                    Gray
-                </td>
-                <td class="px-6 py-4">
-                    Phone
-                </td>
-                <td class="px-6 py-4">
-                    $799
-                </td>
-                <td class="px-6 py-4">
-                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    Apple Watch 5
-                </th>
-                <td class="px-6 py-4">
-                    Red
-                </td>
-                <td class="px-6 py-4">
-                    Wearables
-                </td>
-                <td class="px-6 py-4">
-                    $999
-                </td>
-                <td class="px-6 py-4">
-                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                </td>
-            </tr>
+
+        {tableBodyData(eventName,eventLocation,eventWageType,eventPosted)
+        }
+        
+           {skeleton()}
+           
         </tbody>
     </table>
 </div>
@@ -394,27 +323,46 @@ function Panel({
   )
 }
 
+function tableBodyData(eventName,eventLocation,eventWageType,eventWageTypeVal){
+  return(
+    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+        {eventName}
+    </th>
+    <td class="px-6 py-4">
+        {eventLocation}
+    </td>
+    <td class="px-6 py-4">
+        {eventWageType}
+    </td>
+    <td class="px-6 py-4">
+        {eventWageTypeVal}
+    </td>
+    <td class="px-6 py-4">
+        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+    </td>
+</tr>
+  )
+}
 function skeleton(){
   return(
-    <>
-    <div role="status" class="flex items-center justify-center h-56 max-w-sm bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700">
-    <svg class="w-10 h-10 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
-    <path d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.98 2.98 0 0 0 .13 5H5Z"/>
-    <path d="M14.066 0H7v5a2 2 0 0 1-2 2H0v11a1.97 1.97 0 0 0 1.934 2h12.132A1.97 1.97 0 0 0 16 18V2a1.97 1.97 0 0 0-1.934-2ZM9 13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2Zm4 .382a1 1 0 0 1-1.447.894L10 13v-2l1.553-1.276a1 1 0 0 1 1.447.894v2.764Z"/>
-  </svg>
-  
-    <span class="sr-only">Loading...</span>
-    
-</div>
-<h2 className="mt-3 text-center h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></h2>
-<hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
-<ul className="flex items-center w-full me-4">
-  <li><p class="mt-2  text-left h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></p></li>
-  <li>
-
-</li>
-</ul>
-</>
+       <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <div class="mt-3 h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                </th>
+                <td class="px-6 py-4">
+                <div class="mt-3 h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                </td>
+                <td class="px-6 py-4">
+                <div class="mt-3 h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-24 mb-4"></div>
+                </td>
+                <td class="px-6 py-4">
+                <div class="mt-3 h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-24 mb-4"></div>
+                </td>
+                <td class="px-6 py-4">
+                <div class="mt-3 h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-24 mb-4"></div>
+                </td>
+            </tr>
   )
 }
 function EditInactiveIcon(props) {

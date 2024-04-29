@@ -1,8 +1,7 @@
 import firebase_app from "../config";
-import {getFirestore,doc, getDocs, query,collection} from 'firebase/firestore';
-
-import {where, onSnapshot} from 'firebase/firestore';
-
+import {getFirestore,doc, getDocs, setDoc, query,collection, addDoc} from 'firebase/firestore';
+import {where} from 'firebase/firestore';
+import userData from "@/app/dashboard/user";
 const firebase_app_init = firebase_app;
 const dbInstance = getFirestore(firebase_app);
 
@@ -34,39 +33,70 @@ export  class eventData extends appData{
     constructor(){
       super()
       this.eventName="";
-      this.eventUID = new Array()
+      this.eventCName='';
+      this.eventLocation = '';
+      this.wageType='';
+      this.wageTypeVal='';
+      this.eventUID = '';
+      this.dataobjMap = new Map();
+      this.eventKeys = new Array();
     }
 
-    async setData(eventNameInput, eventDateInfo, eventLocInfo, eventDescriptionInput){ //override
-        const res = await this.db.collection('events').add({
-            userid: this.uid,
+    async setData(uid, eventCName, eventNameInput, eventDateInfo, eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal){ //override
+        const docRef = doc(collection(this.db,"events"))
+        await setDoc(docRef,{
+            userid: uid,
+            eventCreatorName: eventCName,
             eventName: eventNameInput,
             eventDate: eventDateInfo,
-            eventLocation:eventLoc,
+            eventLocation:eventLocInfo,
             description:eventDescriptionInput,
-            eventWageType:'',
-            eventWageTypeValue:'',
+            eventWageType:eventWType,
+            eventWageTypeValue:eventWTypeVal,
             isOpen: true
         })
+
     }
+
     async getData(collectionRef,arg0, queryOp, arg1){
         const q = query(collection(this.db,collectionRef),where(arg0,queryOp,arg1))
        const qsnapshot = await getDocs(q);
         qsnapshot.forEach((doc)=>{
         this.eventName= doc.data().eventName;
-        this.eventUID.push(doc.id);
-        //this.eventDoc.set({id: doc.id},doc.data())
-       })
-      
+        this.eventUID = doc.id;
+        this.eventKeys.push(doc.id);
+        this.eventLocation=doc.data().eventLocation;
+        this.wageType = doc.data().eventWageType;
+        this.wageTypeVal = doc.data().eventWageTypeValue;  
+        this.dataToJSON()
+         })
+
+        //dataToJSON(this.eventUID,this.eventName, this.eventLocation,this.eventWageType,this.eventWageTypeVal)
 
      }
 
+     dataToJSON(){
+        let data ={
+            'eventName' : this.eventName,
+            'eventLocation': this.eventLocation,
+            'eventWageType' : this.wageType,
+            'eventWageTypeVal' : this.wageTypeVal
+        }
+        const dataobj = JSON.stringify(data)
+        this.dataobjMap.set(this.eventUID,dataobj)
+     }
+
+     getResults(){
+        return this.dataobjMap;
+     }
      getEventName(){
         var temp = this.eventName;
         return temp;
-
      }
 
+    getEventLocation(){
+        return this.eventLocation;
+    }
     getEventUID(){
         return this.eventUID;
     }
@@ -74,7 +104,13 @@ export  class eventData extends appData{
      getEventDoc(){
         return this.eventDoc
      }
-
+    
+     getWageType(){
+        return this.wageType;
+     }
+     getWageTypeVal(){
+        return this.wageTypeVal;
+     }
 }
 
 
