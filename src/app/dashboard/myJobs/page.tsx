@@ -42,7 +42,7 @@ function currUser(){
 } 
 export default function Page(){
   const[activeIndex, setActiveIndex] = useState(0);
-  const [data,setData] = useState({"":""})
+  const [data,setData] = useState([])
   const [eKeys, setEKeys] = useState([]);
   const [isOpen, setIsOpen] = useState(false)
 
@@ -61,25 +61,24 @@ export default function Page(){
   var obj = localStorage.getItem('currentUser')
   var accInfo = JSON.parse(obj)
   var edata = new eventData();
-  
+  var results = new Array;
+  edata.getData('events','userid','==', accInfo.uid).then(()=>{
+    var keys = edata.eventKeys
+ //   console.log(keys)
+      keys.forEach((key)=>{
+        let dataobj = JSON.parse(edata.dataobjMap.get(key))
+        results.push(dataobj)
+      })
+  })
 
   useEffect(()=>{
     //fetch all possible eventUID ->procedurally create cards -> update states
-    edata.getData('events','userid','==', accInfo.uid).then(()=>{
-      var keys = edata.eventKeys
-   //   console.log(keys)
-        keys.forEach((key)=>{
-          let dataobj = JSON.parse(edata.dataobjMap.get(key))
-          //setData(dataobj)
-        })
-      setActiveIndex(1)
-    },[data])
-  })
-  useEffect(()=>{
 
-   //  setEKeys(edata.eventKeys)
-    
-    },[eKeys])
+      // setData(results)
+       setActiveIndex(1)
+
+  },[data])
+ 
     return (
       <>
         <header className="bg-pink-500">
@@ -237,7 +236,7 @@ export default function Page(){
     </Transition>
         </div>
         {} 
-        {eventDataTabs(data.eventName,data.eventLocation,data.eventWageType,data.eventWageTypeVal)}
+        {eventDataTabs(data,data.eventName,data.eventLocation,data.eventWageType,data.eventWageTypeVal)}
 </>
     );
 
@@ -270,7 +269,7 @@ function eventApplicationTabs(){
   )
 }
 
-function eventDataTabs(eventName, eventLocation,eventWageType, eventPosted){
+function eventDataTabs(data,eventName, eventLocation,eventWageType, eventPosted){
   const[activeIndex, setActiveIndex] = useState(0);
   return(
     <div>
@@ -298,12 +297,16 @@ function eventDataTabs(eventName, eventLocation,eventWageType, eventPosted){
             </tr>
         </thead>
         
-        <tbody>
+        <tbody id='tablebody'>
 
-        {tableBodyData(eventName,eventLocation,eventWageType,eventPosted)
-        }
-        
-           {skeleton()}
+        {Object.values(data).forEach(d=>{
+         // const newnode = document.createTextNode(d)
+            return(
+              console.log(data)
+            )
+        }   
+          )}
+           
            
         </tbody>
     </table>
