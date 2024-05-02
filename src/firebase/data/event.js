@@ -93,7 +93,10 @@ export  class eventData extends appData{
         var temp = this.eventName;
         return temp;
      }
-
+    
+    getEventKeys(){
+        return this.eventKeys;
+    }
     getEventLocation(){
         return this.eventLocation;
     }

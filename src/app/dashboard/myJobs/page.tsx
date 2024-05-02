@@ -1,5 +1,5 @@
 'use client'
-import {Fragment, useState,useEffect} from 'react';
+import {Fragment, useState,useEffect, useRef} from 'react';
 import { Disclosure, Dialog, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import firebase_app from '@/firebase/config';
@@ -62,23 +62,27 @@ export default function Page(){
   var accInfo = JSON.parse(obj)
   var edata = new eventData();
   var results = new Array;
-  edata.getData('events','userid','==', accInfo.uid).then(()=>{
-    var keys = edata.eventKeys
- //   console.log(keys)
-      keys.forEach((key)=>{
-        let dataobj = JSON.parse(edata.dataobjMap.get(key))
-        results.push(dataobj)
-      })
-  })
+  
 
   useEffect(()=>{
-    //fetch all possible eventUID ->procedurally create cards -> update states
-
-      // setData(results)
+    edata.getData('events','userid','==', accInfo.uid).then(()=>{
+      var output = edata.dataobjMap
+     // console.log(output.values())
+     output.forEach((v,k)=>{
+      var temp = JSON.parse(v)
+      results.push(temp)
+     })
+     // console.log(keys)
+     // return(keys)
+       setData(results)
        setActiveIndex(1)
 
-  },[data])
- 
+    }
+    
+    )
+
+  },[])
+ //console.log(Object.values(data))
     return (
       <>
         <header className="bg-pink-500">
@@ -205,38 +209,11 @@ export default function Page(){
   Create Event
 </button>
 
-<Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={()=>closeModal()}>
-
-        <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom='opacity-100' leaveTo='opacity-0'>
-          <div className='fixed inset-0 bg-black/25'/>
-        </Transition.Child>
-        <div className="fixed inset-0 overfly-auto">
-          <div className='flex min-h-full items-center justify-center p-8 text-center'>
-            <Transition.Child as={Fragment} enter='ease-out duration-300' enterFrom='opacity-0 scale-95' enterTo='opacity-100 scale-100' leave='ease-in duration-200' leaveFrom='opacity-100 scale-100' leaveTo='opacity-0 scale-95'>
-              <Dialog.Panel className='w-full max-w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-              <div className='inset-x-0'> <button type='button' onClick={()=>closeModal()} className=" rounded-md border"> x </button></div>
-
-                <div className="text-center">
-                <Dialog.Title as="h3"> Dialog Title</Dialog.Title>
-                </div>
-                <div className='mt-8 text-center space-x-2'>
-                {
-                //GET UID + SKELETON + FETCH 1 DATA + ITERATE
-                //CONFIRM - CLOSE MODAL - NEW TRANSITION :> 
-                jobRegistrationForm()}
-              
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
         </div>
-        </Dialog>
-
-    </Transition>
-        </div>
-        {} 
-        {eventDataTabs(data,data.eventName,data.eventLocation,data.eventWageType,data.eventWageTypeVal)}
+        {
+          eventDataTabs(data)
+        } 
+      
 </>
     );
 
@@ -269,8 +246,31 @@ function eventApplicationTabs(){
   )
 }
 
-function eventDataTabs(data,eventName, eventLocation,eventWageType, eventPosted){
+function eventDataTabs(data){
   const[activeIndex, setActiveIndex] = useState(0);
+  const [isOpen, setIsOpen] = useState(false)
+  const [dialogTitle, setDialogTitle] = useState('')
+
+  useEffect(()=>{
+      setActiveIndex(1)
+  },[])
+
+  function closeModal(){
+    setIsOpen(false)
+ }
+ 
+ function openModal(){
+   setIsOpen(true)
+ }
+ 
+
+function editDialog(title){
+  setDialogTitle(title)
+  openModal()
+  //do something
+}
+
+
   return(
     <div>
       
@@ -294,22 +294,71 @@ function eventDataTabs(data,eventName, eventLocation,eventWageType, eventPosted)
                 <th scope="col" class="px-6 py-3">
                     Action
                 </th>
+                
             </tr>
         </thead>
         
         <tbody id='tablebody'>
-
-        {Object.values(data).forEach(d=>{
-         // const newnode = document.createTextNode(d)
+          <Panel isActive={activeIndex===0}>
+            {
+           data.map((d)=>{
             return(
-              console.log(data)
+              <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+              <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                  {d.eventName}
+              </th>
+              <td class="px-6 py-4">
+                  {d.eventLocation}
+              </td>
+              <td class="px-6 py-4">
+                  {d.eventWageType}
+              </td>
+              <td class="px-6 py-4">
+              &#8369; {d.eventWageTypeVal}
+              </td>
+              <td class="px-6 py-4">
+              <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-pink-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800">View Applications</button>  |  
+              <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={()=>editDialog(d.eventName)}> Edit</button>
+                |    <button type="button" class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Delete</button>
+
+              </td>
+          </tr>
             )
-        }   
-          )}
-           
-           
+           })
+        }
+        
+          </Panel>
         </tbody>
     </table>
+    <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={()=>closeModal()}>
+
+        <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom='opacity-100' leaveTo='opacity-0'>
+          <div className='fixed inset-0 bg-black/25'/>
+        </Transition.Child>
+        <div className="fixed inset-0 overfly-auto">
+          <div className='flex min-h-full items-center justify-center p-8 text-center'>
+            <Transition.Child as={Fragment} enter='ease-out duration-300' enterFrom='opacity-0 scale-95' enterTo='opacity-100 scale-100' leave='ease-in duration-200' leaveFrom='opacity-100 scale-100' leaveTo='opacity-0 scale-95'>
+              <Dialog.Panel className='w-full max-w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+              <div className='inset-x-0'> <button type='button' onClick={()=>closeModal()} className=" rounded-md border"> x </button></div>
+
+                <div className="text-center">
+                <Dialog.Title as="h3">{dialogTitle}</Dialog.Title>
+                </div>
+                <div className='mt-8 text-center space-x-2'>
+                  {
+                    editForm()
+
+                  }
+                  
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+        </Dialog>
+
+    </Transition>
 </div>
 
     </div>
@@ -320,33 +369,112 @@ function Panel({
   isActive
 }){
   return(
-    <div className='text-center'>
+    <>
         {isActive ? skeleton() : (children) }
-    </div>
+    </>
   )
 }
 
-function tableBodyData(eventName,eventLocation,eventWageType,eventWageTypeVal){
+function editForm( ){
+  const eventName = useRef(null);
+  const createDate = useRef(null);
+  const createLoc = useRef(null);
+  const createDescription = useRef(null)
+  const createWageType = useRef(null)
+  const createWageTypeVal = useRef(null)
+
+  const handleSubmit = (event) =>{
+    event.preventDefault();
+    sessionStorage.setItem('eventName',eventName.current.value)
+    sessionStorage.setItem('createLoc',createLoc.current.value);
+    sessionStorage.setItem('createDate', createDate.current.value)
+    sessionStorage.setItem('createDesc', createDescription.current.value)
+    sessionStorage.setItem('createWageType',document.querySelector('input[name="jobWageType"]:checked').value)
+    sessionStorage.setItem('createWageTypeVal',createWageTypeVal.current.value)
+}
+
+function changState(id,state){
+
+}
+
+function dateHandler(eventDate){
+    const date  = new Date();
+    let currDate = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()
+    if(Date.parse(eventDate) < Date.parse(currDate)){
+      alert('You cannot set an event in the past.')
+    }
+  }
+
+function fieldHandler(id1, id2){
+    document.getElementById(id1).disabled=true;
+    document.getElementById(id1).value='';
+    document.getElementById(id2).disabled=false;
+    document.getElementById('jobWType').value=id2
+}
+
+function eventPlaceHandler(){
+    var cities = ['Caloocan', 'Manila','Malabon','Makati']
+    const select = document.getElementById('eventWork')
+
+    return(
+      <div>
+         <select id="eventWork" className='bg-gray-200 rounded px-3 py-4' placeholder='select city' ref={createLoc}>
+          <option value='Caloocan'> Caloocan </option>
+          <option value='Manila'> Manila</option>
+        </select>
+      </div>
+    )
+  }
   return(
-    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-        {eventName}
-    </th>
-    <td class="px-6 py-4">
-        {eventLocation}
-    </td>
-    <td class="px-6 py-4">
-        {eventWageType}
-    </td>
-    <td class="px-6 py-4">
-        {eventWageTypeVal}
-    </td>
-    <td class="px-6 py-4">
-        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-    </td>
-</tr>
+    <>
+     <form onSubmit={handleSubmit}>
+          <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
+          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Name </label>
+          <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="eventName" placeholder="Event Name (e.g. Anime Expo)"  ref={eventName}></input>
+       
+          </div>
+          <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
+          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold" for="grid-first-name"> Event Date</label>
+             
+          <input type='date' id='eventDate' className='mt-3 mb-4 rounded py-3 px-4  bg-gray-200 border border-blue-500 focus:ring-blue-500 focus:border-blue-500 ' onChange={()=>dateHandler(document.getElementById('eventDate').value)} placeholder="Select a date" ref={createDate}></input>
+          </div>
+          <div>
+        
+            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="file_input">Event Location</label>
+            {eventPlaceHandler()}
+          </div>
+          <div>
+            
+          <label class="mt-4 block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="file_input">Event Job Description</label>
+          <textarea id="message" rows="4" id='jobDescription' className=" text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Job Description" ref={createDescription}></textarea>
+      
+          </div>
+          <div>
+            <label className=" mt-4 block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Job Wage</label>
+            <ul>
+              <li>
+                
+            <input type='radio' id='jobWType' name='jobWageType' value='hourly' onClick={()=>fieldHandler('jobWageSum','jobWageHourly')} ref={createWageType}></input>
+            <label className="ml-3">Hourly Rate:</label>
+      
+            <input type="number" min="0" id="jobWageHourly" name ='jobWageValue' className="ml-3 w-24 ring-2" placeholder="PHP" required ref={createWageTypeVal}/>
+            <label> per Hour</label></li>
+            <li>
+            <input type='radio' id='jobWType' name='jobWageType' value='fixed' onClick={()=> fieldHandler('jobWageHourly','jobWageSum') } ref={createWageType}>
+      
+            </input>
+            <label className="ml-3">Fixed Rate:</label>
+            <input type="number" min="0" id="jobWageSum" name ='jobWageValue' className="ml-3 w-24 ring-2" placeholder="PHP" required ref={createWageTypeVal}/>
+      
+            <label className='ml-3'>PHP</label></li>
+            </ul>
+          </div>      
+          <button  type='submit' className="mx-auto mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={()=>openModal()}>Next</button>
+      </form>
+    </>
   )
 }
+
 function skeleton(){
   return(
        <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">

@@ -74,7 +74,7 @@ export default function Page(){
     edata.getData('events','isOpen','==',true).then(()=>{
       setData(edata.getEventName())
       setActiveIndex(1)
-    },[data])
+    },[])
   })
 
     return (
@@ -197,7 +197,8 @@ export default function Page(){
         
 
 <div class="mt-10 ml-5  max-w-sm p-6 text-center bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-  <Panel  isActive={activeIndex===0}><img className="h-auto max-w-full rounded-lg" src="https://www.peerspace.com/resources/wp-content/uploads/atlanta-Beautiful-Urban-Garden.webp"/>
+  <Panel  isActive={activeIndex===0}>
+    <img className="h-auto max-w-full rounded-lg" src="https://www.peerspace.com/resources/wp-content/uploads/atlanta-Beautiful-Urban-Garden.webp"/>
 
 <a href="#">
     <h5 class="mt-4 text-2xl text-center font-semibold tracking-tight text-gray-900 dark:text-white">{data}</h5>
