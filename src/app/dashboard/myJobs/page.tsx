@@ -11,6 +11,7 @@ import AppDialog from './dialog';
 import jobRegistrationForm from './createJob/forms';
 import { tab } from '@material-tailwind/react';
 import { table } from 'console';
+import { create } from 'domain';
 const auth = getAuth(firebase_app);
 
 
@@ -82,7 +83,7 @@ export default function Page(){
     )
 
   },[])
- //console.log(Object.values(data))
+
     return (
       <>
         <header className="bg-pink-500">
@@ -250,6 +251,11 @@ function eventDataTabs(data){
   const[activeIndex, setActiveIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false)
   const [dialogTitle, setDialogTitle] = useState('')
+  const [date, setDate] = useState('');
+  const [desc,setDesc] = useState('')
+  const [location,setLocation] = useState('')
+  const [eventWT, setEventWT] = useState('')
+  const [eventWTVal, setEventVTVal] = useState('')
 
   useEffect(()=>{
       setActiveIndex(1)
@@ -264,8 +270,14 @@ function eventDataTabs(data){
  }
  
 
-function editDialog(title){
+function editDialog(title, eDate, eLoc, eDescrip,eWageWT, eWageTVal){
   setDialogTitle(title)
+  setDate(eDate)
+  setLocation(eLoc)
+  setDesc(eDescrip)
+  setEventWT(eWageWT)
+  console.log(eWageWT)
+  setEventVTVal(eWageTVal)
   openModal()
 }
 
@@ -317,8 +329,8 @@ function editDialog(title){
               </td>
               <td class="px-6 py-4">
               <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-pink-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800">View Applications</button>  |  
-              <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={()=>editDialog(d.eventName)}> Edit</button>
-                |    <button type="button" class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Delete</button>
+              <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={()=>editDialog(d.eventName,d.eventDate, d.eventLocation, d.description,d.eventWageType,d.eventWageTypeVal )}> Edit</button>
+             <button type="button" class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Delete</button>
 
               </td>
           </tr>
@@ -349,7 +361,7 @@ function editDialog(title){
                 </div>
                 <div className='mt-8 text-center space-x-2'>
                   {
-                    editForm(dialogTitle)
+                    editForm(dialogTitle,date,location,desc,eventWT,eventWTVal)
 
                   }
                   
@@ -379,51 +391,55 @@ function Panel({
   )
 }
 
-function editForm(eName ){
+function editForm(eName, eventDate, eventLoc, eventDesc, eventWT, eventWTVal){
   const eventName = useRef(eName);
-  const createDate = useRef(null);
-  const createLoc = useRef(null);
-  const createDescription = useRef(null)
-  const createWageType = useRef(null)
-  const createWageTypeVal = useRef(null)
+  const createDate = useRef(eventDate);
+  const createLoc = useRef(eventLoc);
+  const createDescription = useRef(eventDesc)
+  const createWageType = useRef(eventWT)
+  const createWageTypeVal = useRef(eventWTVal)
   const [isOpen, setIsOpen] = useState(false)
 
   function closeModal(){
      setIsOpen(false)
   }
-  
+
   function openModal(){
     setIsOpen(true)
   }
   const handleSubmit = (event) =>{
     event.preventDefault();
-    console.log(eventName.current.value)
-  //  sessionStorage.setItem('eventName',eventName.current.value)
-   // sessionStorage.setItem('createLoc',createLoc.current.value);
-  //  sessionStorage.setItem('createDate', createDate.current.value)
-   // sessionStorage.setItem('createDesc', createDescription.current.value)
-   // sessionStorage.setItem('createWageType',document.querySelector('input[name="jobWageType"]:checked').value)
-   // sessionStorage.setItem('createWageTypeVal',createWageTypeVal.current.value)
+     sessionStorage.setItem('eventName',eventName.current.value)
+     sessionStorage.setItem('createLoc',createLoc.current.value);
+     sessionStorage.setItem('createDate', createDate.current.value)
+     sessionStorage.setItem('createDesc', createDescription.current.value)
+     if(document.querySelector('input[name="jobWageType"]:checked')==null){
+      sessionStorage.setItem('createWageType',eventWT)
+     }
+     else{
+      sessionStorage.setItem('createWageType',document.querySelector('input[name="jobWageType"]:checked').value)
+     }
+     sessionStorage.setItem('createWageTypeVal',createWageTypeVal.current.value)
     setIsOpen(true)
   }
 
-function changState(id,state){
 
-}
-
-function dateHandler(eventDate){
+function dateHandler(eventDat){
     const date  = new Date();
     let currDate = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()
-    if(Date.parse(eventDate) < Date.parse(currDate)){
+    if(Date.parse(eventDat) < Date.parse(currDate)){
       alert('You cannot set an event in the past.')
     }
+    
+    
   }
 
 function fieldHandler(id1, id2){
     document.getElementById(id1).disabled=true;
+    document.getElementById(id1).placeholder=""
     document.getElementById(id1).value='';
     document.getElementById(id2).disabled=false;
-    document.getElementById('jobWType').value=id2
+    //document.getElementById('jobWType').value=id2
 }
 
 function eventPlaceHandler(){
@@ -432,7 +448,8 @@ function eventPlaceHandler(){
 
     return(
       <div>
-         <select id="eventWork" className='bg-gray-200 rounded px-5 py-4' placeholder='select city' ref={createLoc}>
+         <select id="eventWork" className='bg-gray-200 rounded px-5 py-4' ref={createLoc}>
+          <option selected={eventLoc}>{eventLoc}</option>
           <option value='Caloocan'> Caloocan </option>
           <option value='Manila'> Manila</option>
         </select>
@@ -442,9 +459,20 @@ function eventPlaceHandler(){
 
 function editButton(){
   document.getElementById('eventName').disabled=false;
+  document.getElementById('eventDate').disabled=false;
   document.getElementById('jobDescription').disabled=false;
+  //document.querySelectorAll('input[name="jobWageType').disabled=false;
 } 
 
+
+function getInitialRadioValue(){
+  if(eventWT =='hourly'){
+    return true
+  }
+  else{
+    return false
+  }
+}
 
   return(
     <>
@@ -460,13 +488,13 @@ function editButton(){
      <form onSubmit={handleSubmit}>
           <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
           <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Name </label>
-          <input className="appearance-none block w-full bg-white text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white disabled:bg-gray-300" id="eventName" placeholder={eName} defaultValue={eName} ref={eventName}disabled></input>
+          <input className="appearance-none block w-full bg-white text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white disabled:bg-gray-300" id="eventName" placeholder={eName} defaultValue={eName} ref={eventName} disabled></input>
           
           </div>
           <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
           <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold" for="grid-first-name"> Event Date</label>
              
-          <input type='date' id='eventDate' className='mt-3 mb-4 rounded py-3 px-4  bg-gray-200 border border-blue-500 focus:ring-blue-500 focus:border-blue-500 ' onChange={()=>dateHandler(document.getElementById('eventDate').value)} placeholder="Select a date" ref={createDate} disabled></input>
+          <input type='date' id='eventDate' className='mt-3 mb-4 rounded py-3 px-4  bg-white border border-blue-500 focus:ring-blue-500 focus:border-blue-500  disabled:bg-gray-200'  onClick={()=> createDate.current=''} onChange={()=>dateHandler(document.getElementById('eventDate').value)} value={createDate.current.value} ref={createDate} ></input>
           </div>
           <div>
         
@@ -477,7 +505,7 @@ function editButton(){
             
           <label class="mt-4 block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="file_input">Event Job Description</label>
 
-          <textarea id="message" rows="4" id='jobDescription' className=" text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Job Description" ref={createDescription} disabled></textarea>
+          <textarea id="message" rows="4" id='jobDescription' className=" text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={eventDesc} ref={createDescription} disabled></textarea>
       
           </div>
           <div>
@@ -485,17 +513,16 @@ function editButton(){
             <ul>
               <li>
                 
-            <input type='radio' id='jobWType' name='jobWageType' value='hourly' onClick={()=>fieldHandler('jobWageSum','jobWageHourly')} ref={createWageType}></input>
-            <label className="ml-3">Hourly Rate:</label>
+            <input type='radio' id='jobWTypeH' name='jobWageType' value='hourly' onClick={()=>fieldHandler('jobWageSum','jobWageHourly')} ref={createWageType}></input>
+            <label className="ml-3"  >Hourly Rate:</label>
       
-            <input type="number" min="0" id="jobWageHourly" name ='jobWageValue' className="ml-3 w-24 ring-2" placeholder="PHP" required ref={createWageTypeVal}/>
+            <input type="number" min="0" id="jobWageHourly" name ='jobWageValue' className="ml-3 w-24 ring-2"  placeholder={getInitialRadioValue ? 0 : eventWTVal}  required ref={createWageTypeVal} value={getInitialRadioValue ? 0: eventWTVal}/>
             <label> per Hour</label></li>
             <li>
-            <input type='radio' id='jobWType' name='jobWageType' value='fixed' onClick={()=> fieldHandler('jobWageHourly','jobWageSum') } ref={createWageType}>
-      
+            <input type='radio' id='jobWTypeF' name='jobWageType' value='fixed' onClick={()=> fieldHandler('jobWageHourly','jobWageSum') } ref={createWageType}>
             </input>
             <label className="ml-3">Fixed Rate:</label>
-            <input type="number" min="0" id="jobWageSum" name ='jobWageValue' className="ml-3 w-24 ring-2" placeholder="PHP" required ref={createWageTypeVal}/>
+            <input type="number" min="0" id="jobWageSum" name ='jobWageValue' className="ml-3 mt-4 w-24 ring-2" placeholder={getInitialRadioValue ? eventWTVal: 0}  value={getInitialRadioValue ? eventWTVal: 0} required ref={createWageTypeVal}/>
       
             <label className='ml-3'>PHP</label></li>
             </ul>
@@ -518,7 +545,13 @@ function editButton(){
                 <Dialog.Title as="h2"  className="text-lg font-medium leading-6 text-gray-900"> Confirm Details</Dialog.Title>
                 </div>
                 <div className='mt-8 text-center space-x-2'>
-                      Event Name: {eventName.current.value}
+                     <p> Event Name: {sessionStorage.getItem("eventName")}</p>
+                      <p>Event Date: {sessionStorage.getItem("createDate")}</p>
+                      <p>Event Location: {sessionStorage.getItem("createLoc")}</p>
+                      <p>Event Description: {sessionStorage.getItem("createDesc")}</p>
+                      <p>Event Wage Type : {sessionStorage.getItem("createWageType")}</p>
+                      <p>Event Wage Type Val: {sessionStorage.getItem("createWageTypeVal")}</p>
+                      
                       <div className='mt-8'>
                         
                     <button type="button" class="text-white bg-pink-400 hover:bg-pink-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2" onClick={()=>closeModal()}>

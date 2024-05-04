@@ -64,6 +64,7 @@ export  class eventData extends appData{
         qsnapshot.forEach((doc)=>{
         this.eventName= doc.data().eventName;
         this.eventUID = doc.id;
+        this.eventDate = doc.data().eventDate;
         this.eventKeys.push(doc.id);
         this.eventLocation=doc.data().eventLocation;
         this.wageType = doc.data().eventWageType;
@@ -80,7 +81,8 @@ export  class eventData extends appData{
             'eventName' : this.eventName,
             'eventLocation': this.eventLocation,
             'eventWageType' : this.wageType,
-            'eventWageTypeVal' : this.wageTypeVal
+            'eventWageTypeVal' : this.wageTypeVal,
+            'eventDate' :  this.eventDate
         }
         const dataobj = JSON.stringify(data)
         this.dataobjMap.set(this.eventUID,dataobj)
