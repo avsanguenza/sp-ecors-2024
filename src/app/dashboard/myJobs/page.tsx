@@ -250,12 +250,14 @@ function eventApplicationTabs(){
 function eventDataTabs(data){
   const[activeIndex, setActiveIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false)
+  const [isDel, setIsDel] = useState(false)
   const [dialogTitle, setDialogTitle] = useState('')
   const [date, setDate] = useState('');
   const [desc,setDesc] = useState('')
   const [location,setLocation] = useState('')
   const [eventWT, setEventWT] = useState('')
-  const [eventWTVal, setEventVTVal] = useState('')
+  const [eventWTVal, setEventWTVal] = useState('')
+  const [eventUID, setEventUID] = useState('')
 
   useEffect(()=>{
       setActiveIndex(1)
@@ -264,23 +266,41 @@ function eventDataTabs(data){
   function closeModal(){
     setIsOpen(false)
  }
+  function closeDelModal(){
+    setIsDel(false)
+  }
  
  function openModal(){
    setIsOpen(true)
  }
+ function openDelModal(){
+  setIsDel(true)
+ }
  
+function deleteModal(){
 
-function editDialog(title, eDate, eLoc, eDescrip,eWageWT, eWageTVal){
+}
+function editDialog(uid,title, eDate, eLoc, eDescrip,eWageWT, eWageTVal){
   setDialogTitle(title)
   setDate(eDate)
   setLocation(eLoc)
   setDesc(eDescrip)
   setEventWT(eWageWT)
-  console.log(eWageWT)
-  setEventVTVal(eWageTVal)
+  setEventWTVal(eWageTVal)
+  setEventUID(uid)
   openModal()
 }
 
+async function deleteFromDB(eventUID){
+  let e = new eventData();
+  e.deleteData(eventUID)
+}
+
+function deleteData(eventUID){
+  deleteFromDB(eventUID)
+  alert('Entry Successfully Deleted!')
+  window.location.replace('/dashboard/myJobs')
+}
 
   return(
     <div>
@@ -313,6 +333,7 @@ function editDialog(title, eDate, eLoc, eDescrip,eWageWT, eWageTVal){
           <Panel isActive={activeIndex===0}>
             {
            data.map((d)=>{
+//            console.log(d)
             return(
               <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
               <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -329,8 +350,8 @@ function editDialog(title, eDate, eLoc, eDescrip,eWageWT, eWageTVal){
               </td>
               <td class="px-6 py-4">
               <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-pink-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800">View Applications</button>  |  
-              <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={()=>editDialog(d.eventName,d.eventDate, d.eventLocation, d.description,d.eventWageType,d.eventWageTypeVal )}> Edit</button>
-             <button type="button" class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Delete</button>
+              <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={()=>editDialog(d.eventid,d.eventName,d.eventDate, d.eventLocation, d.description,d.eventWageType,d.eventWageTypeVal )}> Edit</button>
+             <button type="button" class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" onClick={()=>openDelModal()}>Delete</button>
 
               </td>
           </tr>
@@ -360,11 +381,55 @@ function editDialog(title, eDate, eLoc, eDescrip,eWageWT, eWageTVal){
                 <Dialog.Title as="h3">{dialogTitle}</Dialog.Title>
                 </div>
                 <div className='mt-8 text-center space-x-2'>
+                
                   {
-                    editForm(dialogTitle,date,location,desc,eventWT,eventWTVal)
+                    editForm(eventUID,dialogTitle,date,location,desc,eventWT,eventWTVal)
 
                   }
                   
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+        </Dialog>
+
+    </Transition>
+
+    <Transition appear show={isDel} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={()=>closeDelModal()}>
+
+        <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom='opacity-100' leaveTo='opacity-0'>
+          <div className='fixed inset-0 bg-black/25'/>
+        </Transition.Child>
+        <div className="fixed inset-0 overfly-auto">
+          <div className='flex min-h-full items-center justify-center p-8 text-center'>
+            
+            <Transition.Child as={Fragment} enter='ease-out duration-300' enterFrom='opacity-0 scale-95' enterTo='opacity-100 scale-100' leave='ease-in duration-200' leaveFrom='opacity-100 scale-100' leaveTo='opacity-0 scale-95'>
+
+
+              <Dialog.Panel className='w-96 max-w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>      
+                <div className="text-center">
+                <Dialog.Title as="h3">Confirm Deletion </Dialog.Title>
+                </div>
+                <div className='mt-8 text-center space-x-2'>
+                
+                  {
+                    "Are you sure you want to delete?"
+
+                  }
+                     <div className='mt-8'>
+                        
+                        <button type="button" class="text-grey-900 bg-grey-300 hover:bg-grey-500 border border-grey-900 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2" onClick={()=>closeDelModal()}>
+                  
+                     Cancel
+                    </button>
+                    <button type="button" class="text-white bg-red-800 hover:bg-red-900 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2"  onClick={()=>deleteData()}>
+    
+    
+                                  Confirm
+                    </button>
+                                      </div>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
@@ -391,14 +456,17 @@ function Panel({
   )
 }
 
-function editForm(eName, eventDate, eventLoc, eventDesc, eventWT, eventWTVal){
+function editForm(eventUID,eName, eventDate, eventLoc, eventDesc, eventWT, eventWTVal){
   const eventName = useRef(eName);
   const createDate = useRef(eventDate);
   const createLoc = useRef(eventLoc);
   const createDescription = useRef(eventDesc)
   const createWageType = useRef(eventWT)
   const createWageTypeVal = useRef(eventWTVal)
+
   const [isOpen, setIsOpen] = useState(false)
+
+  let e = new eventData()
 
   function closeModal(){
      setIsOpen(false)
@@ -407,6 +475,7 @@ function editForm(eName, eventDate, eventLoc, eventDesc, eventWT, eventWTVal){
   function openModal(){
     setIsOpen(true)
   }
+
   const handleSubmit = (event) =>{
     event.preventDefault();
      sessionStorage.setItem('eventName',eventName.current.value)
@@ -419,8 +488,14 @@ function editForm(eName, eventDate, eventLoc, eventDesc, eventWT, eventWTVal){
      else{
       sessionStorage.setItem('createWageType',document.querySelector('input[name="jobWageType"]:checked').value)
      }
-     sessionStorage.setItem('createWageTypeVal',createWageTypeVal.current.value)
-    setIsOpen(true)
+    if(sessionStorage.getItem('createWageType')=='hourly'){
+      sessionStorage.setItem("createWageTypeVal", document.getElementById('jobWageHourly').value)
+    }
+    else{
+      sessionStorage.setItem("createWageTypeVal", document.getElementById('jobWageSum').value)
+
+    }
+     setIsOpen(true)
   }
 
 
@@ -438,8 +513,7 @@ function fieldHandler(id1, id2){
     document.getElementById(id1).disabled=true;
     document.getElementById(id1).placeholder=""
     document.getElementById(id1).value='';
-    document.getElementById(id2).disabled=false;
-    //document.getElementById('jobWType').value=id2
+   document.getElementById(id2).disabled=false;
 }
 
 function eventPlaceHandler(){
@@ -448,7 +522,7 @@ function eventPlaceHandler(){
 
     return(
       <div>
-         <select id="eventWork" className='bg-gray-200 rounded px-5 py-4' ref={createLoc}>
+         <select id="eventWork" className='bg-white rounded px-5 py-4 border border-pink-500 disabled:bg-pink-500 disabled:text-white disabled:opacity-70' ref={createLoc} disabled>
           <option selected={eventLoc}>{eventLoc}</option>
           <option value='Caloocan'> Caloocan </option>
           <option value='Manila'> Manila</option>
@@ -461,10 +535,82 @@ function editButton(){
   document.getElementById('eventName').disabled=false;
   document.getElementById('eventDate').disabled=false;
   document.getElementById('jobDescription').disabled=false;
-  //document.querySelectorAll('input[name="jobWageType').disabled=false;
+  document.getElementById('eventWork').disabled=false;
+  document.getElementById('jobWTypeH').disabled=false;
+  document.getElementById('jobWageHourly').disabled=false;
+  document.getElementById('jobWTypeF').disabled=false;
+  document.getElementById('jobWageSum').disabled=false;
+
+
+
 } 
 
-
+function radioHandler(){
+  if(eventWT=='hourly'){
+    return(
+      <>
+        <li>
+                
+                <input defaultChecked type='radio' id='jobWTypeH' name='jobWageType' value='hourly' onClick={()=>fieldHandler('jobWageSum','jobWageHourly')}  ref={createWageType}></input>
+                <label className="ml-3"  >Hourly Rate:</label>
+          
+                <input type="number" 
+                min="0" 
+                step="1"
+                id="jobWageHourly"
+                name ='jobWageValue'
+                className="ml-3 w-24 ring-2 disabled:bg-pink-500 disabled:text-white disabled:opacity-70" 
+                placeholder={getInitialRadioValue() ? eventWTVal : 0} 
+                defaultValue={getInitialRadioValue() ? eventWTVal : 0}
+                onClick={()=> document.getElementById}
+                required 
+                ref={(ref)=>(createWageTypeVal.current=ref)}
+                disabled />
+                <label> per Hour</label>
+                </li>
+                <li>
+                <input type='radio' id='jobWTypeF' name='jobWageType' value='fixed' onClick={()=> fieldHandler('jobWageHourly','jobWageSum') }  ref={createWageType}>
+                </input>
+                <label className="ml-3">Fixed Rate:</label>
+                
+                <input type="number" 
+                min="0"
+                step="1"
+                id="jobWageSum" 
+                name ='jobWageValue' 
+                className="ml-3 mt-4 w-24 ring-2 disabled:bg-pink-500 disabled:text-white disabled:opacity-70" 
+                placeholder={getInitialRadioValue() ? 0 : eventWTVal} 
+                defaultValue={getInitialRadioValue() ? 0 : eventWTVal}
+                required
+                ref={(ref)=>(createWageTypeVal.current=ref)}
+               disabled/>
+          
+                <label className='ml-3'>PHP</label></li>
+      </>
+    )
+  }
+  else{
+    return(
+      <>
+      <li>
+              
+              <input type='radio' id='jobWTypeH' name='jobWageType' value='hourly' onClick={()=>fieldHandler('jobWageSum','jobWageHourly')} ref={createWageType}></input>
+              <label className="ml-3"  >Hourly Rate:</label>
+        
+              <input type="number" min="0" id="jobWageHourly" name ='jobWageValue' className="ml-3 w-24 ring-2 disabled:bg-pink-500 disabled:text-white disabled:opacity-70"  placeholder={getInitialRadioValue() ? 0 : eventWTVal}  required ref={createWageTypeVal} defaultValue={getInitialRadioValue ? 0: eventWTVal} disabled />
+              <label> per Hour</label></li>
+              <li>
+              <input defaultChecked type='radio' id='jobWTypeF' name='jobWageType' value='fixed' onClick={()=> fieldHandler('jobWageHourly','jobWageSum') } ref={createWageType}>
+              </input>
+              <label className="ml-3">Fixed Rate:</label>
+              <input type="number" min="0" id="jobWageSum" name ='jobWageValue' className="ml-3 mt-4 w-24 ring-2 disabled:bg-pink-500 disabled:text-white disabled:opacity-70" placeholder={getInitialRadioValue() ? eventWTVal: 0}  defaultValue={getInitialRadioValue() ? eventWTVal: 0} required ref={createWageTypeVal} disabled/>
+        
+              <label className='ml-3'>PHP</label></li>
+    </>
+  )
+    
+  }
+}
 function getInitialRadioValue(){
   if(eventWT =='hourly'){
     return true
@@ -473,6 +619,15 @@ function getInitialRadioValue(){
     return false
   }
 }
+
+async function updateData(eventUID,eName, eventDate, eventLoc, eventDesc, eventWT, eventWTVal){
+  e.updateData(eventUID, eName, eventDate, eventLoc, eventDesc, eventWT, eventWTVal).then(()=>{
+    closeModal()
+    alert("Entry Sueccessfully Updated!")
+    window.location.replace('/dashboard/myJobs')
+  })
+}
+
 
   return(
     <>
@@ -487,14 +642,15 @@ function getInitialRadioValue(){
     </div>
      <form onSubmit={handleSubmit}>
           <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
-          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Name </label>
-          <input className="appearance-none block w-full bg-white text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white disabled:bg-gray-300" id="eventName" placeholder={eName} defaultValue={eName} ref={eventName} disabled></input>
+          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Name: </label>
+          
+          <input className="appearance-none block w-full bg-white text-gray-700 border border-pink-500 focus: border-red-500  rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white disabled:bg-pink-500 disabled:text-white disabled:opacity-70" id="eventName" placeholder={eName} defaultValue={eName} ref={eventName} disabled></input>
           
           </div>
           <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
           <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold" for="grid-first-name"> Event Date</label>
              
-          <input type='date' id='eventDate' className='mt-3 mb-4 rounded py-3 px-4  bg-white border border-blue-500 focus:ring-blue-500 focus:border-blue-500  disabled:bg-gray-200'  onClick={()=> createDate.current=''} onChange={()=>dateHandler(document.getElementById('eventDate').value)} value={createDate.current.value} ref={createDate} ></input>
+          <input type='date' id='eventDate' className='mt-3 mb-4 rounded py-3 px-4  bg-white border border-blue-500 focus:ring-pink-500 focus: border-pink-500 disabled:bg-pink-500 disabled:text-white disabled:opacity-70' defaultValue={eventDate} onChange={()=>dateHandler(document.getElementById('eventDate').value)}  ref={createDate} disabled></input>
           </div>
           <div>
         
@@ -505,29 +661,17 @@ function getInitialRadioValue(){
             
           <label class="mt-4 block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="file_input">Event Job Description</label>
 
-          <textarea id="message" rows="4" id='jobDescription' className=" text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={eventDesc} ref={createDescription} disabled></textarea>
+          <textarea id="message" rows="4" id='jobDescription' className=" text-gray-900 bg-white rounded-lg border border-pink-500 focus:ring-blue-500 focus:border-pink-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 focus:border-pink-500 disabled:bg-pink-500 disabled:text-white disabled:opacity-70" placeholder={eventDesc} ref={createDescription} disabled></textarea>
       
           </div>
           <div>
             <label className=" mt-4 block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Job Wage</label>
             <ul>
-              <li>
-                
-            <input type='radio' id='jobWTypeH' name='jobWageType' value='hourly' onClick={()=>fieldHandler('jobWageSum','jobWageHourly')} ref={createWageType}></input>
-            <label className="ml-3"  >Hourly Rate:</label>
-      
-            <input type="number" min="0" id="jobWageHourly" name ='jobWageValue' className="ml-3 w-24 ring-2"  placeholder={getInitialRadioValue ? 0 : eventWTVal}  required ref={createWageTypeVal} value={getInitialRadioValue ? 0: eventWTVal}/>
-            <label> per Hour</label></li>
-            <li>
-            <input type='radio' id='jobWTypeF' name='jobWageType' value='fixed' onClick={()=> fieldHandler('jobWageHourly','jobWageSum') } ref={createWageType}>
-            </input>
-            <label className="ml-3">Fixed Rate:</label>
-            <input type="number" min="0" id="jobWageSum" name ='jobWageValue' className="ml-3 mt-4 w-24 ring-2" placeholder={getInitialRadioValue ? eventWTVal: 0}  value={getInitialRadioValue ? eventWTVal: 0} required ref={createWageTypeVal}/>
-      
-            <label className='ml-3'>PHP</label></li>
+            {radioHandler()}
             </ul>
           </div>      
           <button  type='submit' className="mx-auto mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Next</button>
+       
       </form>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -558,7 +702,7 @@ function getInitialRadioValue(){
               
                  Cancel
                 </button>
-                <button type="button" class="text-white bg-pink-400 hover:bg-pink-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2" >
+                <button type="button" class="text-white bg-pink-400 hover:bg-pink-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2"  onClick={()=>updateData(eventUID,sessionStorage.getItem("eventName"),sessionStorage.getItem("createDate"),sessionStorage.getItem('createLoc'),sessionStorage.getItem('createDesc'),sessionStorage.getItem('createWageType'),sessionStorage.getItem('createWageTypeVal'))}>
 
 
                               Confirm

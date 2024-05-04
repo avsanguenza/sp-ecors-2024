@@ -1,5 +1,5 @@
 import firebase_app from "../config";
-import {getFirestore,doc, getDocs, setDoc, query,collection, addDoc} from 'firebase/firestore';
+import {getFirestore,doc, getDocs, setDoc, query,collection, addDoc, updateDoc, deleteDoc} from 'firebase/firestore';
 import {where} from 'firebase/firestore';
 import userData from "@/app/dashboard/user";
 const firebase_app_init = firebase_app;
@@ -76,8 +76,28 @@ export  class eventData extends appData{
 
      }
 
+    async updateData(eventUID, eventNameInput, eventDateInfo, eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal){
+        const docRef = doc(this.db,"events",eventUID)
+        await updateDoc(docRef,{
+            eventName: eventNameInput,
+            eventDate: eventDateInfo,
+            eventLocation:eventLocInfo,
+            description:eventDescriptionInput,
+            eventWageType:eventWType,
+            eventWageTypeValue:eventWTypeVal
+          //  isOpen: true
+        }).then(()=>{
+            return true
+        }).catch((err)=>console.log(err))
+    }
+
+    async deleteData(eventuid){
+        await deleteDoc(doc(this.db,"events",eventuid))
+    }
+
      dataToJSON(){
         let data ={
+            'eventid' : this.eventUID,
             'eventName' : this.eventName,
             'eventLocation': this.eventLocation,
             'eventWageType' : this.wageType,
@@ -87,7 +107,6 @@ export  class eventData extends appData{
         const dataobj = JSON.stringify(data)
         this.dataobjMap.set(this.eventUID,dataobj)
      }
-
      getResults(){
         return this.dataobjMap;
      }
