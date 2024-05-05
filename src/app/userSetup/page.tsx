@@ -12,10 +12,10 @@ const [personalName, setPersonalName] = React.useState("")
   return(
     <>
  
-      <div className="">
+      <div className=" w-5/6 text-center">
       <Panel title="User Information" isActive={activeIndex===0} onShow={()=>setActiveIndex(0)}>
-           <div className="">
-      <ol class=" mt-10 flex items-center w-full p-3 space-x-2 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-400 sm:text-base dark:bg-white dark:border-pink-500 sm:p-4 sm:space-x-4 rtl:space-x-reverse">
+           <div className="w-5/6 text-center">
+      <ol class=" mt-10 flex items-center w-full p-3 space-x-2 text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-400 sm:text-base dark:bg-white dark:border-pink-500">
           <li class="flex items-center text-pink-500 dark:text-pink-500">
               <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-blue-600 rounded-full shrink-0 dark:border-pink-500">
                   1

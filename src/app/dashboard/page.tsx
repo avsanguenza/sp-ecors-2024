@@ -44,15 +44,14 @@ function currUser(){
  );
 } 
 
-//TODO get panel switching two using states -> async get firebase data -> fire data
-//  
+
 
 
 export default function Page(){
   const[activeIndex, setActiveIndex] = useState(0);
-  const [data,setData] = useState('')
-  const [eData, setEData] = useState('');
+  const [data,setData] = useState([])
   const [isOpen, setIsOpen] = useState(false)
+
 
   function closeModal(){
      setIsOpen(false)
@@ -68,14 +67,21 @@ export default function Page(){
   var obj = localStorage.getItem('currentUser')
   var accInfo = JSON.parse(obj)
   var edata = new eventData();
+  var results = new Array;
+
 
   useEffect(()=>{
     //fetch all possible eventUID ->procedurally create cards -> update states
     edata.getData('events','isOpen','==',true).then(()=>{
-      setData(edata.getEventName())
+      var output = edata.dataobjMap
+      output.forEach((v,k)=>{
+        var temp = JSON.parse(v)
+        results.push(temp)
+      })
+     setData(results)
       setActiveIndex(1)
-    },[])
-  })
+    })
+  },[])
 
     return (
       <>
@@ -195,46 +201,67 @@ export default function Page(){
                     </nav>
         </header>
         
+      <div className='grid grid-cols-5 gap-3'>
+      { data.map((d)=>{
+        return(
+          <Panel  isActive={activeIndex===0}>
+               <div class="mt-10 ml-5  max-w-sm p-6 text-center bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+            <img className="h-auto max-w-full rounded-lg" src="https://www.peerspace.com/resources/wp-content/uploads/atlanta-Beautiful-Urban-Garden.webp"/>
 
-<div class="mt-10 ml-5  max-w-sm p-6 text-center bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-  <Panel  isActive={activeIndex===0}>
-    <img className="h-auto max-w-full rounded-lg" src="https://www.peerspace.com/resources/wp-content/uploads/atlanta-Beautiful-Urban-Garden.webp"/>
+          <a href="#">
+          <h5 class="mt-4 text-2xl text-center font-semibold tracking-tight text-gray-900 dark:text-white">{d.eventName}</h5>
+          </a>
+          <h2 className="mt-2">{d.eventLocation}</h2>
+          <hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
 
-<a href="#">
-    <h5 class="mt-4 text-2xl text-center font-semibold tracking-tight text-gray-900 dark:text-white">{data}</h5>
-</a>
-<h2 className="mt-2">Event place</h2>
-<hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
+          <ul className="flex items-center w-full me-4">
+          <li><p class="mt-2  text-left font-normal  dark:text-gray-400">Organizer name here</p></li>
+          <li>
+          <a href="#" className='mt-3 inline-flex items-center'>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="ml-24 w-8 h-4">
+          <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clipRule="evenodd" /> 5
+          </svg>
+              4.0
+          </a>
+          </li>
+          </ul>
+          <button type="button" onClick={() =>openModal()} className="mt-4 text-white bg-pink-500 hover:bg-pink-700 focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none">Apply</button>
+          </div>
 
-<ul className="flex items-center w-full me-4">
-  <li><p class="mt-2  text-left font-normal  dark:text-gray-400">Organizer name here</p></li>
-  <li>
- <a href="#" className='mt-3 inline-flex items-center'>
- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="ml-24 w-8 h-4">
-<path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clipRule="evenodd" /> 5
-</svg>
-                    4.0
- </a>
-</li>
-</ul> </Panel>
-     
-    <button type="button" onClick={() =>openModal()} className="mt-4 text-white bg-pink-500 hover:bg-pink-700 focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none">Apply</button>
+          </Panel>
+        )
+      }
+      )
+      }
+
+      </div>
+      
+    
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={()=>closeModal()}>
-
+        
         <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom='opacity-100' leaveTo='opacity-0'>
           <div className='fixed inset-0 bg-black/25'/>
         </Transition.Child>
         <div className="fixed inset-0 overfly-auto">
           <div className='flex min-h-full items-center justify-center p-8 text-center'>
             <Transition.Child as={Fragment} enter='ease-out duration-300' enterFrom='opacity-0 scale-95' enterTo='opacity-100 scale-100' leave='ease-in duration-200' leaveFrom='opacity-100 scale-100' leaveTo='opacity-0 scale-95'>
-              <Dialog.Panel className='w-full max-w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
-              <div className='inset-x-0'> <button type='button' onClick={()=>closeModal()} className=" rounded-md border"> x </button></div>
+              
+              <Dialog.Panel className='w-5/6 transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+              <div className='text-end'>
+                   <button type="button" class="text-gray-800 bg-white border border-gray-800 hover:bg-pink-200 hover:text-white font-medium rounded-lg text-xs px-2.5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2" onClick={()=>closeModal()}>
+      
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+</svg>
 
-                <div className="text-center">
+      </button>
+              </div>
+
+                <div className="text-center ">
                 <Dialog.Title as="h3"> Dialog Title</Dialog.Title>
                 </div>
-                {userSetupPage()}
+                {dialogAppBody()}
               </Dialog.Panel>
             </Transition.Child>
           </div>
@@ -243,52 +270,24 @@ export default function Page(){
 
     </Transition>
 
-</div>
 
 </>
     );
 
 }
 
-function proceduralCard(){
-  //[useEffect (db UIDS + event data)] -> fetch size of that list to iterate + generate # of cards 
-}
-
-function proceduralPanel({
-  children,
-  isActiveInfo,
-  eData
-}){
+function dialogAppBody(){
   return(
-    eData.keys().forEach((key)=>{
-      var eventName = eData.get(key).eventName;
-      var eventDescription = eData.get(key).description;
-        <Panel isActive={isActiveInfo}>
-             <Panel isActive={isActiveInfo}>
-        
-        <a href="#">
-            <h5 class="mt-4 text-2xl text-center font-semibold tracking-tight text-gray-900 dark:text-white"></h5>
-        </a>
-        <h2 className="mt-2">{eventName}</h2>
-        <hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
-        
-        <ul className="flex items-center w-full me-4">
-          <li><p class="mt-2  text-left font-normal  dark:text-gray-400">Organizer name here</p></li>
-          <li>
-         <a href="#" className='mt-3 inline-flex items-center'>
-         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="ml-24 w-8 h-4">
-        <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clipRule="evenodd" /> 5
-        </svg>
-                            4.0
-         </a>
-        </li>
-        </ul> 
-              </Panel>
-        </Panel>
-    })
+    <div className='flex flex-wrap'>
+      <div className='w-1/2 ml-auto border-border-gray-200'>
+        here
+      </div>
+      <div className='w-1/2 ml-auto border-border-gray-200'>
+      {userSetupPage()}
+      </div>
+    </div>
   )
 }
-
 function Panel({
   children,
   isActive

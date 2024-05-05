@@ -38,6 +38,7 @@ export  class eventData extends appData{
       this.wageType='';
       this.wageTypeVal='';
       this.eventUID = '';
+      this.eventStatus='';
       this.dataobjMap = new Map();
       this.eventKeys = new Array();
     }
@@ -69,6 +70,7 @@ export  class eventData extends appData{
         this.eventLocation=doc.data().eventLocation;
         this.wageType = doc.data().eventWageType;
         this.wageTypeVal = doc.data().eventWageTypeValue;  
+        this.eventStatus = doc.data().isOpen;
         this.dataToJSON()
          })
 
@@ -91,8 +93,11 @@ export  class eventData extends appData{
         }).catch((err)=>console.log(err))
     }
 
-    async deleteData(eventuid){
-        await deleteDoc(doc(this.db,"events",eventuid))
+    async updateStatus(eventUID, eventStatus){
+        const docRef = doc(this.db,"events",eventUID)
+        await updateDoc(docRef,{
+            isOpen: eventStatus
+        })
     }
 
      dataToJSON(){
@@ -102,7 +107,8 @@ export  class eventData extends appData{
             'eventLocation': this.eventLocation,
             'eventWageType' : this.wageType,
             'eventWageTypeVal' : this.wageTypeVal,
-            'eventDate' :  this.eventDate
+            'eventDate' :  this.eventDate,
+            'isOpen' : this.eventStatus
         }
         const dataobj = JSON.stringify(data)
         this.dataobjMap.set(this.eventUID,dataobj)
