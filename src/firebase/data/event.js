@@ -64,12 +64,14 @@ export  class eventData extends appData{
        const qsnapshot = await getDocs(q);
         qsnapshot.forEach((doc)=>{
         this.eventName= doc.data().eventName;
+        this.eventCreatorName=doc.data().eventCreatorName;        
         this.eventUID = doc.id;
         this.eventDate = doc.data().eventDate;
         this.eventKeys.push(doc.id);
         this.eventLocation=doc.data().eventLocation;
         this.wageType = doc.data().eventWageType;
         this.wageTypeVal = doc.data().eventWageTypeValue;  
+        this.description = doc.data().description;
         this.eventStatus = doc.data().isOpen;
         this.dataToJSON()
          })
@@ -104,10 +106,12 @@ export  class eventData extends appData{
         let data ={
             'eventid' : this.eventUID,
             'eventName' : this.eventName,
+            'eventCreatorName': this.eventCreatorName,
             'eventLocation': this.eventLocation,
             'eventWageType' : this.wageType,
             'eventWageTypeVal' : this.wageTypeVal,
             'eventDate' :  this.eventDate,
+            'eventDescription' : this.description,
             'isOpen' : this.eventStatus
         }
         const dataobj = JSON.stringify(data)
@@ -147,13 +151,23 @@ export  class eventData extends appData{
 //Event Applications extend Data
 
 export class eventFormData extends appData{
-    constructor(uid,eventUID){
+    constructor(userUID,eventUID){
         super()
-        this.uid= uid;
+        this.uid= userUID;
         this.eventUID = eventUID;
     }
 
-    async setData(collectionRef){
-       
+    async setData(phoneNum,emailAdd){
+       const docRef = doc(this.db,'event-application',this.eventUID);
+       const colRef = collection(docRef,'entries')
+        addDoc(colRef,{
+            userid: this.uid,
+            phoneNumber: phoneNum,
+            emailAddress: emailAdd,
+            applicationStatus:'pending'
+        })
+    }
+    async getData(){
+        
     }
 }

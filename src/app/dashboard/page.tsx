@@ -51,7 +51,9 @@ export default function Page(){
   const[activeIndex, setActiveIndex] = useState(0);
   const [data,setData] = useState([])
   const [isOpen, setIsOpen] = useState(false)
-
+  const [dbData, setDBdata] = useState({eventuid:'', eventName: '', eventCreator:'', eventLocation:'', eventWType:'',eventWTypeVal:'', eventDate:'', description:''})
+  const[eventName, setEventName] = useState('');
+  const[eventUID, setEventUID] = useState('')
 
   function closeModal(){
      setIsOpen(false)
@@ -60,8 +62,53 @@ export default function Page(){
   function openModal(){
     setIsOpen(true)
   }
-  async function getEventData(){
-    //call from a different file
+  function apply(d){
+    setDBdata(d)
+    setEventName(d.eventName)
+    setEventUID(d.eventUID)
+    openModal()
+    
+  }
+  
+  function dialogAppBody(dbData){
+    return(
+      <div className='flex flex-wrap divide-x-2 '>
+        <div className='w-1/2 ml-auto border-border-gray-200'>
+            <p className='text-2xl font-bold'>{dbData.eventName}</p>
+            <p className='text-xl font-semibold'>{dbData.eventLocation}</p>
+
+            <p className='mt-3 text-xl'> Looking for event position</p>
+            <div className='mt-6 inline-flex'>
+              <div className='px-3 inline-flex'>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-3">
+  <path d="M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM7.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM9.75 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM10.5 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM12.75 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM14.25 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
+  <path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z" clip-rule="evenodd" />
+                </svg>
+                {dbData.eventDate} </div>
+                <div className='px-3 inline-flex'> 
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-3">
+  <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
+  <path fill-rule="evenodd" d="M22.5 9.75h-21v7.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-7.5Zm-18 3.75a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z" clip-rule="evenodd" />
+</svg>
+                {dbData.eventWageType}</div>
+              <div className='px-3 inline-flex'>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-3">
+  <path d="M10.464 8.746c.227-.18.497-.311.786-.394v2.795a2.252 2.252 0 0 1-.786-.393c-.394-.313-.546-.681-.546-1.004 0-.323.152-.691.546-1.004ZM12.75 15.662v-2.824c.347.085.664.228.921.421.427.32.579.686.579.991 0 .305-.152.671-.579.991a2.534 2.534 0 0 1-.921.42Z" />
+  <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v.816a3.836 3.836 0 0 0-1.72.756c-.712.566-1.112 1.35-1.112 2.178 0 .829.4 1.612 1.113 2.178.502.4 1.102.647 1.719.756v2.978a2.536 2.536 0 0 1-.921-.421l-.879-.66a.75.75 0 0 0-.9 1.2l.879.66c.533.4 1.169.645 1.821.75V18a.75.75 0 0 0 1.5 0v-.81a4.124 4.124 0 0 0 1.821-.749c.745-.559 1.179-1.344 1.179-2.191 0-.847-.434-1.632-1.179-2.191a4.122 4.122 0 0 0-1.821-.75V8.354c.29.082.559.213.786.393l.415.33a.75.75 0 0 0 .933-1.175l-.415-.33a3.836 3.836 0 0 0-1.719-.755V6Z" clip-rule="evenodd" />
+</svg>
+
+              {dbData.eventWageTypeVal}</div>
+            </div>
+            <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+            <div className='text-2xl text-bold font-bold'>Job Description</div>
+
+            <p className='mt-8 text-ms text-justified' >{dbData.eventDescription}</p>
+        </div>
+        <div className='w-1/2 ml-auto border-border-gray-200'>
+        {userSetupPage(dbData.eventid)}
+        </div>
+      </div>
+    )
   }
   //currUser(); //DISABLED BECAUSE TESTING
   var obj = localStorage.getItem('currentUser')
@@ -215,7 +262,7 @@ export default function Page(){
           <hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
 
           <ul className="flex items-center w-full me-4">
-          <li><p class="mt-2  text-left font-normal  dark:text-gray-400">Organizer name here</p></li>
+          <li><p class="mt-2  text-left font-normal  dark:text-gray-400">{d.eventCreatorName}</p></li>
           <li>
           <a href="#" className='mt-3 inline-flex items-center'>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="ml-24 w-8 h-4">
@@ -225,7 +272,7 @@ export default function Page(){
           </a>
           </li>
           </ul>
-          <button type="button" onClick={() =>openModal()} className="mt-4 text-white bg-pink-500 hover:bg-pink-700 focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none">Apply</button>
+          <button type="button" onClick={() =>apply(d)} className="mt-4 text-white bg-pink-500 hover:bg-pink-700 focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none">Apply</button>
           </div>
 
           </Panel>
@@ -259,9 +306,11 @@ export default function Page(){
               </div>
 
                 <div className="text-center ">
-                <Dialog.Title as="h3"> Dialog Title</Dialog.Title>
+                <Dialog.Title className='h3 mb-8'> {dbData.eventName} Details</Dialog.Title>
+                <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+
                 </div>
-                {dialogAppBody()}
+                {dialogAppBody(dbData)}
               </Dialog.Panel>
             </Transition.Child>
           </div>
@@ -276,18 +325,7 @@ export default function Page(){
 
 }
 
-function dialogAppBody(){
-  return(
-    <div className='flex flex-wrap'>
-      <div className='w-1/2 ml-auto border-border-gray-200'>
-        here
-      </div>
-      <div className='w-1/2 ml-auto border-border-gray-200'>
-      {userSetupPage()}
-      </div>
-    </div>
-  )
-}
+
 function Panel({
   children,
   isActive
