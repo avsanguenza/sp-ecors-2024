@@ -6,9 +6,10 @@ import firebase_app from '@/firebase/config';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from "next/navigation";
 
-import {appData, eventData} from '@/firebase/data/event'
+import {eventData,eventFormData} from '@/firebase/data/event'
 import editForm from './editJobForm';
-
+import userData from '../user';
+import jobAppList from './jobApplications';
 const auth = getAuth(firebase_app);
 
 
@@ -41,6 +42,7 @@ function currUser(){
 export default function Page(){
   const[activeIndex, setActiveIndex] = useState(0);
   const [data,setData] = useState([])
+  const [appFormData, setAppFormData] = useState([])
   const [eKeys, setEKeys] = useState([]);
   const [isOpen, setIsOpen] = useState(false)
 
@@ -51,33 +53,39 @@ export default function Page(){
   function openModal(){
     setIsOpen(true)
   }
-  async function getEventData(){
-    //call from a different file
-  }
 
+  function infoMsg(disabledState){
+    return(
+         <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+  <span class="font-medium">Info alert!</span> Change a few things up and try submitting again.
+</div>
+    )
+  }
   //currUser(); //DISABLED BECAUSE TESTING
   var obj = localStorage.getItem('currentUser')
   var accInfo = JSON.parse(obj)
+  var udata = new userData();
+  udata.parseData();
   var edata = new eventData();
   var results = new Array;
-  
+  var appFormResults = new Array;
 
   useEffect(()=>{
     edata.getData('events','userid','==', accInfo.uid).then(()=>{
       var output = edata.dataobjMap
-     // console.log(output.values())
      output.forEach((v,k)=>{
       var temp = JSON.parse(v)
+     
       results.push(temp)
      })
-     // console.log(keys)
-     // return(keys)
        setData(results)
        setActiveIndex(1)
 
     }
+    ).catch((err)=>{
+      alert(err)
+    })
     
-    )
 
   },[])
 
@@ -209,7 +217,7 @@ export default function Page(){
 
         </div>
         {
-          eventDataTabs(data)
+          eventDataTabs(data,appFormData)
         } 
       
 </>
@@ -224,19 +232,16 @@ function eventApplicationTabs(){
 
       <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
           <li class="me-2">
-              <a href="#" aria-current="page" class="inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500">Profile</a>
+              <a href="#" aria-current="page" class="inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500">All</a>
           </li>
           <li class="me-2">
-              <a href="#" class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">Dashboard</a>
+              <a href="#" class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">Active</a>
           </li>
           <li class="me-2">
-              <a href="#" class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">Settings</a>
+              <a href="#" class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">Inactive</a>
           </li>
           <li class="me-2">
-              <a href="#" class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">Contacts</a>
-          </li>
-          <li>
-              <a class="inline-block p-4 text-gray-400 rounded-t-lg cursor-not-allowed dark:text-gray-500">Disabled</a>
+              <a href="#" class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300">Archived</a>
           </li>
       </ul>
 
@@ -244,9 +249,11 @@ function eventApplicationTabs(){
   )
 }
 
-function eventDataTabs(data){
+function eventDataTabs(data, appFormData){
   const[activeIndex, setActiveIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false)
+  const [isAppOpen, setIsAppOpen] = useState(false)
+
   const [isDel, setIsDel] = useState(false)
   const [dialogTitle, setDialogTitle] = useState('')
   const [date, setDate] = useState('');
@@ -255,10 +262,8 @@ function eventDataTabs(data){
   const [eventWT, setEventWT] = useState('')
   const [eventWTVal, setEventWTVal] = useState('')
   const [eventUID, setEventUID] = useState('')
-
+  const [eventAppNum, setEventAppNum] = useState(0)
   const [isChecked, setIsChecked] = useState()
-
-  const isChRef = useRef(false)
   var edata = new eventData();
 
   useEffect(()=>{
@@ -271,6 +276,14 @@ function eventDataTabs(data){
  function openModal(){
    setIsOpen(true)
  }
+
+ function closeAppModal(){
+  setIsAppOpen(false)
+}
+
+function openAppModal(){
+ setIsAppOpen(true)
+}
 
 function editDialog(uid,title, eDate, eLoc, eDescrip,eWageWT, eWageTVal){
   setDialogTitle(title)
@@ -292,6 +305,7 @@ function update(uid){
 const checkHandler = () =>{
   setIsChecked(!isChecked)
 }
+
 function tableHeaders(){
   return(
     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -313,6 +327,9 @@ function tableHeaders(){
         </th>
         <th scope="col" class="px-6 py-3">
             Wage Posted
+        </th>
+        <th scope="col" class="px-6 py-3">
+            Applications Received
         </th>
         <th scope="col" class="px-6 py-3">
             Action
@@ -352,7 +369,7 @@ function returnCheckID(eventuid){
         <tbody id='tablebody'>
           <Panel isActive={activeIndex===0}>
             {
-           data.map((d)=>{
+           data.map((d)=>{       
             return(
               <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
               <th className='px-5'>
@@ -381,8 +398,11 @@ function returnCheckID(eventuid){
               &#8369; {d.eventWageTypeVal}
               </td>
               <td class="px-6 py-4 space-x-2" >
+              {d.appCount}
+              </td>
+              <td class="px-6 py-4 space-x-2" >
                 
-              <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-pink-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800">View Applications</button>  |  
+              <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-pink-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800" onClick={()=>openAppModal()}>View Applications</button>  |  
               <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={()=>editDialog(d.eventid,d.eventName,d.eventDate, d.eventLocation, d.description,d.eventWageType,d.eventWageTypeVal )}> Edit</button>
             
               </td>
@@ -420,6 +440,57 @@ function returnCheckID(eventuid){
                   }
                   
                 </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+        </Dialog>
+
+    </Transition>
+
+    <Transition appear show={isAppOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={()=>closeAppModal()}>
+
+        <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom='opacity-100' leaveTo='opacity-0'>
+          <div className='fixed inset-0 bg-black/25'/>
+        </Transition.Child>
+        <div className="fixed inset-0 overfly-auto">
+          <div className='flex min-h-full items-center justify-center p-8 text-center'>
+            
+            <Transition.Child as={Fragment} enter='ease-out duration-300' enterFrom='opacity-0 scale-95' enterTo='opacity-100 scale-100' leave='ease-in duration-200' leaveFrom='opacity-100 scale-100' leaveTo='opacity-0 scale-95'>
+
+
+              <Dialog.Panel className='w-full max-w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>      
+                <div className="text-center">
+                <Dialog.Title as="h3">{dialogTitle}</Dialog.Title>
+                </div>
+                <table class="w-full text-sm text-left text-center text-gray-500 dark:text-gray-400">
+                <thead class="text-center text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                    <th scope="col" class="px-6 py-3">
+                    Applicant Name
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                    Position
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                    Email Address
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                   Phone Number
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                    Actions
+                    </th>
+                    
+                    </tr>
+                    </thead>
+                    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                  
+                
+                </tr>
+                </table>
+                  
               </Dialog.Panel>
             </Transition.Child>
           </div>

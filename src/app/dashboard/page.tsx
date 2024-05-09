@@ -8,7 +8,9 @@ import { useRouter } from "next/navigation";
 
 import {appData, eventData} from '@/firebase/data/event'
 import userSetupPage from '../userSetup/page';
+import { imageData } from '@/firebase/data/storage';
 const auth = getAuth(firebase_app);
+let imgdata = new imageData('event')
 
 
 const navigation = [
@@ -123,6 +125,7 @@ export default function Page(){
       var output = edata.dataobjMap
       output.forEach((v,k)=>{
         var temp = JSON.parse(v)
+        //add appcount here
         results.push(temp)
       })
      setData(results)
@@ -253,7 +256,7 @@ export default function Page(){
         return(
           <Panel  isActive={activeIndex===0}>
                <div class="mt-10 ml-5  max-w-sm p-6 text-center bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-            <img className="h-auto max-w-full rounded-lg" src="https://www.peerspace.com/resources/wp-content/uploads/atlanta-Beautiful-Urban-Garden.webp"/>
+            <img className="h-auto max-w-full rounded-lg" src={d.eventImageURL}/>
 
           <a href="#">
           <h5 class="mt-4 text-2xl text-center font-semibold tracking-tight text-gray-900 dark:text-white">{d.eventName}</h5>

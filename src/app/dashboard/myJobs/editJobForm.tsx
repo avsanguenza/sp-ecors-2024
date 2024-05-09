@@ -1,6 +1,7 @@
 import {Fragment, useState,useEffect, useRef} from 'react';
 import { Disclosure, Dialog, Menu, Transition } from '@headlessui/react'
-import {appData, eventData} from '@/firebase/data/event'
+import {imageData} from '@/firebase/data/storage'
+import {eventData} from '@/firebase/data/event'
 
 
 function editForm(eventUID,eName, eventDate, eventLoc, eventDesc, eventWT, eventWTVal){
@@ -13,6 +14,10 @@ function editForm(eventUID,eName, eventDate, eventLoc, eventDesc, eventWT, event
   
     const [isOpen, setIsOpen] = useState(false)
   
+    const [selectedFile, setSelectedFile] = useState({src:'',blob:'',name:''})
+    const [uploaded, setUploaded] = useState(null)
+    const imageRef = useRef(null)
+
     let e = new eventData()
   
 function closeModal(){
@@ -45,7 +50,25 @@ const handleSubmit = (event) =>{
        setIsOpen(true)
 }
 
-  
+function handleUpload () {
+  const folderName = 'event'
+  let imgup = new imageData(folderName);
+  console.log(selectedFile)
+  imgup.uploadImage(selectedFile,eventName.current.value).then(()=>
+    alert("File uploaded.")
+  ).catch((err)=>{
+    console.log(err)
+  })
+}
+
+function handleUploadChange(e){
+  setSelectedFile({
+    ...selectedFile,
+    src: URL.createObjectURL(e.target.files[0]),
+    blob: e.target.files[0],
+    name: eventName
+  })
+}
 function eventPlaceHandler(){
     var cities = ['Caloocan', 'Manila','Malabon','Makati']
     const select = document.getElementById('eventWork')
@@ -130,14 +153,31 @@ function eventPlaceHandler(){
 
   async function updateData(eventUID,eName, eventDate, eventLoc, eventDesc, eventWT, eventWTVal){
     e.updateData(eventUID, eName, eventDate, eventLoc, eventDesc, eventWT, eventWTVal).then(()=>{
+    //  closeModal()
+      //alert("Entry Sueccessfully Updated!")
+      //window.location.replace('/dashboard/myJobs')
+    })
+  }
+
+  function updateAll(eventUID, eName, eventDate, eventLoc, eventDesc, eventWT,eventWTVal){
+    updateData(eventUID,eName, eventDate, eventLoc, eventDesc, eventWT,eventWTVal).then(()=>
+      handleUpload()
+    ).then(()=>{
       closeModal()
       alert("Entry Sueccessfully Updated!")
-      window.location.replace('/dashboard/myJobs')
+     window.location.replace('/dashboard/myJobs')
     })
   }
   function form(){
     return(
         <form onSubmit={handleSubmit}>
+        <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-2">
+        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" > Event Image: </label>
+        
+        <input id="file_input" type="file" onChange={handleUploadChange} ref={imageRef} />
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
+
+        </div>
         <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Name: </label>
         
@@ -202,7 +242,7 @@ function eventPlaceHandler(){
               
                  Cancel
                 </button>
-                <button type="button" class="text-white bg-pink-400 hover:bg-pink-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2"  onClick={()=>updateData(eventUID,sessionStorage.getItem("eventName"),sessionStorage.getItem("createDate"),sessionStorage.getItem('createLoc'),sessionStorage.getItem('createDesc'),sessionStorage.getItem('createWageType'),sessionStorage.getItem('createWageTypeVal'))}>
+                <button type="button" class="text-white bg-pink-400 hover:bg-pink-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2"  onClick={()=>updateAll(eventUID,sessionStorage.getItem("eventName"),sessionStorage.getItem("createDate"),sessionStorage.getItem('createLoc'),sessionStorage.getItem('createDesc'),sessionStorage.getItem('createWageType'),sessionStorage.getItem('createWageTypeVal'))}>
 
 
                               Confirm

@@ -35,6 +35,7 @@ export  class eventData extends appData{
       this.eventName="";
       this.eventCName='';
       this.eventLocation = '';
+      this.eventImageURL=""
       this.wageType='';
       this.wageTypeVal='';
       this.eventUID = '';
@@ -66,6 +67,7 @@ export  class eventData extends appData{
         this.eventName= doc.data().eventName;
         this.eventCreatorName=doc.data().eventCreatorName;        
         this.eventUID = doc.id;
+        this.eventImageURL = doc.data().eventImage
         this.eventDate = doc.data().eventDate;
         this.eventKeys.push(doc.id);
         this.eventLocation=doc.data().eventLocation;
@@ -112,6 +114,7 @@ export  class eventData extends appData{
             'eventWageTypeVal' : this.wageTypeVal,
             'eventDate' :  this.eventDate,
             'eventDescription' : this.description,
+            'eventImageURL': this.eventImageURL,
             'isOpen' : this.eventStatus
         }
         const dataobj = JSON.stringify(data)
@@ -155,6 +158,11 @@ export class eventFormData extends appData{
         super()
         this.uid= userUID;
         this.eventUID = eventUID;
+        this.applicantID='';
+        this.applicantEmail ='';
+        this.applicantPhone = '';
+        this.count = 0
+        this.eventDataObj = new Map();
     }
 
     async setData(phoneNum,emailAdd){
@@ -168,6 +176,29 @@ export class eventFormData extends appData{
         })
     }
     async getData(){
-        
+        const docRef = doc(this.db, 'event-application',this.eventUID)
+        const colRef = collection(docRef,'entries')
+        const snapshot = await getDocs(colRef);
+        snapshot.forEach((doc)=>{
+            this.count = this.count +1
+            this.applicantID = doc.data().userid;
+            this.applicantEmail = doc.data().emailAddress;
+            this.applicantPhone = doc.data().phoneNumber;
+            //add for file later-> downloadlink!
+            this.dataToJSON();
+        })
+
     }
+
+    dataToJSON(){
+       let data= {
+        'eventid' : this.eventUID,
+        'applicantName': this.applicantID,
+        'applicantEmail': this.applicantEmail,
+        'applicantPhone' : this.applicantPhone,
+    }
+    const dataobj = JSON.stringify(data)
+    this.eventDataObj.set(this.eventUID,dataobj)
+    }
+    
 }
