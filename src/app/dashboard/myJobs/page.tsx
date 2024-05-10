@@ -64,18 +64,19 @@ export default function Page(){
   //currUser(); //DISABLED BECAUSE TESTING
   var obj = localStorage.getItem('currentUser')
   var accInfo = JSON.parse(obj)
-  var udata = new userData();
-  udata.parseData();
+  
+  var udata = new userData()
+  udata.parseData()
   var edata = new eventData();
+  var edfata = new eventFormData()
   var results = new Array;
-  var appFormResults = new Array;
 
   useEffect(()=>{
     edata.getData('events','userid','==', accInfo.uid).then(()=>{
       var output = edata.dataobjMap
      output.forEach((v,k)=>{
       var temp = JSON.parse(v)
-     
+      temp['appCount']= edfata.getEntryCount(temp.eventid);
       results.push(temp)
      })
        setData(results)
@@ -262,10 +263,12 @@ function eventDataTabs(data, appFormData){
   const [eventWT, setEventWT] = useState('')
   const [eventWTVal, setEventWTVal] = useState('')
   const [eventUID, setEventUID] = useState('')
-  const [eventAppNum, setEventAppNum] = useState(0)
+  const [eventAppData, setEventAppData] = useState([])
   const [isChecked, setIsChecked] = useState()
   var edata = new eventData();
-
+  var udata = new userData();
+  
+  udata.parseData();
   useEffect(()=>{
       setActiveIndex(1)
   },[])
@@ -285,6 +288,24 @@ function openAppModal(){
  setIsAppOpen(true)
 }
 
+function viewAppForm(eventid){
+  let efd = new eventFormData(udata.getUserUID,eventid);
+  let formResults = new Array();
+  efd.getData().then(()=>{
+    let res = efd.eventDataObj;
+    res.forEach((v,k)=>{
+      var temp = JSON.parse(v)
+      formResults.push(temp)
+    })
+    return(
+      formResults
+    )
+  }).then((res)=>{
+    setEventAppData(res)
+    openAppModal()
+  })
+  //setEventAppID(eventid)
+}
 function editDialog(uid,title, eDate, eLoc, eDescrip,eWageWT, eWageTVal){
   setDialogTitle(title)
   setDate(eDate)
@@ -402,7 +423,7 @@ function returnCheckID(eventuid){
               </td>
               <td class="px-6 py-4 space-x-2" >
                 
-              <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-pink-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800" onClick={()=>openAppModal()}>View Applications</button>  |  
+              <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-pink-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800" onClick={()=>viewAppForm(d.eventid)}>View Applications</button>  |  
               <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={()=>editDialog(d.eventid,d.eventName,d.eventDate, d.eventLocation, d.description,d.eventWageType,d.eventWageTypeVal )}> Edit</button>
             
               </td>
@@ -422,7 +443,7 @@ function returnCheckID(eventuid){
         <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom='opacity-100' leaveTo='opacity-0'>
           <div className='fixed inset-0 bg-black/25'/>
         </Transition.Child>
-        <div className="fixed inset-0 overfly-auto">
+        <div className="fixed inset-0 overflow-y-auto">
           <div className='flex min-h-full items-center justify-center p-8 text-center'>
             
             <Transition.Child as={Fragment} enter='ease-out duration-300' enterFrom='opacity-0 scale-95' enterTo='opacity-100 scale-100' leave='ease-in duration-200' leaveFrom='opacity-100 scale-100' leaveTo='opacity-0 scale-95'>
@@ -486,7 +507,9 @@ function returnCheckID(eventuid){
                     </tr>
                     </thead>
                     <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                  
+                  {
+                    jobAppList(eventAppData)
+                  }
                 
                 </tr>
                 </table>

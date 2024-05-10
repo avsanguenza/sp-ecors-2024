@@ -2,6 +2,7 @@ import {Fragment, useState,useEffect, useRef} from 'react';
 import { Disclosure, Dialog, Menu, Transition } from '@headlessui/react'
 import {imageData} from '@/firebase/data/storage'
 import {eventData} from '@/firebase/data/event'
+import { select } from '@material-tailwind/react';
 
 
 function editForm(eventUID,eName, eventDate, eventLoc, eventDesc, eventWT, eventWTVal){
@@ -14,7 +15,7 @@ function editForm(eventUID,eName, eventDate, eventLoc, eventDesc, eventWT, event
   
     const [isOpen, setIsOpen] = useState(false)
   
-    const [selectedFile, setSelectedFile] = useState({src:'',blob:'',name:''})
+    const [selectedFile, setSelectedFile] = useState({src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp9hZ_fn1p0GQsP8Ehynpd7sNAHWz0CZXiMNLGo0b0RA&s',blob:'',name:''})
     const [uploaded, setUploaded] = useState(null)
     const imageRef = useRef(null)
 
@@ -53,7 +54,7 @@ const handleSubmit = (event) =>{
 function handleUpload () {
   const folderName = 'event'
   let imgup = new imageData(folderName);
-  console.log(selectedFile)
+//  console.log(selectedFile)
   imgup.uploadImage(selectedFile,eventName.current.value).then(()=>
     alert("File uploaded.")
   ).catch((err)=>{
@@ -173,10 +174,17 @@ function eventPlaceHandler(){
         <form onSubmit={handleSubmit}>
         <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-2">
         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" > Event Image: </label>
-        
-        <input id="file_input" type="file" onChange={handleUploadChange} ref={imageRef} />
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
+        <img src={selectedFile.src} className="mx-auto h-32 max-w-lg rounded-lg border border-pink-500 mb-4"></img>  
 
+        <input id="file_input" type="file" className='bg-white border text-gray-900 border-pink-300 rounded-lg px-3 py-4 text-slate-500 file:bg-pink-500 
+        file:block-mb-2 file:mr-4 file:py-2 file:px-4
+        file:rounded-full file:border-0
+        file:text-sm file:font-semibold
+        file:bg-pink-500 file:text-white
+        hover:file:bg-pink-700'  onChange={handleUploadChange} ref={imageRef}/>
+
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
+     
         </div>
         <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Name: </label>
@@ -187,7 +195,7 @@ function eventPlaceHandler(){
         <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold" for="grid-first-name"> Event Date</label>
            
-        <input type='date' id='eventDate' className='mt-3 mb-4 rounded py-3 px-4  bg-white border border-blue-500 focus:ring-pink-500 focus: border-pink-500 disabled:bg-pink-500 disabled:text-white disabled:opacity-70' defaultValue={eventDate} onChange={()=>dateHandler(document.getElementById('eventDate').value)}  ref={createDate} disabled></input>
+        <input type='date' id='eventDate' className='mt-3 mb-4 rounded py-3 px-4  bg-white border border-pink-500 focus:ring-pink-500 focus: border-pink-500 disabled:bg-pink-500 disabled:text-white disabled:opacity-70' defaultValue={eventDate} onChange={()=>dateHandler(document.getElementById('eventDate').value)}  ref={createDate} disabled></input>
         </div>
         <div>
       
@@ -198,7 +206,7 @@ function eventPlaceHandler(){
           
         <label class="mt-4 block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="file_input">Event Job Description</label>
 
-        <textarea id="message" rows="4" id='jobDescription' className=" text-gray-900 bg-white rounded-lg border border-pink-500 focus:ring-blue-500 focus:border-pink-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 focus:border-pink-500 disabled:bg-pink-500 disabled:text-white disabled:opacity-70" placeholder={eventDesc} ref={createDescription} disabled></textarea>
+        <textarea id="message" rows="4" id='jobDescription' className=" text-gray-900 bg-white rounded-lg border border-pink-500 focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-pink-500 focus:border-pink-500 disabled:bg-pink-500 disabled:text-white disabled:opacity-70" placeholder={eventDesc} ref={createDescription} disabled></textarea>
     
         </div>
         <div>
@@ -207,7 +215,7 @@ function eventPlaceHandler(){
           {radioHandler()}
           </ul>
         </div>      
-        <button  type='submit' className="mx-auto mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Next</button>
+        <button  type='submit' className="mx-auto mt-4 text-white bg-pink-700 hover:bg-pink-800 focus:ring-4 focus:ring-pink-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 focus:outline-none dark:focus:ring-pink-800">Next</button>
      
     </form>
     )

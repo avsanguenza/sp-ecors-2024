@@ -5,7 +5,7 @@ import userData from '@/app/dashboard/user'
 import { Disclosure, Dialog, Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react';
 import { useRouter } from "next/navigation";
-
+import { imageData } from '@/firebase/data/storage';
 
  const jobRegistrationForm = () =>{
   //GET UID FIRST 
@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
     const createDescription = useRef(null)
     const createWageType = useRef(null)
     const createWageTypeVal = useRef(null)
+    const [selectedFile, setSelectedFile] = useState({src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp9hZ_fn1p0GQsP8Ehynpd7sNAHWz0CZXiMNLGo0b0RA&s',blob:'',name:''})
     //event instance
     let edata = new eventData();
     let udata = new userData();
@@ -40,6 +41,26 @@ import { useRouter } from "next/navigation";
         sessionStorage.setItem('createWageType',document.querySelector('input[name="jobWageType"]:checked').value)
         sessionStorage.setItem('createWageTypeVal',createWageTypeVal.current.value)
     }
+
+    function handleUploadChange(e){
+      setSelectedFile({
+        ...selectedFile,
+        src: URL.createObjectURL(e.target.files[0]),
+        blob: e.target.files[0],
+        name: eventName
+      })
+    }
+    
+  function handleUpload () {
+    const folderName = 'event'
+    let imgup = new imageData(folderName);
+  //  console.log(selectedFile)
+    imgup.uploadImage(selectedFile,eventName.current.value).then(()=>
+      alert("File uploaded.")
+    ).catch((err)=>{
+      console.log(err)
+    })
+  }
 
     function dateHandler(eventDate){
         const date  = new Date();
@@ -72,7 +93,18 @@ import { useRouter } from "next/navigation";
       function form(){
         return(
           <form onSubmit={handleSubmit}>
-          <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
+          <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0"> 
+          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" > Event Image: </label>
+        <img src={selectedFile.src} className="mx-auto h-32 max-w-lg rounded-lg border border-pink-500 mb-4"></img>  
+
+        <input id="file_input" type="file" className='bg-white border text-gray-900 border-pink-300 rounded-lg px-3 py-4 text-slate-500 file:bg-pink-500 
+        file:block-mb-2 file:mr-4 file:py-2 file:px-4
+        file:rounded-full file:border-0
+        file:text-sm file:font-semibold
+        file:bg-pink-500 file:text-white
+        hover:file:bg-pink-700'  onChange={handleUploadChange}/>
+
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
           <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Event Name </label>
           <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="eventName" placeholder="Event Name (e.g. Anime Expo)"  ref={eventName}></input>
        
@@ -113,7 +145,7 @@ import { useRouter } from "next/navigation";
             <label className='ml-3'>PHP</label></li>
             </ul>
           </div>      
-          <button  type='submit' className="mx-auto mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={()=>openModal()}>Next</button>
+          <button  type='submit' className="mx-auto mt-4 text-white bg-pink-700 hover:bg-pink-800 focus:ring-4 focus:ring-pink-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 focus:outline-none dark:focus:ring-pink-800" onClick={()=>openModal()}>Next</button>
       </form>
         )
       }
@@ -160,13 +192,27 @@ function showJobInfoToConfirm(){
 }
   function sendData(){
     closeModal()
-
-    let edata = new eventData();
-    edata.setData(udata.getUserUID(),udata.getName(),sessionStorage.getItem("eventName"),sessionStorage.getItem("createDate"),sessionStorage.getItem("createLoc"),sessionStorage.getItem("createDesc"),sessionStorage.getItem("createWageType"),sessionStorage.getItem('createWageTypeVal'))
-
-    alert("Successfully created event!")
-    useRouter().push('/dashboard/myJobs')
-    sessionStorage.clear()
+    //handleUpload
+    let imgup = new imageData('event');
+    //  console.log(selectedFile)
+      imgup.uploadImage(selectedFile,eventName.current.value).then((sn)=>{
+    //   console.log(sn)
+    var eventimg = sn;
+      console.log(eventimg)
+        return(
+          eventimg
+        )
+      }).then((eventimg)=>{
+        let edata = new eventData();
+        edata.setData(udata.getUserUID(),udata.getName(),sessionStorage.getItem("eventName"),sessionStorage.getItem("createDate"),sessionStorage.getItem("createLoc"),sessionStorage.getItem("createDesc"),sessionStorage.getItem("createWageType"),sessionStorage.getItem('createWageTypeVal'),eventimg).then(()=>{
+          alert("Successfully created event!")
+          window.location.replace('/dashboard/myJobs')
+     // useRouter().push('/dashboard/myJobs')
+      sessionStorage.clear()    
+        })
+      })
+   
+    
   }
     return(
         <>
@@ -193,7 +239,7 @@ function showJobInfoToConfirm(){
                 <div className="mt-4">
                     <button
                       type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-pink-100 px-4 py-2 text-sm font-medium text-pink-900 hover:bg-pink-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2"
                       onClick={()=> sendData()}
                     >
                       Confirm

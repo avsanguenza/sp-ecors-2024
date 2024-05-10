@@ -1,3 +1,4 @@
+import { getDoc } from "firebase/firestore";
 import { storage } from "../config";
 import { ref,uploadBytesResumable,getDownloadURL, getStorage } from "firebase/storage";
 
@@ -20,21 +21,16 @@ export class imageData extends storageData{
     }
     async uploadImage(file, fileName){
         //fix the storage
-        const imageRef = ref(this.storage, this.imageFolder+"/"+fileName)
-        const res =  uploadBytesResumable(imageRef, file.blob)
-
-        res.on('state_changed', (s)=>{
-            switch(s.state){
-                case "running": "is running"
-                case "paused": "is pasued"
-                case "success": "upload success!"
-                case "canceled": "canceled"
-                case "error": "error"
-            }
-        }, (error)=>{
-            console.log(error)
-        })
-
+        const imageRef = ref(this.storage, this.imageFolder+"/"+fileName,this.metadata)
+        return uploadBytesResumable(imageRef, file.blob).then((snapshot)=>{
+            return getDownloadURL(snapshot.ref).then((sn)=>{
+                return sn
+            })
+        }) 
+       
+    }
+    async getURL(data){
+       
     }
     async getFile(path){
         try{
@@ -51,4 +47,8 @@ export class imageData extends storageData{
     getEventURL(){
         return this.eventURL;
     } 
+}
+
+export class fileData extends storageData{
+
 }

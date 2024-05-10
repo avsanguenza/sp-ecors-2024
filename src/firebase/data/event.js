@@ -1,5 +1,5 @@
 import firebase_app from "../config";
-import {getFirestore,doc, getDocs, setDoc, query,collection, addDoc, updateDoc, deleteDoc} from 'firebase/firestore';
+import {getFirestore,doc, getDocs, setDoc, query,collection, addDoc, updateDoc, deleteDoc, getCountFromServer} from 'firebase/firestore';
 import {where} from 'firebase/firestore';
 import userData from "@/app/dashboard/user";
 const firebase_app_init = firebase_app;
@@ -40,11 +40,12 @@ export  class eventData extends appData{
       this.wageTypeVal='';
       this.eventUID = '';
       this.eventStatus='';
+      this.eventImageURL='';
       this.dataobjMap = new Map();
       this.eventKeys = new Array();
     }
 
-    async setData(uid, eventCName, eventNameInput, eventDateInfo, eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal){ //override
+    async setData(uid, eventCName, eventNameInput, eventDateInfo, eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal,eventimg){ //override
         const docRef = doc(collection(this.db,"events"))
         await setDoc(docRef,{
             userid: uid,
@@ -55,6 +56,7 @@ export  class eventData extends appData{
             description:eventDescriptionInput,
             eventWageType:eventWType,
             eventWageTypeValue:eventWTypeVal,
+            eventImage:eventimg,
             isOpen: true
         })
 
@@ -176,11 +178,12 @@ export class eventFormData extends appData{
         })
     }
     async getData(){
-        const docRef = doc(this.db, 'event-application',this.eventUID)
-        const colRef = collection(docRef,'entries')
-        const snapshot = await getDocs(colRef);
+        //const docRef = doc(this.db, 'event-application',this.eventUID)
+
+       // const colRef = collection(docRef,'entries')
+        const snapshot = await getDocs(collection(this.db,'event-application/'+this.eventUID+"/entries"));
         snapshot.forEach((doc)=>{
-            this.count = this.count +1
+            //console.log(doc.data())
             this.applicantID = doc.data().userid;
             this.applicantEmail = doc.data().emailAddress;
             this.applicantPhone = doc.data().phoneNumber;
@@ -199,6 +202,16 @@ export class eventFormData extends appData{
     }
     const dataobj = JSON.stringify(data)
     this.eventDataObj.set(this.eventUID,dataobj)
+    }
+
+    async getEntryCount(eventid){
+            const coll = collection(this.db,'event-application/'+eventid+"/entries")
+            const snap = await getCountFromServer(coll)
+            //console.log(eventid+"-"+snap.data().count)
+            var finalCount = snap.data().count
+            return(
+                finalCount
+            )
     }
     
 }
