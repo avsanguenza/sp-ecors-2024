@@ -3,14 +3,12 @@
 //class organizer/concessionaire extends basic user 
 //get export classes
 
-import test, { getUserDisplayName } from "../data/userDB"; //change name 
-class User{
-    constructor(uid){
-        this.userUID = uid;
-        this.displayName = getUserDisplayName(uid);
-        //get displayImage 
-
+class User extends userDBClass{
+    constructor(){
+       super()
     }
+
+
 }
 
 export default User;

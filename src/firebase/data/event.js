@@ -1,5 +1,5 @@
 import firebase_app from "../config";
-import {getFirestore,doc, getDocs, setDoc, query,collection, addDoc, updateDoc, deleteDoc, getCountFromServer} from 'firebase/firestore';
+import {getFirestore,doc, getDocs, setDoc, query,collection, addDoc, updateDoc, getCountFromServer} from 'firebase/firestore';
 import {where} from 'firebase/firestore';
 import userData from "@/app/dashboard/user";
 const firebase_app_init = firebase_app;
@@ -45,7 +45,7 @@ export  class eventData extends appData{
       this.eventKeys = new Array();
     }
 
-    async setData(uid, eventCName, eventNameInput, eventDateInfo, eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal,eventimg){ //override
+    async setData(uid, eventCName, eventNameInput, eventDateInfo, eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal,eventimg){
         const docRef = doc(collection(this.db,"events"))
         await setDoc(docRef,{
             userid: uid,

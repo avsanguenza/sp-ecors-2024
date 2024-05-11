@@ -5,7 +5,7 @@ import { Dropdown } from 'flowbite';
 import type { DropdownOptions, DropdownInterface } from 'flowbite';
 import type { InstanceOptions } from 'flowbite';
 import { create } from "domain";
-
+import navBar from "@/app/navBar";
 import jobRegistrationForm from './forms'
 
 function userSetupPage(currentUID){
@@ -20,7 +20,7 @@ function reviewContents(){
 //confirm = own .tsx file -> there to summon database instance too 
   return(
     <>
-   
+   {navBar()}
     <div className=" mt-8 text-center space-x-2">
     {
     //PASS THE UID

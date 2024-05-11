@@ -1,53 +1,52 @@
+'use client'
 import Image from 'next/image';
+import navBar from './navBar';
 //make sure you can change the navbar from login -> logged in 
-
 export default function Page() {
   return (
-    <nav className="relative flex flex-wrap items-center justify-between px-2 py-3 bg-pink-500 mb-3">
-  <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
-    <div className="w-full relative flex justify-between lg:w-auto  px-4 lg:static lg:block lg:justify-start">
-      <a className="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white" href="#pablo">
-        ECORS
-      </a>
-      <button className="cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none" type="button">
-        <span className="block relative w-6 h-px rounded-sm bg-white"></span>
-        <span className="block relative w-6 h-px rounded-sm bg-white mt-1"></span>
-        <span className="block relative w-6 h-px rounded-sm bg-white mt-1"></span>
-      </button>
-    </div>
-    <div className="lg:flex flex-grow items-center" id="example-navbar-warning">
-      <ul className="flex flex-col lg:flex-row list-none mr-auto">
-        <li className="nav-item">
-          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="#pablo">
-            <i className="fab fa-facebook-square text-lg leading-lg text-white opacity-75" /> 
-          </a>
-        </li>
-        <li className="nav-item">
-          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="#pablo">
-            <i className="fab fa-twitter text-lg leading-lg text-white opacity-75" /> <span className="ml-2">Events</span>
-          </a>
-        </li>
-        <li className="nav-item">
-          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="#pablo">
-            <span className="ml-2">Opportunities</span>
-          </a>
-        </li>
-      </ul>
-      <div className="relative flex w-full sm:w-7/12 md:w-5/12 px-4 flex-wrap items-stretch lg:ml-auto">
-        <div className="flex">
-          <span className="font-normal leading-snug flex text-center white-space-no-wrap border border-solid border-pink-600 rounded-full text-sm bg-pink-100 items-center rounded-r-none pl-2 py-1 text-pink-800 border-r-0 placeholder-pink-300">
-            <i className="fas fa-search"></i>
-          </span>
-        </div>
-        <input type="text" className="px-2 py-1 h-8 border border-solid  border-pink-600 rounded-full text-sm leading-snug text-pink-700 bg-pink-100 shadow-none outline-none focus:outline-none w-full font-normal rounded-l-none flex-1 border-l-0 placeholder-pink-300" placeholder="Search pink" />
-      </div>
+  <>
+  {navBar()}
+  
+  {carousel()}
+  <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
 
-      <div>
-      <a href="/login" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-pink-500 hover:bg-white mt-4 lg:mt-0">Login/Signup</a>
+  </>
+  )
+
+function carousel(){
+  return(
+    <>
+    <div className="carousel w-full">
+  <div id="slide1" className="carousel-item relative w-full">
+    <img src="https://img.daisyui.com/images/stock/photo-1625726411847-8cbb60cc71e6.jpg" className="w-full" />
+    <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+      <a href="#slide4" className="btn btn-circle">❮</a> 
+      <a href="#slide2" className="btn btn-circle">❯</a>
     </div>
+  </div> 
+  <div id="slide2" className="carousel-item relative w-full">
+    <img src="https://img.daisyui.com/images/stock/photo-1609621838510-5ad474b7d25d.jpg" className="w-full" />
+    <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+      <a href="#slide1" className="btn btn-circle">❮</a> 
+      <a href="#slide3" className="btn btn-circle">❯</a>
+    </div>
+  </div> 
+  <div id="slide3" className="carousel-item relative w-full">
+    <img src="https://img.daisyui.com/images/stock/photo-1414694762283-acccc27bca85.jpg" className="w-full" />
+    <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+      <a href="#slide2" className="btn btn-circle">❮</a> 
+      <a href="#slide4" className="btn btn-circle">❯</a>
+    </div>
+  </div> 
+  <div id="slide4" className="carousel-item relative w-full">
+    <img src="https://img.daisyui.com/images/stock/photo-1665553365602-b2fb8e5d1707.jpg" className="w-full" />
+    <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+      <a href="#slide3" className="btn btn-circle">❮</a> 
+      <a href="#slide1" className="btn btn-circle">❯</a>
     </div>
   </div>
-</nav>
-  );
-
+</div>
+    </>
+  )
+}
 }

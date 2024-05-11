@@ -10,6 +10,8 @@ import {eventData,eventFormData} from '@/firebase/data/event'
 import editForm from './editJobForm';
 import userData from '../user';
 import jobAppList from './jobApplications';
+import navBar from '@/app/navBar';
+
 const auth = getAuth(firebase_app);
 
 
@@ -92,121 +94,7 @@ export default function Page(){
 
     return (
       <>
-        <header className="bg-pink-500">
-                  <nav className=" flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
-                  <div className="flex lg:flex-1">
-                  <div className="flex space-x-4 pl-24">
-                    {navigation.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        className={classNames(
-                          item.current ? 'bg-pink-700 text-white' : 'text-gray-300 hover:bg-base hover:text-white',
-                          'rounded-md px-3 py-2 text-sm font-medium'
-                        )}
-                        aria-current={item.current ? 'page' : undefined}
-                      >
-                        {item.name}
-                      </a>
-                    ))}
-                  </div>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-64">
-                        
-                  <button
-                  type="button"
-                  className="relative rounded-full bg-base p-1 text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                >
-                  <span className="absolute -inset-1.5" />
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
-
-                <Menu as="div" className="relative ml-3">
-                  <div>
-                    <Menu.Button className="ml-5 relative flex rounded-full text-white bg-base text-sm focus:outline-none  focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                      <span className="absolute -inset-1.5" />
-                      <span className="sr-only">Open user menu</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-</svg>
-
-                    </Menu.Button>
-                  </div>
-                  <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
-                      <div className ="text-center py-2">
-                        <ul>
-                          <li className="font-medium">{accInfo.name}</li>
-                          <li className="text-sm">{accInfo.accountType}</li>
-                        </ul>
-                      </div>
-
-            <div className="px-1 py-1 ">
-              <Menu.Item>
-                
-                {({ active }) => (
-                  <button
-                    className={`${
-                      active ? 'bg-pink-500 text-white' : 'text-gray-900'
-                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                  >
-                    {active ? (
-                      <EditActiveIcon
-                        className="mr-2 h-5 w-5"
-                        aria-hidden="true"
-                      />
-                    ) : (
-                      <EditInactiveIcon
-                        className="mr-2 h-5 w-5"
-                        aria-hidden="true"
-                      />
-                    )}
-                    Settings
-                  </button>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <a href="/signout">
-                  <button
-                    className={`${
-                      active ? 'bg-pink-500 text-white' : 'text-gray-900'
-                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`
-                  } >
-                    {active ? (
-                      <ArchiveActiveIcon
-                        className="mr-2 h-5 w-5"
-                        aria-hidden="true"/>
-                    ) : (
-                      <ArchiveInactiveIcon
-                        className="mr-2 h-5 w-5"
-                        aria-hidden="true"/>
-)}
-                     Sign out
-                  </button>
-                </a>)}
-              </Menu.Item>
-             
-              </div>
-
-          </Menu.Items>
-                  </Transition>
-                </Menu>
-
-
-                  </div>    
-                
-                </div>
-                    </nav>
-        </header>
+       {navBar()}
         
         <div className='mt-4 mx-auto '>
         <button type="button" class="mb-10 text-white bg-pink-500 hover:bg-pink-700 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2"  onClick={()=>window.location.href="/dashboard/myJobs/createJob"}>

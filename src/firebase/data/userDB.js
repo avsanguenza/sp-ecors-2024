@@ -19,6 +19,7 @@ export default class userDBClass{
     const unsub = onSnapshot(doc(db,"users",this.uid),(doc)=>{
       const userData = doc.data()
       let data = (doc.data().isOrganizer== true ? 'Event Organizer' : 'User');
+      data = (doc.data().isAdmin == true ? 'Admin' : 'User')
       var obj = {
         'name' : this.name,
         'uid' : this.uid,
@@ -29,6 +30,9 @@ export default class userDBClass{
       //console.log(data);
   });
 }
+  async getUsers(){
+    
+  }
   }
 
 
