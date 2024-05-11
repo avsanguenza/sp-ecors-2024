@@ -15,11 +15,13 @@ export default class userDBClass{
     this.uid = uid
     this.name = value;
   }
-  setAccValues (){
+  async setAccValues (){
     const unsub = onSnapshot(doc(db,"users",this.uid),(doc)=>{
       const userData = doc.data()
       let data = (doc.data().isOrganizer== true ? 'Event Organizer' : 'User');
-      data = (doc.data().isAdmin == true ? 'Admin' : 'User')
+      if(doc.data().isAdmin==true){
+        data = 'Admin'
+      }
       var obj = {
         'name' : this.name,
         'uid' : this.uid,
@@ -27,7 +29,6 @@ export default class userDBClass{
       }
       var toJSON = JSON.stringify(obj);
       localStorage.setItem('currentUser', toJSON);
-      //console.log(data);
   });
 }
   async getUsers(arg0, queryOp, arg1){  

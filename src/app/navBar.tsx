@@ -269,6 +269,27 @@ function navBarContent(type){
         </>
       )
     }
+    if('User'){
+     return(
+      <>
+      <li className="nav-item">
+          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="#" >
+            <i className="fab fa-twitter text-lg leading-lg text-white opacity-75" /> <span className="ml-2">Events</span>
+          </a>
+        </li>
+        <li className="nav-item">
+          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="#">
+            <span className="ml-2">Manage Applications</span>
+          </a>
+        </li>
+        <li className="nav-item">
+          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="#">
+            <span className="ml-2">Messaging</span>
+          </a>
+        </li>
+        </>
+     ) 
+    }
     else{
         return(
             <>

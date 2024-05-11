@@ -27,8 +27,8 @@ function currUser(){
   if (auth){
   }
     else{
-      router.push("/");
-      alert("Please log-in to continue!");
+      router.push("/error");
+      
   }
  }
 

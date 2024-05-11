@@ -8,7 +8,4 @@ return(
     </>
 )
 }
-
-
-
 export default manageUsers;

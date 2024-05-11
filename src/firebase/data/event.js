@@ -160,9 +160,9 @@ export class eventFormData extends appData{
         super()
         this.uid= userUID;
         this.eventUID = eventUID;
-        this.applicantID='';
-        this.applicantEmail ='';
-        this.applicantPhone = '';
+        this.applicantID='appID';
+        this.applicantEmail ='appEMAIL';
+        this.applicantPhone = 'appPhone';
         this.count = 0
         this.eventDataObj = new Map();
     }
@@ -183,7 +183,7 @@ export class eventFormData extends appData{
        // const colRef = collection(docRef,'entries')
         const snapshot = await getDocs(collection(this.db,'event-application/'+this.eventUID+"/entries"));
         snapshot.forEach((doc)=>{
-            //console.log(doc.data())
+          //  console.log(doc.data())
             this.applicantID = doc.data().userid;
             this.applicantEmail = doc.data().emailAddress;
             this.applicantPhone = doc.data().phoneNumber;
@@ -201,7 +201,7 @@ export class eventFormData extends appData{
         'applicantPhone' : this.applicantPhone,
     }
     const dataobj = JSON.stringify(data)
-    this.eventDataObj.set(this.eventUID,dataobj)
+    this.eventDataObj.set(this.applicantID,dataobj)
     }
 
     async getEntryCount(eventid){

@@ -69,22 +69,16 @@ function Page(){
   const handleForm = async (event) => {
       event.preventDefault()
 
-      let { result, errorMsg } = await signIn(email, password);
-      if (typeof(errorMsg)!= "undefined") { //improve this one
-        alert("Login error"); //try to make it a useState
-         console.log("error dialogue") 
-        
-         //return router.push("/login")
-      }
-
-      else{
-        //getData(auth.currentUser?.uid)
-      //  console.log(auth.currentUser?.displayName)
+        await signIn(email, password).then(()=>{
         var udbc = new userDBClass(auth.currentUser.uid,auth.currentUser?.displayName);
-        udbc.setAccValues()
-         return router.push("/dashboard")
- 
-      }
+        udbc.setAccValues().then(()=>{
+          return router.push("/dashboard")
+        })
+      }).catch((err)=>{
+        alert("Login error"); //try to make it a useState
+        console.log("error dialogue") 
+      })
+      
     }
 
   //add error popup based on error 
