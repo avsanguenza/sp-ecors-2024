@@ -3,7 +3,7 @@
 
 
 import firebase_app from "../config";
-import {getFirestore,doc, getDoc} from 'firebase/firestore';
+import {getFirestore,doc, getDocs} from 'firebase/firestore';
 
 import { collection, query,where, onSnapshot} from 'firebase/firestore';
 
@@ -30,8 +30,9 @@ export default class userDBClass{
       //console.log(data);
   });
 }
-  async getUsers(){
-    
+  async getUsers(arg0, queryOp, arg1){  
+    const q = query(collection(db,'users'),where(arg0,queryOp,arg1))
+    const qsnapshot = await getDocs()
   }
   }
 

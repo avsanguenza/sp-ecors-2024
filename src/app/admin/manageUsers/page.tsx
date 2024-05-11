@@ -4,8 +4,11 @@ function manageUsers(){
 return(
     <>
     {navBar()}
+
     </>
 )
 }
+
+
 
 export default manageUsers;
