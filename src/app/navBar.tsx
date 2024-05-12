@@ -95,8 +95,8 @@ const  searchFormHandle = ()=>{
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
             </svg>
         </div>
-        <input type="search" id="default-search" class="block w-full p-4 ps-32 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-pink-500 dark:focus:border-pink-500" />
-        <button type="submit" class={setClass("text-white absolute end-1.5 bottom-2.5 bg-pink-500 hover:bg-pink-800 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800")} onClick={()=>window.location.replace('/search')}>Search</button>
+        <input type="search" id="default-search" class="w-[32rem] p-4 ps-32 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-pink-500 dark:focus:border-pink-500" />
+        <button type="submit" class={setClass("text-white absolute end-1.5 bottom-2.5 bg-pink-500 hover:bg-pink-800 focus:ring-4 focus:outline-none font-medium rounded-full text-sm px-4 py-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800")} onClick={()=>window.location.replace('/search')}>Search</button>
     </div>
 </form>
 
@@ -131,7 +131,7 @@ function checkUser(){
                 <div className ="text-center py-2">
                   <ul>
                     <li className="font-medium">{accInfo.getName()}</li>
-                    <li className="text-sm">{accInfo.getUserType()}</li>
+                    <li className="text-sm">{accInfo.userType}</li>
                   </ul>
                 </div>
 
@@ -139,6 +139,7 @@ function checkUser(){
         <Menu.Item>
           
           {({ active }) => (
+            <a href="/dashboard/settings">
             <button
               className={`${
                 active ? 'bg-pink-500 text-white' : 'text-gray-900'
@@ -157,7 +158,8 @@ function checkUser(){
               )}
               Settings
             </button>
-          )}
+            </a>
+  )}
         </Menu.Item>
         <Menu.Item>
           {({ active }) => (
@@ -269,11 +271,11 @@ function navBarContent(type){
         </>
       )
     }
-    if('User'){
+    if(type=='User'){
      return(
       <>
       <li className="nav-item">
-          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="#" >
+          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="/dashboard" >
             <i className="fab fa-twitter text-lg leading-lg text-white opacity-75" /> <span className="ml-2">Events</span>
           </a>
         </li>
@@ -283,7 +285,7 @@ function navBarContent(type){
           </a>
         </li>
         <li className="nav-item">
-          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="#">
+          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="/messages">
             <span className="ml-2">Messaging</span>
           </a>
         </li>

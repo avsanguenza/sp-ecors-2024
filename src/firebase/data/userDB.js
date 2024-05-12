@@ -11,11 +11,15 @@ const firebase_app_init = firebase_app;
 const db = getFirestore(firebase_app);
 
 export default class userDBClass{
-  constructor(uid,value){
-    this.uid = uid
-    this.name = value;
+  constructor(auth){
+    this.uid = auth.uid
+    this.name = auth.displayName
+    this.email = auth.email
+    this.phoneNum = auth.phoneNum
   }
   async setAccValues (){
+   try{
+    console.log(this.uid)
     const unsub = onSnapshot(doc(db,"users",this.uid),(doc)=>{
       const userData = doc.data()
       let data = (doc.data().isOrganizer== true ? 'Event Organizer' : 'User');
@@ -25,11 +29,17 @@ export default class userDBClass{
       var obj = {
         'name' : this.name,
         'uid' : this.uid,
-        'accountType' : data
+        'accountType' : data,
+        'email': this.email,
+        'phoneNum':this.phoneNum
       }
       var toJSON = JSON.stringify(obj);
       localStorage.setItem('currentUser', toJSON);
   });
+   }
+   catch(err){
+    console.log(err)
+   }
 }
   async getUsers(arg0, queryOp, arg1){  
     const q = query(collection(db,'users'),where(arg0,queryOp,arg1))
