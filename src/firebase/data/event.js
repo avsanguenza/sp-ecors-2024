@@ -160,22 +160,29 @@ export class eventFormData extends appData{
         super()
         this.uid= userUID;
         this.eventUID = eventUID;
-        this.applicantID='appID';
-        this.applicantEmail ='appEMAIL';
-        this.applicantPhone = 'appPhone';
-        this.count = 0
+        this.docid=''
+        this.applicantID='';
+        this.applicantEmail ='';
+        this.applicantPhone = '';
+        this.applicationStatus=''
+        this.applicantFile='';
         this.eventDataObj = new Map();
     }
 
-    async setData(phoneNum,emailAdd){
-       const docRef = doc(this.db,'event-application',this.eventUID);
-       const colRef = collection(docRef,'entries')
-        addDoc(colRef,{
+    async setData(phoneNum,emailAdd,appFile){
+      try{
+        const docRef = doc(this.db,'event-application',this.eventUID);
+        const colRef = collection(docRef,'entries')
+        await addDoc(colRef,{
             userid: this.uid,
             phoneNumber: phoneNum,
             emailAddress: emailAdd,
+            applicantFile: appFile,
             applicationStatus:'pending'
         })
+      }catch(err){
+        console.log("setData: "+ err)
+      }
     }
     async getData(){
         //const docRef = doc(this.db, 'event-application',this.eventUID)
@@ -184,21 +191,38 @@ export class eventFormData extends appData{
         const snapshot = await getDocs(collection(this.db,'event-application/'+this.eventUID+"/entries"));
         snapshot.forEach((doc)=>{
           //  console.log(doc.data())
+          this.docid = doc.id
             this.applicantID = doc.data().userid;
             this.applicantEmail = doc.data().emailAddress;
             this.applicantPhone = doc.data().phoneNumber;
+            this.applicantFile = doc.data().applicantFile;
+            this.applicationStatus = doc.data().applicationStatus;
             //add for file later-> downloadlink!
             this.dataToJSON();
         })
 
     }
-
+    async updateAttribute(docid,attrName,value){
+        const docRef = doc(this.db,'event-application',this.eventUID);
+        const colRef = collection(docRef,'entries')
+        const doc1Ref = doc(colRef,docid)
+        await updateDoc(doc1Ref,{
+            [attrName]: value
+        })
+    }
+    async getSpecificData(){
+        
+    }
     dataToJSON(){
        let data= {
+        'docid': this.docid,
         'eventid' : this.eventUID,
+        'applicantID' : this.applicantID,
         'applicantName': this.applicantID,
         'applicantEmail': this.applicantEmail,
         'applicantPhone' : this.applicantPhone,
+        'applicationStatus':this.applicationStatus,
+        'applicantFile': this.applicantFile
     }
     const dataobj = JSON.stringify(data)
     this.eventDataObj.set(this.applicantID,dataobj)

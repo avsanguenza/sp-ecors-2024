@@ -143,7 +143,6 @@ function eventDataTabs(data, appFormData){
   const [isOpen, setIsOpen] = useState(false)
   const [isAppOpen, setIsAppOpen] = useState(false)
 
-  const [isDel, setIsDel] = useState(false)
   const [dialogTitle, setDialogTitle] = useState('')
   const [date, setDate] = useState('');
   const [desc,setDesc] = useState('')
@@ -190,6 +189,7 @@ function viewAppForm(eventid){
     )
   }).then((res)=>{
     setEventAppData(res)
+    setEventUID(eventid)
     openAppModal()
   })
 }
@@ -372,33 +372,13 @@ function returnCheckID(eventuid){
                 <div className="text-center">
                 <Dialog.Title as="h3">{dialogTitle}</Dialog.Title>
                 </div>
-                <table class="w-full text-sm text-left text-center text-gray-500 dark:text-gray-400">
-                <thead class="text-center text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                    <th scope="col" class="px-6 py-3">
-                    Applicant Name
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                    Position
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                    Email Address
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                   Phone Number
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                    Actions
-                    </th>
-                    
-                    </tr>
-                    </thead>
-                  
+                
+             
                   {
-                    jobAppList(eventAppData)
+                    jobAppList(eventAppData,eventUID)
                   }
                 
-                </table>
+              
                   
               </Dialog.Panel>
             </Transition.Child>

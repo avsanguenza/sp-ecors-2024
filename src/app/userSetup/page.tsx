@@ -3,32 +3,66 @@ import React from "react";
 import { useState } from "react";
 import { eventFormData } from "@/firebase/data/event";
 import userData from "../dashboard/user";
+import { fileData } from "@/firebase/data/storage";
+import { pdf } from "@react-pdf/renderer";
 function userSetupPage(eventmodalid){
 const [activeIndex, setActiveIndex] = useState(0);
 const [userEntryData,setUserEntryData] = useState({eventID:'',applicantID:'',emailAddress:'', phoneNumber:''})
 
 let u = new userData();
 
-const [file,setFile] = useState('')
+const [selectedFile,setSelectedFile] = useState({src:'',b64:null,type:'',name:''})
 
+function handleUpload (eventID) {
+  const folderName = eventID
+  console.log(eventID+" "+selectedFile.src)
+  let dataup = new fileData(folderName);
 
-function setEntry(){
-  console.log(userEntryData)
-  let e = new eventFormData(userEntryData.applicantID,userEntryData.eventID);
-  e.setData(userEntryData.phoneNumber,userEntryData.emailAddress).then(()=>{
-    alert('Succesfully applied')
-  }
-  ).catch((err)=>{
-    console.log(err)
+ return( dataup.uploadFile(selectedFile).then((sn)=>{
+   // alert("File Uploaded")
+   return sn
+  }).catch((err)=>{
+    console.log('handle upload '+ err)
   })
+ )
+}
+function setEntry(){
+  let e = new eventFormData(userEntryData.applicantID,userEntryData.eventID);
+ handleUpload(userEntryData.eventID).then((sn)=>{
+  console.log(sn)
+  e.setData(userEntryData.phoneNumber,userEntryData.emailAddress,sn).then(()=>{
+     alert('Succesfully applied')
+     window.location.replace('/dashboard')
+   }).catch((err)=>{
+     console.log("setEntry" +err)
+   })
+ })
 
 }
 function uploadForm(){
+
+  const handleUploadChange= (e)=>{
+    e.preventDefault();
+
+      setSelectedFile({
+        ...selectedFile,
+        src: URL.createObjectURL(e.target.files[0]),
+        b64: e.target.files[0],
+        type: e.target.files[0].name.split(".").pop(),
+        name: userEntryData.applicantID
+      })
+  }
   return(
 <>
 <label class="mt-4 block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="file_input">Work Experience</label>
-      <input class=" text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer rounded py-3 px-4 mb-2" aria-describedby="file_input_help" id="file_input" type="file"/>
-  <p class="text-sm text-gray-500 dark:text-gray-300" id="file_input_help">DOCX or PDF (2MB)</p>
+      <input class='bg-white border text-gray-900 border-pink-300 rounded-lg px-3 py-4 text-slate-500 file:bg-pink-500 
+        file:block-mb-2 file:mr-4 file:py-2 file:px-4
+        file:rounded-full file:border-0
+        file:text-sm file:font-semibold
+        file:bg-pink-500 file:text-white
+        hover:file:bg-pink-700' id="file_input" type="file" accept=".doc,.docx,.pdf" onChange={handleUploadChange}/>
+  <p class="text-sm text-gray-500 dark:text-gray-300" id="file_input" >DOCX or PDF (2MB)</p>
+  
   </>
   )
 }
@@ -45,7 +79,7 @@ function professionalForm(textPlaceholder, isDisabled){
           const handleFormSubmit = (e)=>{
           e.preventDefault();
           u.parseData()
-          console.log(eventmodalid + " "+ u.getUserUID())
+      //    console.log(eventmodalid + " "+ u.getUserUID())
           setUserEntryData({
             ...userEntryData,
             applicantID : u.getUserUID(),
