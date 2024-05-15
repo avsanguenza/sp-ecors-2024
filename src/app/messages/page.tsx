@@ -8,7 +8,7 @@ function messagePage(){ //sender0, sender1; sender0 - active user
     const handleMessageSend= (e)=>{
       e.preventDefault()
 
-      console.log(document.getElementById('chatMsg').value)
+    //  console.log(document.getElementById('chatMsg').value)
     }
     return(
         <>
