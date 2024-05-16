@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { eventFormData } from "@/firebase/data/event";
-import Message from '@/firebase/messaging/message'
+import messagePage from "@/app/messages/page";
 import userData from "../user";
 let udata  = new userData();
 udata.parseData()
@@ -35,7 +35,14 @@ function tableHeader(){
         </thead>
     )
 }
-
+function messageButton(appID,appName){
+    sessionStorage.setItem('sender0uid',udata.getUserUID())
+    sessionStorage.setItem('sender0name',udata.getName())
+    sessionStorage.setItem('sender1uid',appID)
+    sessionStorage.setItem('sender1name',appName)
+    window.location.replace('/messages')
+   // messagePage(udata.getUserUID(),udata.getName(),appID,appName)
+}
 function allTable(eventAppData){
 return(
     <table class="w-full text-sm text-left text-center rounded-full text-gray-500 dark:text-gray-400">
@@ -58,7 +65,7 @@ return(
                     {d.applicantPhone}
                 </th>
                 <th>
-                <button type="button" class="mb-10 text-white bg-pink-500 hover:bg-pink-700 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2 mr-8">
+                <button type="button" class="mb-10 text-white bg-pink-500 hover:bg-pink-700 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2 mr-8" onClick={()=>messageButton(d.applicantID,d.applicantName)}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
   <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
   <path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z" />

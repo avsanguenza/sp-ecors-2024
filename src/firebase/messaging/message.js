@@ -31,4 +31,7 @@ export default class Messages{
 
     })
 }
+    async getDataConvo(){
+        
+    }
 }

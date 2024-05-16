@@ -59,6 +59,19 @@ function getDatatoDB(uid){
     });
 }
 
+export class userData{
+  constructor(){
+    this.db = db
+    this.displayName = ''
+  }
+  async getData(collectionRef, arg0,queryOp,arg1){
+    const q = query(collection(this.db,collectionRef),where(arg0,queryOp,arg1))
+    const qsnapshot= await getDocs(q)
+    qsnapshot.forEach((doc)=>{
+      this.displayName = doc.data().displayName
+    })
+  }
+}
 
 
 

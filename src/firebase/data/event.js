@@ -16,10 +16,6 @@ export default class appData{
     
    async getData(collectionRef,arg0, queryOp, arg1){//REWRITE ASG GET()
        //const q = query(collection(this.db,collectionRef),where(arg0,queryOp,arg1))
-      const qsnapshot = this.db.collection(collectionref).where(arg0,queryOp,arg1).get()
-      qsnapshot.forEach((doc)=>{
-        console.log(doc.data().eventName)
-      })
       
     }
     async setData(collectionRef){
@@ -64,7 +60,7 @@ export  class eventData extends appData{
 
     async getData(collectionRef,arg0, queryOp, arg1){
         const q = query(collection(this.db,collectionRef),where(arg0,queryOp,arg1))
-       const qsnapshot = await getDocs(q);
+        const qsnapshot = await getDocs(q);
         qsnapshot.forEach((doc)=>{
         this.eventName= doc.data().eventName;
         this.eventCreatorName=doc.data().eventCreatorName;        

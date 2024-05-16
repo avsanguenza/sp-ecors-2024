@@ -4,7 +4,9 @@ import {Dialog, Menu, Transition } from '@headlessui/react'
 import searchPage from './search/page';
 import { Metadata, ResolvedMetadata } from 'next';
 import { title } from 'process';
-
+import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useDebouncedCallback } from 'use-debounce';
 let accInfo = new userData();
 accInfo.parseData()
 
@@ -80,14 +82,36 @@ function navBar (){
 export default navBar;
 
 function searchBar(){
-const  searchFormHandle = ()=>{
-    window.location.replace('/search')
+  const searchParams = useSearchParams()
+  const [searchQuery, setSearchQuery] = useState('')
+  const pathname = usePathname()
+  const replace = useRouter().replace
 
+ const handleSearch = useDebouncedCallback((type:string,term: string)=>{
+  
+  console.log(term)
+    const params = new URLSearchParams(searchParams)
+    if(!term){
+         params.delete('query')   
+      params.delete('typeQuery')
+    }
+  
+    params.set('query',term)
+    params.set('typeQuery',type)
+    window.location.replace('/search/?'+`${params.toString()}`)
+ //   replace()
+  },300)
+
+const handleNewSearch = ()=>{
+  const searchParams = useSearchParams()
+  const params = new URLSearchParams(searchParams)
+  params.delete('query')   
+  params.delete('typeQuery')
 }
     return(
         <>
         
-<form class="max-w mx-auto">   
+<form class="max-w mx-auto" onSubmit={()=>handleSearch(document.getElementById('searchType').options[document.getElementById('searchType').selectedIndex].value,document.getElementById('searchQuery').value)} >   
     <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
     <div class="relative">
         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -95,8 +119,13 @@ const  searchFormHandle = ()=>{
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
             </svg>
         </div>
-        <input type="search" id="default-search" class="w-[32rem] p-4 ps-32 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-pink-500 dark:focus:border-pink-500" />
-        <button type="submit" class={setClass("text-white absolute end-1.5 bottom-2.5 bg-pink-500 hover:bg-pink-800 focus:ring-4 focus:outline-none font-medium rounded-full text-sm px-4 py-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800")} onClick={()=>window.location.replace('/search')}>Search</button>
+        <select id='searchType'className='mt-5 ml-10  bg-gray-50  text-sm absolute bottom-2.5 px-2 py-2 rounded-full focus:ring-pink-500 focus:border-pink-500 ring-offset-0'>
+        <option defaultChecked className='text-sm'>Search </option>
+        <option>Events</option>
+        <option>People</option>
+        </select>
+        <input type="text" id="searchQuery" class="flex w-[32rem] p-4 ps-40 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-pink-500 dark:focus:border-pink-500"  onClick={()=>handleNewSearch} defaultValue={searchParams.get('query')?.toString()}/>
+        <button type="button" class={setClass("text-white absolute end-1.5 bottom-2.5 bg-pink-500 hover:bg-pink-800 focus:ring-4 focus:outline-none font-medium rounded-full text-sm px-4 py-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800")} onClick={()=>handleSearch(document.getElementById('searchType').options[document.getElementById('searchType').selectedIndex].value,document.getElementById('searchQuery').value)}>Search</button>
     </div>
 </form>
 
