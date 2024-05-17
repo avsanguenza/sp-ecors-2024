@@ -87,17 +87,15 @@ function searchBar(){
   const pathname = usePathname()
   const replace = useRouter().replace
 
- const handleSearch = useDebouncedCallback((type:string,term: string)=>{
+ const handleSearch = useDebouncedCallback((term: string)=>{
   
   console.log(term)
     const params = new URLSearchParams(searchParams)
     if(!term){
          params.delete('query')   
-      params.delete('typeQuery')
     }
   
     params.set('query',term)
-    params.set('typeQuery',type)
     window.location.replace('/search/?'+`${params.toString()}`)
  //   replace()
   },300)
@@ -119,13 +117,8 @@ const handleNewSearch = ()=>{
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
             </svg>
         </div>
-        <select id='searchType'className='mt-5 ml-10  bg-gray-50  text-sm absolute bottom-2.5 px-2 py-2 rounded-full focus:ring-pink-500 focus:border-pink-500 ring-offset-0'>
-        <option defaultChecked className='text-sm'>Search </option>
-        <option>Events</option>
-        <option>People</option>
-        </select>
-        <input type="text" id="searchQuery" class="flex w-[32rem] p-4 ps-40 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-pink-500 dark:focus:border-pink-500"  onClick={()=>handleNewSearch} defaultValue={searchParams.get('query')?.toString()}/>
-        <button type="button" class={setClass("text-white absolute end-1.5 bottom-2.5 bg-pink-500 hover:bg-pink-800 focus:ring-4 focus:outline-none font-medium rounded-full text-sm px-4 py-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800")} onClick={()=>handleSearch(document.getElementById('searchType').options[document.getElementById('searchType').selectedIndex].value,document.getElementById('searchQuery').value)}>Search</button>
+        <input type="text" id="searchQuery" placeholder='Search' class="flex w-[32rem] p-4 ps-20 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-pink-500 dark:focus:border-pink-500"  onClick={()=>handleNewSearch} defaultValue={searchParams.get('query')?.toString()}/>
+        <button type="button" class={setClass("text-white absolute end-1.5 bottom-2.5 bg-pink-500 hover:bg-pink-800 focus:ring-4 focus:outline-none font-medium rounded-full text-sm px-4 py-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800")} onClick={()=>handleSearch(document.getElementById('searchQuery').value)}>Search</button>
     </div>
 </form>
 

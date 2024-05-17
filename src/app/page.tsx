@@ -1,7 +1,8 @@
 'use client'
 import Image from 'next/image';
 import navBar from './navBar';
-//make sure you can change the navbar from login -> logged in 
+import { Suspense } from 'react';
+//make loading screen -> loading animation ->navbar 
 export default function Page() {
   return (
   <>

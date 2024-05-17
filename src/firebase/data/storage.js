@@ -21,13 +21,15 @@ export class imageData extends storageData{
     }
     async uploadImage(file, fileName){
         //fix the storage
-        const imageRef = ref(this.storage, this.imageFolder+"/"+fileName,this.metadata)
-        return uploadBytesResumable(imageRef, file.blob).then((snapshot)=>{
+      // type: e.target.files[0].name.split(".").pop(),
+     //  this.metadata = this.getMetadata(this.getMetadata(file.type))
+        const imageRef = ref(this.storage, this.imageFolder+fileName,this.metadata)
+         return uploadBytesResumable(imageRef, file.blob).then((snapshot)=>{
             return getDownloadURL(snapshot.ref).then((sn)=>{
                 return sn
             })
         }) 
-       
+        
     }
     async getURL(data){
        
@@ -47,6 +49,15 @@ export class imageData extends storageData{
     getEventURL(){
         return this.eventURL;
     } 
+    getMetadata(type){
+        if(type=='jpg' || type=='jpeg'){
+            return({  contentType: 'image/jpeg'})
+        }
+        else if( type =='png'){
+            return({ contentType: 'image/png'})
+        }
+       
+    }
 }
 
 export class fileData extends storageData{

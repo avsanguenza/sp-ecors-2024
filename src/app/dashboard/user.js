@@ -1,9 +1,9 @@
-import { getAuth,onAuthStateChanged,sendPasswordResetEmail,updateProfile } from "firebase/auth";
+import { getAuth,onAuthStateChanged,sendPasswordResetEmail,updatePassword,updateProfile } from "firebase/auth";
 import { imageData } from "@/firebase/data/storage";
 import firebase_app from "@/firebase/config";
 import userDBClass from "@/firebase/data/userDB";
 const auth = getAuth(firebase_app);
-
+let udbc = new  userDBClass(auth)
 export default class userData{
     constructor(){
         //getLocalStorage
@@ -20,6 +20,12 @@ export default class userData{
         this.uid = accInfo.uid
         this.userType = accInfo.accountType;
         this.email = accInfo.email
+        this.photoURL =accInfo.photoURL
+    }
+    checkUser(){
+        this.auth.onAuthStateChanged((auth)=>{
+            console.log(auth)
+        })
     }
     getUserUID(){
         
@@ -31,31 +37,45 @@ export default class userData{
     getUserType(){
         return this.userType;
     } 
-    async setNewProfile(firstName, lastName){
-        console.log(firstName)
+ 
+    async setNewProfile(firstName, lastName,pURL){
         let tempString= firstName+" "+lastName
-        updateProfile(auth.currentUser,{
-            displayName: tempString
-           // photoURL: firebaseURL
-        }).then(()=>{
+      await updateProfile(auth.currentUser,{
+            displayName: tempString,
+            photoURL: pURL
+        }).then((f)=>{
+            console.log(f)
           let udbc = new userDBClass(auth.currentUser)
-          udbc.setAccValues()
+          udbc.setAccValues().then(async()=>{
+            this.parseData()
+            await udbc.updateAtrribute('displayName',tempString,auth.currentUser.uid).then(async()=>{
+                await udbc.updateAtrribute('userImage',pURL,auth.currentUser.uid)
+            })
+          })
+          
         })
-    }
+        await new Promise ((resolve)=> setTimeout(resolve,2000));
+      window.location.reload()
+        }
     async setnewEmail(email){
-      updateEmail(this.auth.currentUser, email).then(()=>{
+     await updateEmail(this.auth.currentUser, email).then(()=>{
         console.log('updated')
       }).catch((err)=>{
         console.log("setNewEmail = " + err)
       })
     }
     
-    async changePasswordviaEnail(email){
-        sendPasswordResetEmail(this.auth,email).then(()=>{
-                console.log('password sent')
-        }).catch((err)=>{
-            console.log('changePassword - '+err)
-        })
+    async changePassword(p1,p2){
+        if(! p1 === p2){
+            //eror
+        }
+        else{
+            await updatePassword(auth.currentUser, p1).then(()=>{
+                return true
+            }).catch((err)=>{
+                console.log(err)
+            })
+        }
     }
 
     async setPhoto(){

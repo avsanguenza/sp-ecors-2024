@@ -3,7 +3,9 @@
 import navBar from "@/app/navBar"
 import { useEffect, useState } from "react"
 import userData from "../user"
-
+import { imageData } from "@/firebase/data/storage"
+import { select } from "@material-tailwind/react"
+import { getAuth, onAuthStateChanged } from "firebase/auth"
 let udata = new userData()
 udata.parseData();
 export default function Page(){
@@ -41,8 +43,13 @@ function settingTabs(){
         </li>
         </ul>
         <div class="p-6 bg-gray-50 text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 rounded-lg w-full">
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Profile Settings</h3>
-        {settingsInterface()}
+        <h3 class="text-4xl font-bold text-gray-900 dark:text-white mb-[2rem]">Profile Settings</h3>       
+        <hr class="h-px my-full bg-gray-200 border-0 dark:bg-gray-700 mb-5"/>
+        
+        <p className="mt-8 text-center mr-[22rem] mb-3 text-2xl font-semibold text-gray-800">Edit profile</p>
+        <div className="mt-2 h-[30rem] w-[30rem] mx-auto border border-gray-300 rounded-lg p-4 ">
+         {settingsInterface()}
+        </div>
         </div>
         </div>
 
@@ -50,15 +57,31 @@ function settingTabs(){
     )
 }
 function settingsInterface(){
-    const [userChange, setUserChange]= useState({firstName:'',  lastName:'',email:'',phoneNumber:''})
-    const [selectedFile, setSelectedFile] = useState({src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp9hZ_fn1p0GQsP8Ehynpd7sNAHWz0CZXiMNLGo0b0RA&s',blob:'',name:''})
-    const handleFormSubmit = (e)=>{
+    const [userChange, setUserChange]= useState({firstName:'',  lastName:'',email:''})
+    const [loading,setLoading] = useState(false)
+    
+    const [selectedFile, setSelectedFile] = useState({src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp9hZ_fn1p0GQsP8Ehynpd7sNAHWz0CZXiMNLGo0b0RA&s',blob:'',name:'',type:''})
+
+   const handleFormSubmit = async (e)=>{
         e.preventDefault();
-        udata.setNewProfile(userChange.firstName,userChange.lastName).then(()=>{
-            udata.parseData()
-            //alert(udata.name)
-        }).then(()=>{
-            window.location.reload
+        setLoading(true)
+        const folderName ='user'
+        let imgup = new imageData(folderName);
+        await imgup.uploadImage(selectedFile,selectedFile.name).then((res)=>{
+            udata.setNewProfile(userChange.firstName,userChange.lastName,res).then(()=>{
+                setLoading(false)
+    
+            })
+        })
+     
+    }   
+    async function handleUploadSubmit(){
+        const folderName ='user'
+        let imgup = new imageData(folderName);
+        
+        await imgup.uploadImage(selectedFile,selectedFile.name).then((res)=>{
+           // await new Promise ((resolve)=> setTimeout(resolve,2000));
+            return res
         })
     }
     const handleFormChange =  (e )=>
@@ -74,8 +97,10 @@ function settingsInterface(){
             ...selectedFile,
             src: URL.createObjectURL(e.target.files[0]),
             blob: e.target.files[0],
+            type: e.target.files[0].name.split(".").pop(),
             name: udata.getUserUID()
           })
+         
     }
     useEffect(()=>{
         var[x,y] = udata.getName().split(' ',2)
@@ -88,17 +113,21 @@ function settingsInterface(){
     },[])
     return(
       <div className="ml-4 mr-4 h-lvh">
-    
 <form class="max-w-md mx-auto" onSubmit={handleFormSubmit}>
    <div className="relative z-0  w-full mb-5 group">
-   <img src={selectedFile.src} className="mx-auto w-24 h-24 rounded-full border border-pink-500 mb-4"></img> 
- 
+   <label for="imgprev" class="font-medium relative text-sm text-gray-500 scale-100 ">Profile Picture</label>
+   <img src={(udata.photoURL != null) ? udata.photoURL:selectedFile.src} className="mt-6 mx-auto w-24 h-24 rounded-full border border-pink-500 mb-4" id='imgprev'></img> 
+
+  
+   {
+    //alert here
+}
    <input id="file_input" type="file" className='bg-white border text-gray-900 border-pink-300 rounded-lg px-3 py-4 text-slate-500 file:bg-pink-500 
         file:block-mb-2 file:mr-4 file:py-2 file:px-4
         file:rounded-full file:border-0
         file:text-sm file:font-semibold
         file:bg-pink-500 file:text-white
-        hover:file:bg-pink-700'  onChange={handleUploadChange}/>
+        hover:file:bg-pink-700'  accept='image/png,image/jpeg' onChange={handleUploadChange}/>
    </div>
   <div class="relative z-0 w-full mb-5 group">
       <input type="email" name="email" id="floating_email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" defaultValue={userChange.email} onClick={(e)=>e.target.value=""} onChange={handleFormChange} required/>
@@ -114,9 +143,29 @@ function settingsInterface(){
         <label for="floating_last_name" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Last name</label>
     </div>
   </div>
-  <button type="submit" class="mx-auto text-center text-white bg-pink-500 hover:bg-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded-full text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800" > Save Changes</button>
+  <hr class="h-px my-full bg-gray-200 border-0 dark:bg-gray-900 mb-4"/>
+  {fetchButton(loading)}
 </form>
 
       </div>
+    )
+}
+
+
+function fetchButton(state){
+    if(state){
+       return( <button type="submit" class="mx-auto text-center text-white bg-pink-500 hover:bg-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded-full text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800" > 
+        {spinnerButton()}
+        Saving Changes</button>)
+    }
+    else{
+      return(  <button type="submit" class="mx-auto text-center text-white bg-pink-500 hover:bg-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded-full text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800" > 
+        Save Changes</button>)
+    }
+}
+
+const spinnerButton = ()=>{
+    return(
+        <svg aria-hidden="true" class="w-4 h-4 me-2 text-gray-200 animate-spin dark:text-gray-600 inline fill-white" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/></svg>
     )
 }

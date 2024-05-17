@@ -18,10 +18,14 @@ export default async function signUp(type,name,email, password) { //name,email,p
         await updateProfile(auth.currentUser,{displayName: name}).then(()=>{
             var isOrganizerValue = (type=="eOrganizer")? true : false
             var isConcessValue = (type=="eConcess") ? true : false
+            
             setDoc(doc(db,'users',auth.currentUser.uid),{
                 isAdmin: false,
                 isConcess: isConcessValue,
-                isOrganizer: isOrganizerValue
+                isOrganizer: isOrganizerValue,
+                displayName: auth.currentUser.displayName,
+                userImage: '',
+                isAccountActive:true
             })
          
         }).catch((err)=>

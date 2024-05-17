@@ -3,7 +3,7 @@
 
 
 import firebase_app from "../config";
-import {getFirestore,doc, getDocs} from 'firebase/firestore';
+import {getFirestore,doc, getDocs,updateDoc} from 'firebase/firestore';
 
 import { collection, query,where, onSnapshot} from 'firebase/firestore';
 
@@ -15,7 +15,8 @@ export default class userDBClass{
     this.uid = auth.uid
     this.name = auth.displayName
     this.email = auth.email
-    this.phoneNum = auth.phoneNum
+    this.photoURL = auth.photoURL
+    this.db = db
   }
   async setAccValues (){
    try{
@@ -31,7 +32,7 @@ export default class userDBClass{
         'uid' : this.uid,
         'accountType' : data,
         'email': this.email,
-        'phoneNum':this.phoneNum
+        'photoURL':this.photoURL
       }
       var toJSON = JSON.stringify(obj);
       localStorage.setItem('currentUser', toJSON);
@@ -41,6 +42,15 @@ export default class userDBClass{
     console.log(err)
    }
 }
+async updateAtrribute(attrName, value,uid){
+  const docRef = doc(this.db,"users",uid)
+  await updateDoc(docRef,{
+    [attrName]: value
+  }).catch((err)=>{
+    console.log(docRef.path + "   "+err)
+  })
+}
+
   async getUsers(arg0, queryOp, arg1){  
     const q = query(collection(db,'users'),where(arg0,queryOp,arg1))
     const qsnapshot = await getDocs()

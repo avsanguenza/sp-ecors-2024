@@ -10,7 +10,6 @@ function searchPage({
     searchParams,
   }: {
     searchParams?: {
-      query?: string;
       page?: string;
     };
   })
@@ -39,7 +38,7 @@ function searchPage({
     <table className='table'>
     {searchBodyHeaderEvent()}
     <tbody>
-            <Suspense fallback={<Loading/>}>{Results(sParams.get('typeQuery'),sParams.get('query'))}</Suspense>
+            <Suspense fallback={<Loading/>}>{Results('Events',sParams.get('query'))}</Suspense>
             </tbody>
             </table>
             </div>
@@ -114,9 +113,9 @@ function searchBodyHeaderUser(){
     <thead>
     <tr>
       <th>User</th>
-      <th>Position</th>
+      <th>Type</th>
+      <th>Profession</th>
       <th>Preferred Type of Wage</th>
-      <th></th>
       <th></th>
     </tr>
   </thead>

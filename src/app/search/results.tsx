@@ -48,14 +48,15 @@ export default async function Results(type,data){
 async function getEventResults(type,data){
  let e = new eventData()
  let tempResults = new Array()
- if(data.length>0){
+try{
+  if(data.length>0){
     switch(type){
-        case 'Events':    e.getData('events','eventName','>=', data)
+        case 'Events':  e.getData('events','eventName','>=', data)
         await new Promise ((resolve)=> setTimeout(resolve,2000));
         var obj= e.dataobjMap  
         obj.forEach((v,k)=>{
            var temp = JSON.parse(v)
-           if(temp.eventName.includes(data)){
+           if(temp.eventName.includes(data) || temp.eventCreatorName.includes(data)){
                tempResults.push(temp)
        
            }
@@ -65,5 +66,8 @@ async function getEventResults(type,data){
        default: break;
     }
  }
+} catch(err){
+  window.location.replace('/error')
+}
 return tempResults
 }
