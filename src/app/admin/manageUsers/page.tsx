@@ -6,17 +6,17 @@ import { useEffect, useState } from "react";
 function manageUsers(){
 const [data,setData] = useState([])
 
-let uidata = new userData()
+//let uidata = new userData()
 let results = new Array;
    useEffect(()=>{
-    uidata.getAllData().then(()=>{
-      var output = uidata.userDataObj
-      output.forEach((v,k)=>{
-        var temp = JSON.parse(v)
-        results.push(temp)
-      })
-      setData(results)
-    })
+  //  uidata.getAllData().then(()=>{
+   //   var output = uidata.userDataObj
+    //  output.forEach((v,k)=>{
+     //   var temp = JSON.parse(v)
+      //  results.push(temp)
+     // })
+    // // setData(results)
+    //})
     
    // admin_getUser('TUW58vakjmSFutrNLEEgtbV3BuM2')
   // admin_updateUser('jo8Tdbv8pnMnVUc2mAb32VqJ7AZ2', 'Alecs Sanguenza')

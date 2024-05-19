@@ -8,7 +8,6 @@ errorMsg ;
 
 export default async function signIn(email, password) {
  
-
         try{
             const result = await signInWithEmailAndPassword(auth,email,password).then((userCredential)=>{
                 const user = usercredential.user;
@@ -16,11 +15,6 @@ export default async function signIn(email, password) {
         
         } catch(error){
             errorMsg = error.code
-      //      console.log(error.code);
         }
-     
-
-    
- //   console.log(errorMsg);
     return { result, errorMsg};
 }

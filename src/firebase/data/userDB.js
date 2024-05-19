@@ -1,6 +1,4 @@
 
-//get and set values here
-
 
 import firebase_app from "../config";
 import {getFirestore,doc, getDocs,updateDoc} from 'firebase/firestore';
@@ -20,7 +18,6 @@ export default class userDBClass{
   }
   async setAccValues (){
    try{
-    console.log(this.uid)
     const unsub = onSnapshot(doc(db,"users",this.uid),(doc)=>{
       const userData = doc.data()
       let data = (doc.data().isOrganizer== true ? 'Event Organizer' : 'User');
@@ -34,13 +31,13 @@ export default class userDBClass{
         'email': this.email,
         'photoURL':this.photoURL
       }
+      console.log(obj)
       var toJSON = JSON.stringify(obj);
       localStorage.setItem('currentUser', toJSON);
   });
    }
    catch(err){
-    console.log(err)
-   }
+  }
 }
 async updateAtrribute(attrName, value,uid){
   const docRef = doc(this.db,"users",uid)

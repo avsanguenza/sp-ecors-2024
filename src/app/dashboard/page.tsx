@@ -6,10 +6,13 @@ import firebase_app from '@/firebase/config';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from "next/navigation";
 
-import {appData, eventData} from '@/firebase/data/event'
+import {eventData} from '@/firebase/data/event'
 import userSetupPage from '../userSetup/page';
 import navBar from '../navBar';
 import { imageData } from '@/firebase/data/storage';
+import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import Loading from './loading-dashboard';
 const auth = getAuth(firebase_app);
 let imgdata = new imageData('event')
 
@@ -20,13 +23,7 @@ const navigation = [
     { name: 'Profile', href: '#', current: false },
     { name: '', href: '#', current: false },
   ]
-  
 
-const organizerNav = [
-      {name: 'Dashboard', href: '#', current:true},
-      {}
-
-]
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -51,7 +48,7 @@ function currUser(){
 
 
 export default function Page(){
-  const[activeIndex, setActiveIndex] = useState(0);
+  const[activeIndex, setActiveIndex] = useState(false);
   const [data,setData] = useState([])
   const [isOpen, setIsOpen] = useState(false)
   const [dbData, setDBdata] = useState({eventuid:'', eventName: '', eventCreator:'', eventLocation:'', eventWType:'',eventWTypeVal:'', eventDate:'', description:''})
@@ -83,26 +80,26 @@ export default function Page(){
             <p className='mt-3 text-xl'> Looking for event position</p>
             <div className='mt-6 inline-flex'>
               <div className='px-3 inline-flex'>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-3">
   <path d="M12.75 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM7.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM8.25 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM9.75 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM10.5 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM12.75 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM14.25 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 17.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 15.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM15 12.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM16.5 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
   <path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z" clip-rule="evenodd" />
                 </svg>
                 {dbData.eventDate} </div>
                 <div className='px-3 inline-flex'> 
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-3">
   <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
   <path fill-rule="evenodd" d="M22.5 9.75h-21v7.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-7.5Zm-18 3.75a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z" clip-rule="evenodd" />
 </svg>
                 {dbData.eventWageType}</div>
               <div className='px-3 inline-flex'>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-3">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-3">
   <path d="M10.464 8.746c.227-.18.497-.311.786-.394v2.795a2.252 2.252 0 0 1-.786-.393c-.394-.313-.546-.681-.546-1.004 0-.323.152-.691.546-1.004ZM12.75 15.662v-2.824c.347.085.664.228.921.421.427.32.579.686.579.991 0 .305-.152.671-.579.991a2.534 2.534 0 0 1-.921.42Z" />
   <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v.816a3.836 3.836 0 0 0-1.72.756c-.712.566-1.112 1.35-1.112 2.178 0 .829.4 1.612 1.113 2.178.502.4 1.102.647 1.719.756v2.978a2.536 2.536 0 0 1-.921-.421l-.879-.66a.75.75 0 0 0-.9 1.2l.879.66c.533.4 1.169.645 1.821.75V18a.75.75 0 0 0 1.5 0v-.81a4.124 4.124 0 0 0 1.821-.749c.745-.559 1.179-1.344 1.179-2.191 0-.847-.434-1.632-1.179-2.191a4.122 4.122 0 0 0-1.821-.75V8.354c.29.082.559.213.786.393l.415.33a.75.75 0 0 0 .933-1.175l-.415-.33a3.836 3.836 0 0 0-1.719-.755V6Z" clip-rule="evenodd" />
 </svg>
 
               {dbData.eventWageTypeVal}</div>
             </div>
-            <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+            <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
             <div className='text-2xl text-bold font-bold'>Job Description</div>
 
             <p className='mt-8 text-ms text-justified' >{dbData.eventDescription}</p>
@@ -122,26 +119,33 @@ export default function Page(){
 
   useEffect(()=>{
     //fetch all possible eventUID ->procedurally create cards -> update states
-    edata.getData('events','isOpen','==',true).then(()=>{
-      var output = edata.dataobjMap
+  edata.getData('events','isOpen','==',true).then(async()=>{
+     var output = edata.dataobjMap
       output.forEach((v,k)=>{
-        var temp = JSON.parse(v)
+       var temp = JSON.parse(v)
         //add appcount here
-        results.push(temp)
+      results.push(temp)
       })
-     setData(results)
-      setActiveIndex(1)
-    })
+    setData(results)
+    await new Promise ((resolve)=> setTimeout(resolve,1000));
+
+     setActiveIndex(true)
+   }).catch(()=>{
+    setActiveIndex(false)
+    toast.error('Something went wrong. Please try again.')
+   })
   },[])
 
     return (
       <>
      {navBar()}
-        
+        <Toaster/>
+
       <div className='grid grid-cols-5 gap-3'>
-      { data.map((d)=>{
+    
+      { data.map((d)=>{ 
         return(
-          <Panel  isActive={activeIndex===0}>
+          <Panel  isActive={activeIndex===true}>
                <div class="mt-10 ml-5  max-w-sm p-6 text-center bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
             <img className="h-auto max-w-full rounded-lg" src={d.eventImageURL}/>
 
@@ -171,8 +175,7 @@ export default function Page(){
       )
       }
 
-      </div>
-      
+      </div>   
     
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={()=>closeModal()}>
@@ -188,7 +191,7 @@ export default function Page(){
               <div className='text-end'>
                    <button type="button" class="text-gray-800 bg-white border border-gray-800 hover:bg-pink-200 hover:text-white font-medium rounded-lg text-xs px-2.5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2" onClick={()=>closeModal()}>
       
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-3 h-3">
   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
 </svg>
 
@@ -197,7 +200,7 @@ export default function Page(){
 
                 <div className="text-center ">
                 <Dialog.Title className='h3 mb-8'> {dbData.eventName} Details</Dialog.Title>
-                <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+                <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
 
                 </div>
                 {dialogAppBody(dbData)}
@@ -222,31 +225,7 @@ function Panel({
 }){
   return(
     <div className='text-center'>
-        {isActive ? skeleton() : (children) }
+             {isActive ?  (children) : <Loading/>}
     </div>
-  )
-}
-
-function skeleton(){
-  return(
-    <>
-    <div role="status" class="flex items-center justify-center h-56 max-w-sm bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700">
-    <svg class="w-10 h-10 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
-    <path d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.98 2.98 0 0 0 .13 5H5Z"/>
-    <path d="M14.066 0H7v5a2 2 0 0 1-2 2H0v11a1.97 1.97 0 0 0 1.934 2h12.132A1.97 1.97 0 0 0 16 18V2a1.97 1.97 0 0 0-1.934-2ZM9 13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2Zm4 .382a1 1 0 0 1-1.447.894L10 13v-2l1.553-1.276a1 1 0 0 1 1.447.894v2.764Z"/>
-  </svg>
-  
-    <span class="sr-only">Loading...</span>
-    
-</div>
-<h2 className="mt-3 text-center h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></h2>
-<hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
-<ul className="flex items-center w-full me-4">
-  <li><p class="mt-2  text-left h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></p></li>
-  <li>
-
-</li>
-</ul>
-</>
   )
 }
