@@ -21,7 +21,7 @@ function messagePage(){ //sender0, sender1; sender0 - active user
     const [sender1, setSender1] = useState({uid:sessionStorage.getItem('sender1uid'), name:sessionStorage.getItem('sender1name')})
     const [messageHistory, setMessageHistory] = useState([])
     const [messageHist, setMessageHist] = useState([])
-    var msg = new Messages(sender0.uid,sender0.name,sender1.uid,sender1.name)
+    var msg = new Messages(udata.getUserUID(),udata.getUserUID(),sender1.uid,sender1.name)
     const handleMessageSend= async (e)=>{
       e.preventDefault()
       msg.newMessage=''
@@ -43,9 +43,9 @@ useEffect(()=>{
     })
 },[])
 
-useEffect(()=>{
-  
-  msg.fetchUserMessage().then(()=>{
+useEffect(()=>{  
+  msg.fetchUserMessage().then(async()=>{
+    await new Promise ((resolve)=> setTimeout(resolve,2000));
     setMessageHist(msg.userConvos)
   })
 },[])
@@ -59,18 +59,15 @@ useEffect(()=>{
   <div class="row-start-1 row-end-7 col-span-1 bg-white">
   <h2 className="ml-7 px-3 py-4 text-3xl font-bold">Messages</h2> 
   <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
-  <Suspense fallback={<MessageListLoading/>} >{messagePreviewList(messageHist,sender0.name,sender1.name)}</Suspense>
+  <Suspense fallback={<MessageListLoading/>} >{messagePreviewList(messageHist,udata.getUserUID())}</Suspense>
 
-    {
-     
-    }
   </div>
   <div className="grid grid-rows-subgrid row-span-4 col-span-2 bg-white">
-    <div className="row-end-1 bg-white px-5 py-8 font-semibold text-3xl"> {sender1.name} </div>
+    <div className="row-end-1 bg-white px-5 py-8 font-semibold text-3xl"> {sender1.uid} </div>
     <div id='messageWindow'className="row-start-2 row-end-5 bg-white overflow-y-auto">
     {}
     <Suspense fallback={<Loading/>}>{
-    ChatBubbles(messageHistory,sender0.uid,sender1.uid)
+    ChatBubbles(messageHistory,udata.getUserUID(),sender1.uid)
     }</Suspense>
   </div>
   </div>

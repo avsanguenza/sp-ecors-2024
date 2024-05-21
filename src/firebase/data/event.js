@@ -39,6 +39,7 @@ export  class eventData extends appData{
       this.eventImageURL='';
       this.dataobjMap = new Map();
       this.eventKeys = new Array();
+      this.eventDataObj = new Array()
     }
 
     async setData(uid, eventCName, eventNameInput, eventDateInfo, eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal,eventimg){
@@ -53,6 +54,7 @@ export  class eventData extends appData{
             eventWageType:eventWType,
             eventWageTypeValue:eventWTypeVal,
             eventImage:eventimg,
+            isFeatured: false,
             isOpen: true
         })
 
@@ -67,7 +69,7 @@ export  class eventData extends appData{
         this.eventUID = doc.id;
         this.eventImageURL = doc.data().eventImage
         this.eventDate = doc.data().eventDate;
-        this.eventKeys.push(doc.id);
+      //  this.eventKeys.push(doc.id);
         this.eventLocation=doc.data().eventLocation;
         this.wageType = doc.data().eventWageType;
         this.wageTypeVal = doc.data().eventWageTypeValue;  
@@ -79,6 +81,32 @@ export  class eventData extends appData{
         //dataToJSON(this.eventUID,this.eventName, this.eventLocation,this.eventWageType,this.eventWageTypeVal)
 
      }
+
+     async getAllData(){
+        const q= query(collection(this.db,'events'))
+        const qSnapshot = await getDocs(q)
+        qSnapshot.forEach((doc)=>{
+           if(doc.data().isOpen){
+            var data ={
+                'eventuid': doc.id,
+                'eventName': doc.data().eventName,
+                'eventCreatorName': doc.data().eventCreatorName,
+                'eventDate' :doc.data().eventDate,
+                'eventLocation': doc.data().eventLocation,
+                'isFeatured': doc.data().isFeatured
+            }
+            this.eventDataObj.push(data)
+           }
+        })
+    }
+
+    async fetchEventID(){
+        const q= query(collection(this.db,'events'))
+        const qSnapshot = await getDocs(q)
+        qSnapshot.forEach((doc)=>{
+            this.eventKeys.push(doc.id)
+        })
+    }
 
     async updateData(eventUID, eventNameInput, eventDateInfo, eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal){
         const docRef = doc(this.db,"events",eventUID)
@@ -95,6 +123,13 @@ export  class eventData extends appData{
         }).catch((err)=>console.log(err))
     }
 
+    async updateAttribute(uid,attr,value){
+        const docRef = doc(this.db,'events',uid)
+        await updateDoc(docRef,{
+            [attr]: value
+        }, {merge:true})
+    }
+    
     async updateStatus(eventUID, eventStatus){
         const docRef = doc(this.db,"events",eventUID)
         await updateDoc(docRef,{
@@ -163,6 +198,7 @@ export class eventFormData extends appData{
         this.applicationStatus=''
         this.applicantFile='';
         this.eventDataObj = new Map();
+        this.applicantFileObj = new Array()
     }
 
     async setData(phoneNum,emailAdd,appFile){
@@ -206,8 +242,39 @@ export class eventFormData extends appData{
             [attrName]: value
         })
     }
-    async getSpecificData(){
+
+    async getSpecificData(uid,arg0,qOp,arg1){
+    
+        const col0Ref = query(collection(this.db,'events')) 
+        const snapshot0 = await getDocs(col0Ref)
+        snapshot0.forEach(async (d)=>{
+          var tempData = d
+          const colRef = collection(this.db,'event-application/'+uid+"/entries")
+          const qColRef = query(colRef,where(arg0,qOp,arg1))
+          const snapshot = await getDocs(qColRef)
+          snapshot.forEach((doc)=>{
+              var data={
+                  'eventuid': tempData.id,
+                  'eventName': tempData.data().eventName,
+                  'eventCreatorName': tempData.data().eventCreatorName,
+                  'eventLocation' :tempData.data().eventLocation,
+                  'eventWageType': tempData.data().eventWageType,
+                  'eventWageTypeVal': tempData.data().eventWageTypeValue,
+  
+                  'applicationStatus': doc.data().applicationStatus,
+                  'emailAddress': doc.data().emailAddress,
+                  'phoneNumber': doc.data().phoneNumber
+
+              }
+            //  console.log(data)
+              if(!this.applicantFileObj.includes(data)){
+                this.applicantFileObj.push(data)
+              }
+          })
+    
+        })
         
+
     }
     dataToJSON(){
        let data= {

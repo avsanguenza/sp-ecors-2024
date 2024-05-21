@@ -20,9 +20,8 @@ export default class Messages{
     async getData(){
         //FORMAT OF DB-> messaging (db) / convo id {check send0, send1} / messages / messageID {SORT} 
         if(!await this.checkExistingConvo()){
-            const qRef = query(collection(this.db,'messaging'),where('sender0','==',this.sender0uid),where('sender1','==',this.sender1uid))
+            const qRef = query(collection(this.db,'messaging'),or(where('sender0','==',this.sender0uid),where('sender1','==',this.sender0uid)))
             const snapshot = await getDocs(qRef).then(async(sn)=>{
-             //   console.log(sn.docs[0].id)
                 var convoid= sn.docs[0].id
                 const q0 = query(collection(this.db,'messaging/'+convoid+'/chat'),orderBy('timeSent'))
                 await new Promise ((resolve)=> setTimeout(resolve,2000));
@@ -51,7 +50,7 @@ export default class Messages{
 
     async checkExistingConvo(){
         const colRef = collection(this.db,'messaging')
-        const qRef = query(collection(this.db,'messaging'),where('sender0','==',this.sender0uid),where('sender1','==',this.sender1uid))
+        const qRef = query(collection(this.db,'messaging'),or(where('sender0','==',this.sender0uid),where('sender1','==',this.sender0uid)))
         const snapshot = (await getDocs(qRef)).empty
        // console.log((await snapshot).docs[0].id)
         return snapshot
@@ -64,7 +63,7 @@ export default class Messages{
     }
     async updateConvo (msgData){
        if(!await this.checkExistingConvo()){
-        const qRef = query(collection(this.db,'messaging'),where('sender0','==',this.sender0uid),where('sender1','==',this.sender1uid))
+        const qRef = query(collection(this.db,'messaging'),or(where('sender0','==',this.sender0uid),where('sender1','==',this.sender0uid)))
         const snapshot = await getDocs(qRef).then(async(sn)=>{
             var convoid= sn.docs[0].id
             await this.updateAttribute(convoid,'lastUpdates',serverTimestamp()).then(async()=>{
@@ -106,7 +105,9 @@ export default class Messages{
                 var data ={
                     'convoid': doc.id,
                     'sender0': doc.data().sender0,
-                    'sender1': doc.data().sender1
+                    'sender0Name': doc.data().sender0Name,
+                    'sender1': doc.data().sender1,
+                    'sender1Name': doc.data().sender1Name
                 }
                 this.userConvos.push(data)
               }

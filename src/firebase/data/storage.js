@@ -1,6 +1,6 @@
 import { getDoc } from "firebase/firestore";
 import { storage } from "../config";
-import { ref,uploadBytesResumable,getDownloadURL, getStorage, uploadString } from "firebase/storage";
+import { ref,uploadBytesResumable,getDownloadURL, getStorage, uploadString,getMetadata,listAll } from "firebase/storage";
 
 
 export default class storageData{
@@ -61,7 +61,56 @@ export class imageData extends storageData{
 }
 
 export class adminData extends storageData{
-  
+  constructor(){
+        super()
+        this.folderName = 'carousel/'
+        this.metadata=''
+        this.imageDataObj= new Array()
+        this.imageDataObjMap = new Map()
+  }
+
+  async uploadAssets(file){
+    const imageRef = ref(this.storage, this.folderName+file.name,this.getMetadata(file.type))
+    return uploadBytesResumable(imageRef, file.blob).then((snapshot)=>{
+       return getDownloadURL(snapshot.ref).then((sn)=>{
+           return sn
+       })
+   }) 
+   
+  }
+  async getFiles(){
+    var storageRef = ref(this.storage,'carousel/')
+    listAll(storageRef).then((res)=>{
+        res.items.forEach((f)=>{
+            getMetadata(f).then((val)=>{
+                return val.name
+            }).then((name)=>{
+                getDownloadURL(f).then((sn)=>{
+                    if(!this.imageDataObj.includes(sn)){
+                        var data={
+                            'name': name,
+                            'link':sn
+                        }                        
+                        this.imageDataObj.push(sn)
+                    }
+                   })
+            })
+          
+        })
+    }).catch((err)=>{
+        console.log(err)
+    })
+  }
+
+  getMetadata(type){
+    if(type=='jpg' || type=='jpeg'){
+        return({  contentType: 'image/jpeg'})
+    }
+    else if( type =='png'){
+        return({ contentType: 'image/png'})
+    }
+   
+}
 }
 
 export class fileData extends storageData{

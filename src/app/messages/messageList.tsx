@@ -1,11 +1,14 @@
-async function messagePreviewList(list,sender0,sender1){
+async function messagePreviewList(list,viewer){
     var msgList = list
-return(
+
+    return(
     <>
     {
         msgList.map((d)=>{
+          var s1 = (d.sender1 == viewer) ? d.sender0 : d.sender1
+          var sName1 = (s1 ==viewer) ? d.sender1Name: d.sender0Name
             return(
-                convoButton(d.sender1,d.timeSent,d.sender1)
+                convoButton(sName1,d.timeSent,s1)
                 //listDesign(d.sender1,d.timeSent)
             )
         })
@@ -47,7 +50,7 @@ function listDesign(name,time){
     return(
         <>
        <div>
-       <button className='bg-gray-200  w-full rounded lg px-4 py-5' onClick={()=>fetchMessage(uid)}>
+       <button className='bg-gray-200  w-fullrounded lg px-4 py-5' onClick={()=>fetchMessage(uid)}>
        <div class="flex items-center grid-rows">
                   <img className="bg-left rounded-full h-16 w-16  " src="https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"/>
                   <div className="ml-3">
