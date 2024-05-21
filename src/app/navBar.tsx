@@ -7,36 +7,19 @@ import { title } from 'process';
 import { useSearchParams } from 'next/navigation';
 import { usePathname, useRouter } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
+import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 let accInfo = new userData();
 accInfo.parseData()
 
+const Admin = [
+  'admin',
+  '',
+  '/search'
+]
+const User = [
 
-const baseNav =[
-    { name: 'Events', href: '#', current: true },
-    { name: 'Manage Events', href: '#', current: false },
-    { name: 'Projects', href: '#', current: false },
-    { name: 'Calendar', href: '#', current: false },
-  ]
-const eOrgNav =[
-    { name: 'Dashboard', href: '#', current: true },
-    { name: 'Team', href: '#', current: false },
-    { name: 'Projects', href: '#', current: false },
-    { name: 'Calendar', href: '#', current: false },
-  ]
-const eAppNav =[
-    { name: 'Dashboard', href: '#', current: true },
-    { name: 'Team', href: '#', current: false },
-    { name: 'Projects', href: '#', current: false },
-    { name: 'Calendar', href: '#', current: false },
-  ]
-  const adminNav =[
-    { name: 'Dashboard', href: '#', current: true },
-    { name: 'Team', href: '#', current: false },
-    { name: 'Projects', href: '#', current: false },
-    { name: 'Calendar', href: '#', current: false },
-
-  ]
-
+]
 var titleName=''
   export  const metadata :Metadata={
     title: titleName, 
@@ -48,6 +31,7 @@ function navBar (){
     useEffect(()=>{
 
         document.title = title
+        isUserSupposedToBeHere(accInfo.userType)
       })
     
    
@@ -75,6 +59,7 @@ function navBar (){
         </div>
       </div>
     </nav>
+    <Toaster/>
       </>
     )
 }
@@ -161,7 +146,7 @@ function checkUser(){
         <Menu.Item>
           
           {({ active }) => (
-            <a href="/dashboard/settings">
+            <a href="/dashboard/settings" hidden={(accInfo.getUserType()=='Admin')}>
             <button
               className={`${
                 active ? 'bg-pink-500 text-white' : 'text-gray-900'
@@ -236,7 +221,15 @@ function setClass(string){
   }
  
 
-
+export function isUserSupposedToBeHere(user){
+const loc = window.location.pathname.split("/")[1]
+  if(user=='Admin'){
+    if(!Admin.includes(loc)){
+    //  toast.error('Access denied.')
+      window.location.replace('/')
+    }
+  }
+}
 export function useTitle(title){
     useEffect(()=>{
         const prevTitle = document.title;
@@ -281,12 +274,7 @@ function navBarContent(type){
           </a>
         </li>
         <li className="nav-item">
-          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="/dashboard/myJobs">
-            <span className="ml-2">Manage Events</span>
-          </a>
-        </li>
-        <li className="nav-item">
-          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="/messages">
+          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="/admin/manageAssets">
             <span className="ml-2">Manage Assets</span>
           </a>
         </li>

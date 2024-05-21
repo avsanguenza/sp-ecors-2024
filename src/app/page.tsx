@@ -1,8 +1,11 @@
 'use client'
 import Image from 'next/image';
 import navBar from './navBar';
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 //make loading screen -> loading animation ->navbar 
+//featured events
+var i= 0
+
 export default function Page() {
   return (
   <>
@@ -10,7 +13,7 @@ export default function Page() {
   
   {carousel()}
   <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
-
+  <h2 className='text-2xl font-bold text-center'>Featured Events</h2>
   </>
   )
 

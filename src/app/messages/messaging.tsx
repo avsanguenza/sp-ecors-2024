@@ -12,6 +12,11 @@ async function ChatBubbles(messageHistory,sender0,sender1){
                     sender0Bubble(d.message,d.timeSent)
                 )
                }
+               else{
+                return(
+                  sender1Bubble(d.message,d.timeSent)
+                )
+               }
             })
         }
         </>
@@ -22,7 +27,7 @@ async function ChatBubbles(messageHistory,sender0,sender1){
 export default ChatBubbles
 
 function sender0Bubble(message,time){
-    const date = time.toDate().toDateString()
+    const date = time.toDate().toDateString() //too fast
     return(
       <div class="chat chat-end">
     <div class="chat-header text-start ">
@@ -48,7 +53,7 @@ function sender0Bubble(message,time){
 
   function sender1Bubble(message,time){
 
-    const date = time.toDate().toDateString()
+    const date = time.toDate().toDateString() //too fast throw 
     return(
       <div class="chat chat-start">
     <div class="chat-header text-start ">

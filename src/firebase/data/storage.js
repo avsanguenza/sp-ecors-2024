@@ -60,6 +60,10 @@ export class imageData extends storageData{
     }
 }
 
+export class adminData extends storageData{
+  
+}
+
 export class fileData extends storageData{
     constructor(eventid){
         super()

@@ -1,5 +1,5 @@
 import firebase_app from "../config";
-import {getFirestore,doc, getDocs, setDoc, query,collection, addDoc, updateDoc,serverTimestamp, getDoc, orderBy} from 'firebase/firestore';
+import {getFirestore,doc, getDocs, setDoc, query,collection, addDoc, updateDoc,serverTimestamp, getDoc, orderBy, onSnapshot,or} from 'firebase/firestore';
 import {where} from 'firebase/firestore';
 import userData from "@/app/dashboard/user";
 const firebase_app_init = firebase_app;
@@ -13,6 +13,8 @@ export default class Messages{
         this.sender1uid = sender1uid
         this.sender1Name = sender1Name
         this.messageHistory= new Array()
+        this.userConvos = new Array()
+        this.newMessage = 'initial';
     }
 
     async getData(){
@@ -36,6 +38,7 @@ export default class Messages{
                   //  console.log(data)
                     this.messageHistory.push(data)
                 })
+                this.updateMessageListener()
                // var convoRef = await getDocs(collection(this.db,'messaging/'+convoid+'/chat'))
                // convoRef.forEach((c)=>{
               //      console.log(c.id)
@@ -70,6 +73,8 @@ export default class Messages{
                 msgSenderID: this.sender0uid,
                 message: msgData,
                 timeSent: serverTimestamp()
+            }).then(()=>{
+                this.newMessage='added'
             })
             })
            // var convoRef = await getDocs(collection(this.db,'messaging/'+convoid+'/chat'))
@@ -81,10 +86,32 @@ export default class Messages{
     
        }
     }
+    async updateMessageListener(){
+        const observerQ =  query(collection(this.db,'messaging'),where('sender0','==',this.sender0uid),where('sender1','==',this.sender1uid))
+        const unsub= onSnapshot(observerQ,(qnSnap)=>{
+            qnSnap.docChanges().forEach((ch)=>{
+                if(ch.type==='added'|| ch.type ==='modified'){
+                    this.newMessage='changed'
+                }
+            })
 
-    async fetchUserMessage(){
-        
+            unsub();
+        })
     }
+    async fetchUserMessage(){
+        const qRef = query(collection(this.db,'messaging'),or(where('sender0','==',this.sender0uid),where('sender1','==',this.sender0uid)))
+        const snapshot = await getDocs(qRef,orderBy('lastUpdates'))
+            snapshot.forEach((doc)=>{
+              if(!this.userConvos.includes(doc.id)){
+                var data ={
+                    'convoid': doc.id,
+                    'sender0': doc.data().sender0,
+                    'sender1': doc.data().sender1
+                }
+                this.userConvos.push(data)
+              }
+            }) 
+           }
     async createT(msgData){
         const tRef = collection(this.db,'messaging')
       if(await this.checkExistingConvo(this.sender0uid,this.sender1uid)){

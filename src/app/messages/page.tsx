@@ -5,7 +5,9 @@ import { Suspense } from "react";
 import Loading from "./loading";
 import MessageListLoading from "./messageListLoading";
 import ChatBubbles from "./messaging";
+import messagePreviewList from "./messageList";
 import Messages from '@/firebase/messaging/message'
+import userData from "../dashboard/user";
 var messageArray = new Array()
 function messagePage(){ //sender0, sender1; sender0 - active user
     //when accessing a message, you should check if the currentUser == sender0 or sender1
@@ -13,30 +15,42 @@ function messagePage(){ //sender0, sender1; sender0 - active user
     //and determine if the accessing user is 0 or 1, then put the messages based on the access
     //(if sender 0 is the one accessing the message, they should go to chat-end <div> tags)
     //const [chatData, setChatData] =  useState([])
-    const [sender0, setSender0] = useState({uid:sessionStorage.getItem('sender0uid'), name:sessionStorage.getItem('sender0name')})
+    let udata = new userData()
+    udata.parseData()
+    const [sender0, setSender0] = useState({uid:udata.getUserUID(), name:udata.getName()})
     const [sender1, setSender1] = useState({uid:sessionStorage.getItem('sender1uid'), name:sessionStorage.getItem('sender1name')})
     const [messageHistory, setMessageHistory] = useState([])
+    const [messageHist, setMessageHist] = useState([])
     var msg = new Messages(sender0.uid,sender0.name,sender1.uid,sender1.name)
     const handleMessageSend= async (e)=>{
       e.preventDefault()
-    var msg = new Messages(sender0.uid,sender0.name,sender1.uid,sender1.name)
+      msg.newMessage=''
    if (await msg.checkExistingConvo()){
     await  msg.createT(document.getElementById('chatMsg').value)
     }
     else{
-      await   msg.updateConvo(document.getElementById('chatMsg').value)
+      await   msg.updateConvo(document.getElementById('chatMsg').value).then(()=>{
+         msg.updateMessageListener()
+      })
       }
 
   document.getElementById('chatMsg').value=''
-
+  window.location.reload()
   }
-  useEffect(()=>{
- //   msg.getData().then(()=>{
- //     setMessageHistory(msg.messageHistory)
+useEffect(()=>{
+    msg.getData().then(()=>{
+      setMessageHistory(msg.messageHistory)    
+    })
+},[])
 
-    //})
-  },[])
-    return(
+useEffect(()=>{
+  
+  msg.fetchUserMessage().then(()=>{
+    setMessageHist(msg.userConvos)
+  })
+},[])
+
+  return(
         <>
         {navBar()}
         
@@ -45,9 +59,10 @@ function messagePage(){ //sender0, sender1; sender0 - active user
   <div class="row-start-1 row-end-7 col-span-1 bg-white">
   <h2 className="ml-7 px-3 py-4 text-3xl font-bold">Messages</h2> 
   <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
-  
+  <Suspense fallback={<MessageListLoading/>} >{messagePreviewList(messageHist,sender0.name,sender1.name)}</Suspense>
+
     {
-  messageList()
+     
     }
   </div>
   <div className="grid grid-rows-subgrid row-span-4 col-span-2 bg-white">
@@ -55,7 +70,7 @@ function messagePage(){ //sender0, sender1; sender0 - active user
     <div id='messageWindow'className="row-start-2 row-end-5 bg-white overflow-y-auto">
     {}
     <Suspense fallback={<Loading/>}>{
-    //ChatBubbles(messageHistory,sender0.uid,sender1.uid)
+    ChatBubbles(messageHistory,sender0.uid,sender1.uid)
     }</Suspense>
   </div>
   </div>
@@ -75,7 +90,7 @@ function messagePage(){ //sender0, sender1; sender0 - active user
 }
 export default messagePage;
 
-function messageList(){
+function messageList(list){
   return(
     <>
             <div className="bg-gray-200 rounded lg px-4 py-3" >
