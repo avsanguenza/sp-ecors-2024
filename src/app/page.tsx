@@ -1,6 +1,6 @@
 'use client'
 import Image from 'next/image';
-import navBar from './navBar';
+import NavBar from './navBar';
 import { Suspense, useEffect, useState } from 'react';
 import { eventData } from '@/firebase/data/event';
 import { adminData } from '@/firebase/data/storage';
@@ -37,8 +37,7 @@ export default function Page() {
 },[])
   return (
   <>
-  {navBar()}
-  
+  <NavBar>
   <Suspense fallback={<CarouselLoadingSkeleton/>}>{carousel(imageData)}</Suspense>
   <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
   <h2 className='text-2xl font-bold text-center'>Featured Events</h2>
@@ -48,7 +47,8 @@ export default function Page() {
       return(
         <Panel isActive={loading ===true}>
            <div class="mt-10 ml-5  max-w-sm p-6 text-center bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-            <img className="h-auto max-w-full rounded-lg" src={d.eventImageURL}/>
+            <img className="h-auto max-w-full rounded-lg" src={d.eventImageURL} onClick={()=>  document.getElementById(d.eventName).showModal()
+}/>
 
           <a href="#">
           <h5 class="mt-4 text-2xl text-center font-semibold tracking-tight text-gray-900 dark:text-white">{d.eventName}</h5>
@@ -57,26 +57,44 @@ export default function Page() {
           <hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
 
           <ul className="flex items-center w-full me-4">
-          <li><p class="mt-2  text-left font-normal  dark:text-gray-400">{d.eventCreatorName}</p></li>
-          <li>
-          <a href="#" className='mt-3 inline-flex items-center'>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="ml-24 w-8 h-4">
-          <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clipRule="evenodd" /> 5
-          </svg>
-              4.0
-          </a>
-          </li>
+          <li className='flex items-start'>
+          <p className='font-medium'>Posted by:</p>
+          <img src={d.eventImageURL} className=' ml-3 h-5 w-5 mt-1 inline rounded-full'/>  
+          <p class=" ml-2 text-left font-normal  dark:text-gray-400">{d.eventCreatorName}</p></li>
+        
           </ul>
           </div>
+          {infoModal(d.eventName,d.eventLocation)}
 
         </Panel>
       )
     })
   }
  </div>
+  </NavBar>
+
   </>
   )
 
+function infoModal(eventName,eventLocation){
+  return(
+    <dialog id={eventName} class="modal">
+    <div class="modal-box">
+    <form method='dialog'>
+    <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+    </form>
+      <h3 class="font-bold text-lg">{eventName}</h3>
+      <p class="py-4">{eventLocation}</p>
+    </div>
+  
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+      
+    </form>
+  
+  </dialog>
+  )
+}
 function carousel(dataMap){
   return(
     <>

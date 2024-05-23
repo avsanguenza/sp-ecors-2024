@@ -1,5 +1,5 @@
 'use client'
-import navBar from "@/app/navBar";
+import NavBar from "@/app/navBar";
 import { adminData } from "@/firebase/data/storage";
 import { eventData } from "@/firebase/data/event";
 import { useEffect, useState } from "react";
@@ -25,10 +25,12 @@ const [imageData, setImageData] = useState([])
     },[])
     return(
         <>
-        {navBar()}
-        <Toaster
+        
+     <NavBar>
+     <Toaster
         containerStyle={{zIndex:99999}}/>
         {assetWindow(data,imageData)}
+     </NavBar>
         </>
     )
 }

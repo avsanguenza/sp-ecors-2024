@@ -42,13 +42,14 @@ export  class eventData extends appData{
       this.eventDataObj = new Array()
     }
 
-    async setData(uid, eventCName, eventNameInput, eventDateInfo, eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal,eventimg){
+    async setData(uid, eventCName, eventNameInput, eventDateInfoStart,eventDateInfoEnd, eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal,eventimg){
         const docRef = doc(collection(this.db,"events"))
         await setDoc(docRef,{
             userid: uid,
             eventCreatorName: eventCName,
             eventName: eventNameInput,
-            eventDate: eventDateInfo,
+            eventDateStart: eventDateInfoStart,
+            eventDateEnd: eventDateInfoEnd,
             eventLocation:eventLocInfo,
             description:eventDescriptionInput,
             eventWageType:eventWType,
@@ -74,12 +75,33 @@ export  class eventData extends appData{
         this.wageType = doc.data().eventWageType;
         this.wageTypeVal = doc.data().eventWageTypeValue;  
         this.description = doc.data().description;
+        this.eventImageURL = doc.data().eventImage;
         this.eventStatus = doc.data().isOpen;
         this.dataToJSON()
          })
 
         //dataToJSON(this.eventUID,this.eventName, this.eventLocation,this.eventWageType,this.eventWageTypeVal)
 
+     }
+
+     async getMultipleFieldData(collectionRef, arg0){
+        const q = query(collection(this.db, collectionRef),...arg0)
+        const qsnapshot = await getDocs(q);
+        qsnapshot.forEach((doc)=>{
+            this.eventName= doc.data().eventName;
+            this.eventCreatorName=doc.data().eventCreatorName;        
+            this.eventUID = doc.id;
+            this.eventImageURL = doc.data().eventImage
+            this.eventDate = doc.data().eventDate;
+          //  this.eventKeys.push(doc.id);
+            this.eventLocation=doc.data().eventLocation;
+            this.wageType = doc.data().eventWageType;
+            this.wageTypeVal = doc.data().eventWageTypeValue;  
+            this.description = doc.data().description;
+            this.eventImageURL = doc.data().eventImage;
+            this.eventStatus = doc.data().isOpen;
+            this.dataToJSON()
+             })
      }
 
      async getAllData(){

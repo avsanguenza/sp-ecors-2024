@@ -76,7 +76,17 @@ export class userData{
     const q = query(collection(this.db,collectionRef),where(arg0,queryOp,arg1))
     const qsnapshot= await getDocs(q)
     qsnapshot.forEach((doc)=>{
-      this.displayName = doc.data().displayName
+    // this.displayName = doc.data().displayName
+      var data={
+        'uid': doc.id,
+            'displayName': doc.data().displayName,
+            'isActive': doc.data().isAccountActive,
+            'isConcess': doc.data().isConcess,
+            'isOrganizer':doc.data().isOrganizer,
+            'userImage': doc.data().userImage
+      }
+      this.userDataObj.push(data)
+
     })
   }
   async getAllData(){

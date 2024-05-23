@@ -1,5 +1,5 @@
 'use client'
-import navBar from "@/app/navBar";
+import NavBar from "@/app/navBar";
 import {admin_getUser, admin_updateUser} from '@/firebase/admin/manageAdmin'
 import { userData } from "@/firebase/data/userDB";
 import { useEffect, useState } from "react";
@@ -21,9 +21,10 @@ let results = new Array;
    },[])
 return(
     <>
-    {navBar()}
-
-    <div role="tablist" className="tabs tabs-lifted">
+   
+<NavBar>
+  
+<div role="tablist" className="tabs tabs-lifted">
   <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="All" defaultChecked />
   <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">{allTable(data,'all')}</div>
 
@@ -36,6 +37,7 @@ return(
  <Toaster
   
     />
+</NavBar>
     </>
 )
 }

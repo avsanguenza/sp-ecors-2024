@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import firebase_app from "@/firebase/config";
 import { getAuth } from "firebase/auth";
 import  userDBClass from '@/firebase/data/userDB';
-
+import NavBar from "../navBar";
 
 
 const auth = getAuth(firebase_app);
@@ -75,10 +75,6 @@ function Page() {
 
         }
 
-       // console.log(result)
-        //get uid, to server
-       // console.log(auth.currentUser?.displayName)
-
        return router.push("/dashboard")
         
     }
@@ -93,8 +89,8 @@ const onOptionChange = (f)=>{
    localStorage.setItem('fromSUPage',f.target.value);
 }
 return (
-    
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+    <NavBar>
+ <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <div className="form-wrapper">
                 <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign up to {role}</h2>
                 <form onSubmit={handleForm} className="space-y-6 mt-16" >
@@ -175,6 +171,8 @@ return (
             </div>
         </div>
         
+    </NavBar>
+       
     );
 }
 

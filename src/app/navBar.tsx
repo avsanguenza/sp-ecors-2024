@@ -26,7 +26,8 @@ var titleName=''
 }
 
 
-function navBar (){
+function NavBar ({children}){
+
     const [title,setTitle] = useState('ECORS')
     useEffect(()=>{
 
@@ -42,6 +43,7 @@ function navBar (){
       <div className="container px-2 mx-auto flex flex-wrap items-center justify-between">
         <div className="w-full relative flex justify-between lg:w-auto  px-4 lg:static lg:block lg:justify-start">
           <a className="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white" href="/">
+            {icon()}
             ECORS
           </a>
           <button className="cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none" type="button">
@@ -60,12 +62,44 @@ function navBar (){
       </div>
     </nav>
     <Toaster/>
+    <div className='ml-8 mr-8 mb-8'>
+    {children}
+    </div>
+      {footer()}
       </>
     )
 }
 
-export default navBar;
+export default NavBar;
+function icon(){
+  return(
+    <svg xmlns="http://www.w3.org/2000/svg" className='w-6 h-6 inline mx-auto fill-white mr-4 ' viewBox="0 0 24 24"><path d="M19 5c-2.321 0-4.025 2.127-5 3.779a2.952 2.952 0 0 0-4 0C9.025 7.127 7.32 5 5 5a3.718 3.718 0 0 0-3.52 2.053A4.711 4.711 0 0 0 1 9a6.549 6.549 0 0 0 .753 3A6.549 6.549 0 0 0 1 15a4.711 4.711 0 0 0 .48 1.947A3.718 3.718 0 0 0 5 19c2.32 0 4.025-2.127 5-3.779a2.952 2.952 0 0 0 4 0C14.975 16.873 16.679 19 19 19a3.888 3.888 0 0 0 4-4 6.549 6.549 0 0 0-.753-3A6.549 6.549 0 0 0 23 9a3.888 3.888 0 0 0-4-4zM5 17a1.881 1.881 0 0 1-2-2 3.927 3.927 0 0 1 .707-2.3 1 1 0 0 0 0-1.414A3.918 3.918 0 0 1 3 9.008 1.884 1.884 0 0 1 5 7c1.71 0 3.288 2.657 3.909 4H7a1 1 0 0 0 0 2h1.909C8.288 14.343 6.71 17 5 17zm7-3a1 1 0 0 1-1-1v-2a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zm8.293-1.293A3.918 3.918 0 0 1 21 14.992 1.885 1.885 0 0 1 19 17c-1.711 0-3.288-2.657-3.909-4H17a1 1 0 0 0 0-2h-1.909c.621-1.343 2.2-4 3.909-4a1.882 1.882 0 0 1 2 2 3.927 3.927 0 0 1-.707 2.3 1 1 0 0 0 0 1.407z"/></svg>
+  )
+}
+function footer(){
+  return(
+    
 
+<footer class="bg-pink-500 rounded-lg shadow m-4 dark:bg-gray-800">
+  <div className='sm:absolute left-0 ml-16 md:flex'> 
+  <span class=" text-sm text-white dark:text-gray-400 py-4">© 2024 Alyssa Fatima V. Sanguenza 
+    </span>
+  </div>
+    <div class="w-full mx-auto max-w-screen-xl p-4 md:flex items-end md:justify-between">
+
+    <ul class="flex items-end mt-3 text-sm font-medium text-white sm:mt-0">
+        <li>
+            <a href="#" class="hover:underline me-4 md:me-6">About</a>
+        </li>
+        <li>
+            <a href="mailto:avsanguenza@up.edu.ph" class="hover:underline">Contact</a>
+        </li>
+    </ul>
+    </div>
+</footer>
+
+  )
+}
 function searchBar(){
   const searchParams = useSearchParams()
   const [searchQuery, setSearchQuery] = useState('')
@@ -307,13 +341,13 @@ function navBarContent(type){
             <>
        
             <li className="nav-item">
-              <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="#pablo">
+              <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="/events">
                 <i className="fab fa-twitter text-lg leading-lg text-white opacity-75" /> <span className="ml-2">Events</span>
               </a>
             </li>
             <li className="nav-item">
-              <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="#pablo">
-                <span className="ml-2">Opportunities</span>
+              <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="/people">
+                <span className="ml-2">People</span>
               </a>
             </li>
             </>

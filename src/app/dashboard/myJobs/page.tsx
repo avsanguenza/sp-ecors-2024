@@ -10,7 +10,7 @@ import {eventData,eventFormData} from '@/firebase/data/event'
 import editForm from './editJobForm';
 import userData from '../user';
 import jobAppList from './jobApplications';
-import navBar from '@/app/navBar';
+import NavBar from '@/app/navBar';
 
 const auth = getAuth(firebase_app);
 
@@ -94,9 +94,8 @@ export default function Page(){
 
     return (
       <>
-       {navBar()}
-        
-        <div className='mt-4 mx-auto '>
+      <NavBar>
+      <div className='mt-4 mx-auto '>
         <button type="button" class="mb-10 text-white bg-pink-500 hover:bg-pink-700 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2"  onClick={()=>window.location.href="/dashboard/myJobs/createJob"}>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 me-2">
   <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" />
@@ -109,6 +108,8 @@ export default function Page(){
           eventDataTabs(data,appFormData)
         } 
       
+      </NavBar>
+    
 </>
     );
 

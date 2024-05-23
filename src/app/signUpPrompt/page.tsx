@@ -7,8 +7,7 @@
 //im a concessionaire looking for events to partner with 
 import React from 'react'
 import {useState} from 'react'
-import Page from '@/app/signup/page';
-import { register } from 'module';
+import NavBar from '../navBar'
 function SUPage(){
 const[registerType,setRegisterType] = useState('eOrganizer')
 const handleChoice =(type)=>{
@@ -22,7 +21,9 @@ const onOptionChange= (e)=>{
 }
 
    return(
-       <><h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign up as a:</h2>
+       <>
+       <NavBar>
+       <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign up as a:</h2>
          <form onSubmit={handleChoice}>
 
              <ul className="mt-64 grid w-full gap-6 md:grid-cols-2 p-6">
@@ -65,10 +66,11 @@ const onOptionChange= (e)=>{
                 else{
                     localStorage.setItem('fromSUPage',registerType);
                 }
-                window.location='/signup'}} className="mt-10 text-2xl font-bold text-white bg-pink-500 hover:bg-pink-700 tracking-normal rounded-full px-24 py-8">Register</button>
+                window.location.href='/signup'}} className="mt-10 text-2xl font-bold text-white bg-pink-500 hover:bg-pink-700 tracking-normal rounded-full px-24 py-8">Register</button>
 
             </div>
        </form>
+       </NavBar>
        
        </>
        )

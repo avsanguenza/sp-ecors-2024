@@ -1,13 +1,10 @@
 'use client'
 import React, { useEffect } from "react";
 import { useState,useRef } from "react";
-import { Dropdown } from 'flowbite';
-import type { DropdownOptions, DropdownInterface } from 'flowbite';
-import type { InstanceOptions } from 'flowbite';
 import { create } from "domain";
 import navBar from "@/app/navBar";
 import jobRegistrationForm from './forms'
-
+import { Toaster } from "react-hot-toast";
 function userSetupPage(currentUID){
 const [activeIndex, setActiveIndex] = useState(0);
 const [jobWType, setjobWType] = useState('')
@@ -17,16 +14,25 @@ function reviewContents(){
 }
 //actually restructure this page into this: THIS page is to check if authorized user, main header GET THE DAMN UID
 //jobForm = own .tsx file 
-//confirm = own .tsx file -> there to summon database instance too 
+ 
   return(
     <>
+   <div className="bg-pink-500">
    {navBar()}
-    <div className=" mt-8 text-center space-x-2">
+   <Toaster/>
+   <div className="rounded-t-lg bg-gray-50 w-72 h-12 ml-6"> <h2 className="text-4xl font-bold py-4  ml-6">Create Event </h2></div>
+  <div className="bg-gray-50">
+  
+    <div className=" text-center py-8 ">
+     
     {
-    //PASS THE UID
     jobRegistrationForm()}
     </div>
-    </>
+  </div>
+  </div>
+
+  </>
+
       )
 }
 

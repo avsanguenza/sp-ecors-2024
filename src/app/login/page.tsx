@@ -4,22 +4,19 @@ import React from 'react'
 import signIn from "@/firebase/auth/signin";
 import {useRouter} from 'next/navigation';
 import firebase_app from '@/firebase/config';
-import { getAuth } from 'firebase/auth';
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
 import  userDBClass from '@/firebase/data/userDB';
 import { useState } from 'react';
+import NavBar from '../navBar';
 const auth = getAuth(firebase_app);
 
 const top= () =>{
   return(
     <>
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-            <img
-              className="mx-auto h-10 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=pink&shade=500"
-              alt="Your Company"
-            />
+          <svg xmlns="http://www.w3.org/2000/svg" className='w-16 h-16 mx-auto fill-pink-500' viewBox="0 0 24 24"><path d="M19 5c-2.321 0-4.025 2.127-5 3.779a2.952 2.952 0 0 0-4 0C9.025 7.127 7.32 5 5 5a3.718 3.718 0 0 0-3.52 2.053A4.711 4.711 0 0 0 1 9a6.549 6.549 0 0 0 .753 3A6.549 6.549 0 0 0 1 15a4.711 4.711 0 0 0 .48 1.947A3.718 3.718 0 0 0 5 19c2.32 0 4.025-2.127 5-3.779a2.952 2.952 0 0 0 4 0C14.975 16.873 16.679 19 19 19a3.888 3.888 0 0 0 4-4 6.549 6.549 0 0 0-.753-3A6.549 6.549 0 0 0 23 9a3.888 3.888 0 0 0-4-4zM5 17a1.881 1.881 0 0 1-2-2 3.927 3.927 0 0 1 .707-2.3 1 1 0 0 0 0-1.414A3.918 3.918 0 0 1 3 9.008 1.884 1.884 0 0 1 5 7c1.71 0 3.288 2.657 3.909 4H7a1 1 0 0 0 0 2h1.909C8.288 14.343 6.71 17 5 17zm7-3a1 1 0 0 1-1-1v-2a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1zm8.293-1.293A3.918 3.918 0 0 1 21 14.992 1.885 1.885 0 0 1 19 17c-1.711 0-3.288-2.657-3.909-4H17a1 1 0 0 0 0-2h-1.909c.621-1.343 2.2-4 3.909-4a1.882 1.882 0 0 1 2 2 3.927 3.927 0 0 1-.707 2.3 1 1 0 0 0 0 1.407z"/></svg>
             
               
             <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
@@ -35,6 +32,7 @@ const top= () =>{
 function Page(){
 
   const [email, setEmail] = React.useState('')
+  const [forgorEmail, setForgorEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [loading,setLoading] = useState(false)
   const router = useRouter()
@@ -56,20 +54,29 @@ function Page(){
       }).catch((err)=>{
         setLoading(false)
         toast.error('Login failed. Please try again.')
-        console.log("error dialogue") 
       })
       
     }
 
+  const handleForgor = async (e)=>{
+      e.preventDefault()
+      const sendForgorEmailReset = sendPasswordResetEmail(auth,forgorEmail)
+      toast.promise(sendForgorEmailReset,{
+        loading:'Preparing email reset link...',
+        success : 'Reset link sent to your email! Please check your inbox.',
+        error: 'Something has occured. Please try again'
 
+      })   
+  }
     
   return (
 
-      <>
-        
-        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+     <NavBar>
+          
+          <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
          {top()}
           <Toaster
+          containerStyle={{zIndex:99999}}
           />
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <form onSubmit={handleForm} className="space-y-6">
@@ -85,7 +92,7 @@ function Page(){
                     type="email"
                     autoComplete="email"
                     required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-center"
                   />
                 </div>
               </div>
@@ -96,7 +103,7 @@ function Page(){
                     Password
                   </label>
                   <div className="text-sm">
-                    <a href="#" className="font-semibold text-pink-600 hover:text-pink-500">
+                    <a href="#forgorPassword" className="font-semibold text-pink-600 hover:text-pink-500" onClick={()=>document.getElementById('forgorModal').showModal()}>
                       Forgot password?
                     </a>
                   </div>
@@ -109,16 +116,42 @@ function Page(){
                     type="password"
                     autoComplete="current-password"
                     required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
   
               <div>
-                {fetchButton(loading)}
+                {fetchButton(loading,'Sign in')}
               </div>
             </form>
-  
+
+            <dialog id="forgorModal" className="modal modal-bottom sm:modal-middle">
+                    <div className="modal-box">
+                    <h3 className="font-bold text-lg text-center ">Forgot Password </h3>
+                    <p className="py-4 text-center">Enter the email you have used during registration:</p>
+                   <div className='text-center'>
+                   <form  onSubmit={handleForgor}>
+                    <input
+                    id="forgorEmail"
+                    name="forgorEmail"
+                    type="email"
+                    defaultValue={forgorEmail}
+                    onChange={(e)=> setForgorEmail(e.target.value)}
+                    placeholder='something@mail.com'
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mb-5 text-center "
+                  />
+                   {fetchButton(false, 'Send password recovery email')}
+                    </form>
+                   </div>
+                    <div className="modal-action">
+                    <form method="dialog">
+                    <button className="btn absolute top-0 right-0">X </button>
+                    </form>
+                    </div>
+                    </div>
+                    </dialog>
+
             <p className="mt-10 text-center text-sm text-gray-500">
               Not a member?{' '}
               <a href="/signUpPrompt" className="font-semibold leading-6 text-pink-500 hover:text-pink-700">
@@ -127,22 +160,22 @@ function Page(){
             </p>
           </div>
         </div>
-      </>
+     </NavBar>
     );
   }
     export default Page;
 
-function fetchButton(state){
+function fetchButton(state,message){
       if(state){
          return( <button type="submit" class="flex w-full inline justify-center rounded-md bg-pink-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-pink-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 " > 
           {spinnerButton()}
-          Signing In</button>)
+          {(message=='Sign in')? 'Signing In' : 'Sending Password Recovery'} </button>)
       }
       else{return(<button
         type="submit"
         className="flex w-full justify-center rounded-md bg-pink-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-pink-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
       >
-        Sign in
+        {message}
       </button>)
       }
   }
