@@ -2,8 +2,10 @@ import { getAuth,onAuthStateChanged,sendPasswordResetEmail,updatePassword,update
 import { imageData } from "@/firebase/data/storage";
 import firebase_app from "@/firebase/config";
 import userDBClass from "@/firebase/data/userDB";
+import { getFirestore,doc,getDoc } from "firebase/firestore";
 const auth = getAuth(firebase_app);
 let udbc = new  userDBClass(auth)
+const dbInstance = getFirestore(firebase_app);
 export default class userData{
     constructor(){
         //getLocalStorage
@@ -12,6 +14,7 @@ export default class userData{
         this.name =''
         this.uid='';
         this.userType=''
+        this.photoURL =''
     }
     parseData(){
         //parsedata here
@@ -37,7 +40,12 @@ export default class userData{
     getUserType(){
         return this.userType;
     } 
- 
+    
+    async fetchPhotoURL(){
+        const docRef = doc(dbInstance,'users',this.uid)
+        const docSnap=  await getDoc(docRef)
+        this.photoURL = docSnap.data().userImage
+    }  
     async setNewProfile(firstName, lastName,pURL){
         let tempString= firstName+" "+lastName
       await updateProfile(auth.currentUser,{

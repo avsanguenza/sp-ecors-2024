@@ -4,13 +4,15 @@ import React from 'react'
 import signIn from "@/firebase/auth/signin";
 import {useRouter} from 'next/navigation';
 import firebase_app from '@/firebase/config';
-import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
+import { getAuth, sendPasswordResetEmail, } from 'firebase/auth';
 import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
 import  userDBClass from '@/firebase/data/userDB';
 import { useState } from 'react';
 import NavBar from '../navBar';
+import { checkIfDisabled } from '@/firebase/admin/manageAdmin';
 const auth = getAuth(firebase_app);
+
 
 const top= () =>{
   return(
@@ -40,23 +42,32 @@ function Page(){
   const handleForm = async (event) => {
       event.preventDefault()
       setLoading(true)
-        await signIn(email, password).then(async()=>{
-        var udbc = new userDBClass(auth.currentUser);
-        udbc.setAccValues()
+        await signIn(email, password).then(async(res)=>{
+        
+        try{
+          
+          if(auth.currentUser!=null){
+            var udbc = new userDBClass(auth.currentUser);
+            udbc.setAccValues()
       
-        await new Promise ((resolve)=> setTimeout(resolve,2000));
-        setLoading(false)
-        toast.success('Login success')
-   
-      }).then(()=>{
-       window.location.replace("/dashboard")
-  
-      }).catch((err)=>{
-        setLoading(false)
-        toast.error('Login failed. Please try again.')
-      })
+              await new Promise ((resolve)=> setTimeout(resolve,2000));
+              setLoading(false)
+              toast.success('Login success')
+              window.location.replace('/')
+          }
+          else{
+            
+            setLoading(false)
+            throw 'Login failed.'
+          }
+          
+        }catch(err){
+          toast.error(err)
+        }
       
-    }
+    }).catch((e)=>{
+      toast.error(e)
+    })}
 
   const handleForgor = async (e)=>{
       e.preventDefault()

@@ -1,6 +1,6 @@
 'use client'
 
-import navBar from "@/app/navBar"
+import NavBar from "@/app/navBar"
 import userData from "../user";
 import { eventData } from "@/firebase/data/event";
 import { eventFormData } from "@/firebase/data/event";
@@ -14,30 +14,21 @@ let userApplData = new Array()
 function manageApplications(){
     const [data,setData] = useState([])
     useEffect(()=>{
-        edata.fetchEventID().then(()=>{
-            var tempKeys = edata.eventKeys;
-            tempKeys.forEach((tk)=>{
-            //console.log(tk)
-            efdata.getSpecificData(tk,'userid','==',udata.getUserUID()).then(async()=>{
-                await new Promise ((resolve)=> setTimeout(resolve,2000));
+        efdata.getSpecificData('userid','==',udata.getUserUID()).then(async()=>{
+          await new Promise ((resolve)=> setTimeout(resolve,2000));
               var tempData = efdata.applicantFileObj
             
             setData(tempData) 
-            })
-            }
-        )
-    
-    }).then(()=>{
-      //  console.log(data)
-
-    })
+        })
     },[])
     return(
       <>
-        {navBar()}
-        <div role="tablist" className="tabs tabs-lifted mx-auto">
+       <NavBar>
+       <div role="tablist" className="tabs tabs-lifted mx-auto">
   <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="All" defaultChecked />
-  <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">   {tableApps(data)}</div>
+  <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">   {
+  tableApps(data)
+  }</div>
 
   <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Tab 2" />
   <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">Tab content 2</div>
@@ -46,6 +37,7 @@ function manageApplications(){
   <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">Tab content 3</div>
 </div>
      
+       </NavBar>
       </>
     )
 }

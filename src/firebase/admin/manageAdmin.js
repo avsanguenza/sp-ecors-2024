@@ -6,7 +6,7 @@ let authAdmin = getAuth(firebase_admin)
 let adminDB  = getFirestore(firebase_admin)
 export async function admin_updateUser(uid, value){
    getAuth().updateUser(uid, {
-    displayName: ,
+    //displayName: ,
    // email: 'modifiedUser@example.com',
    // phoneNumber: '+11234567890',
    // emailVerified: true,
@@ -24,7 +24,33 @@ export async function admin_updateUser(uid, value){
   });
 
 }
+export async function checkIfDisabled(uid){
+  const val = getAuth().getUser(uid).then((rec)=>{
+    console.log("========="+uid+"  is   "+rec.disabled+"=========")
+      return rec.disabled
+  })
+  return val
+}
+export async function admin_changeStateUser(uid,value){
+  getAuth().updateUser(uid, {
+   //displayName: ,
+  // email: 'modifiedUser@example.com',
+  // phoneNumber: '+11234567890',
+  // emailVerified: true,
+  // password: 'newPassword',
+  // displayName: 'Jane Doe',
+  // photoURL: 'http://www.example.com/12345678/photo.png',
+   disabled: value
+ })
+ .then((userRecord) => {
+   // See the UserRecord reference doc for the contents of userRecord.
+   console.log('---------- Successfully updated user', userRecord.displayName+"==="+userRecord.disabled+"-----");
+ })
+ .catch((error) => {
+   console.log('Error updating user:', error);
+ });
 
+}
 export async function admin_getUser(uid){
     getAuth().getUser(uid)
   .then((userRecord) => {

@@ -1,6 +1,6 @@
 'use client'
 import NavBar from "@/app/navBar";
-import {admin_getUser, admin_updateUser} from '@/firebase/admin/manageAdmin'
+import {admin_changeStateUser} from '@/firebase/admin/manageAdmin'
 import { userData } from "@/firebase/data/userDB";
 import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
@@ -145,12 +145,24 @@ function roleConcessButton(uid,role, isActive){
   }
 }
 
+function changeStateUser(uid,value){
+const updateState =  updateActiveRole(uid,!value).then(()=>{
+  admin_changeStateUser(uid,value)
+})
+
+  toast.promise(updateState,{
+    loading:'Updating User State',
+    success: 'User state updated',
+    error:'An error has occured please try again.'
+  })
+}
+
 function accountActionButton(uid,role){
   if(role){
     return(
     <>
-      <button type="button" class="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800" onClick={()=>updateActiveRole(uid,false)}> Deactivate</button>
-      <dialog id="my_modal_1" class="modal">
+      <button type="button" class="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800" onClick={()=>document.getElementById(uid+'confirmAction').showModal()}> Deactivate</button>
+      <dialog id={uid+"confirmAction"} class="modal">
   <div class="modal-box">
     <h3 class="font-bold text-lg">Deactivating Account - {uid}</h3>
     <p class="py-4"> Are you sure you would like to deactivate this account?
@@ -160,7 +172,7 @@ function accountActionButton(uid,role){
                 <button type="btn" class="text-white bg-gray-400 hover:bg-gray-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2">
   
   Cancel        </button>
-                <button type="btn" class="text-white bg-red-700 hover:bg-red-900 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2" onClick={()=>console.log(uid)}>
+                <button type="btn" class="text-white bg-red-700 hover:bg-red-900 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2" onClick={()=>changeStateUser(uid,true)}>
   Continue 
     </button>
                 </form>
@@ -173,8 +185,8 @@ function accountActionButton(uid,role){
   else{
     return(
     <>
-    <button type="button" class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"  onClick={()=>updateActiveRole(uid,true)}> Reactivate</button>
-    <dialog id="reactivate_modal" class="modal">
+    <button type="button" class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"  onClick={()=>document.getElementById(uid+'reactivate_modal').showModal()}> Reactivate</button>
+    <dialog id={uid+"reactivate_modal"} class="modal">
     <div class="modal-box">
       <h3 class="font-bold text-lg">Reactivating Account - {uid}</h3>
       <p class="py-4"> Are you sure you would like to reactivate this account?
@@ -184,7 +196,7 @@ function accountActionButton(uid,role){
                   <button type="btn" class="text-white bg-gray-400 hover:bg-gray-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2">
     
     Cancel        </button>
-                  <button type="btn" class="text-white bg-green-700 hover:bg-green-900 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2" onClick={()=>updateActiveRole(uid,true)}>
+                  <button type="btn" class="text-white bg-green-700 hover:bg-green-900 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2" onClick={()=>changeStateUser(uid,false)}>
     Reactivate
       </button>
                   </form>
@@ -241,7 +253,7 @@ function updateRole(uid,prevrole,newrole,value){
 
 }
 
-function updateActiveRole(uid,value){
+async function updateActiveRole(uid,value){
   const update = uidata.updateAttribute(uid,'isAccountActive',value);
   toast.promise(update,{
     loading:'Updating account role',

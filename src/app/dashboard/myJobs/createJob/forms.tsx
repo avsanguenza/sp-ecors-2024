@@ -10,25 +10,31 @@ import toast from 'react-hot-toast';
 import citiesData from './citiesData.json'
 import positionData from './positionCategory.json'
 import { json } from 'stream/consumers';
+import { input } from '@material-tailwind/react';
 
-function jobRegistrationForm(data){
+function jobRegistrationForm(inputData,mode){
+  //console.log(inputData)
   const [formData, setFormData] = useState(
-    {eventName:data.eventName,
-    createDateStart:data.createDateStart,
-    createDateEnd:data.createDateEnd,
-    createJob0:data.createJob0,
-    createJob1:data.createJob1, 
-    createLoc0:data.createLoc0,
-    createLoc:data.createLoc,
-    createWageType:data.createWageType,
-    createWageTypeVal:data.createWageTypeVal,
-    createDescription:data.createDescription})
+    {
+    eventuniqueid : inputData.eventid,
+    eventName:inputData.eventName,
+    createDateStart:inputData.createDateStart,
+    createDateEnd:inputData.createDateEnd,
+    createJob0:inputData.createJob0,
+    createJob1:inputData.createJob1, 
+    createLoc0:inputData.createLoc0,
+    createLoc:inputData.createLoc,
+    createWageType:inputData.createWageType,
+    createWageTypeVal:inputData.createWageTypeVal,
+    createDescription:inputData.createDescription,
+    createEventImage: inputData.eventImageURL
+  })
   const [selectOptions, setSelectOptions] = useState([])
   const [jobCategory, setJobCategory] = useState([])
   const [jobList, setJobList] = useState([])
   const [loading,setLoading] = useState(false)
   const [changeList, setChangeList] = useState('')
-  const [selectedFile, setSelectedFile] = useState({src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp9hZ_fn1p0GQsP8Ehynpd7sNAHWz0CZXiMNLGo0b0RA&s',blob:'',name:''})
+  const [selectedFile, setSelectedFile] = useState({src:(inputData.eventImageURL =='' ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp9hZ_fn1p0GQsP8Ehynpd7sNAHWz0CZXiMNLGo0b0RA&s': inputData.eventImageURL),blob:'',name:''})
     //event instance
 
     let edata = new eventData();
@@ -38,13 +44,23 @@ function jobRegistrationForm(data){
     const handleStateChange = (e) =>{
       e.preventDefault()
       const {name,value} = e.target
-      if(name =='jobCreate0'){
-        setChangeList(value)
+      try{
+        if(name =='createDateStart' && !dateHandler(value)){
+          document.getElementById('eventDate0').value=''
+          throw 'You cannot set an event into the past... yet.'
+        }
+      
+        if(name =='jobCreate0'){
+          setChangeList(value)
+        }
+       setFormData({
+        ...formData,
+        [name]:value,
+       })
       }
-     setFormData({
-      ...formData,
-      [name]:value,
-     })
+     catch(err){
+      toast.error(err)
+     }
     }
     
     const modifiedHandleStateChange = (e)=>{
@@ -52,7 +68,7 @@ function jobRegistrationForm(data){
       try{
         if(name =='createDateEnd' && formData.createDateStart!== ''){
           if(value < formData.createDateStart){
-            throw 'Invalid date'
+            throw 'You cannot set an ending date prior your start date.'
           }
           else{
             setFormData({
@@ -69,15 +85,27 @@ function jobRegistrationForm(data){
              })
           }
           else{
-           throw 'Invalid date'
+           throw 'You cannot set an event into the past... yet.'
           }
         }
       }catch(err){
-        toast.error('Invalid date. Please try again')
+        toast.error(err)
         e.target.value =''
       }
     }
-
+    const checkInput = ()=>{
+      try{
+        if(formData.eventName =="" || formData.createWageType=='' || formData.createWageTypeVal=='' || formData.createDateStart=='' || formData.createDateEnd==''){
+          throw 'Please check your input.'
+        }
+        else{
+          document.getElementById(formData.eventName).showModal()
+        }
+      }
+      catch(err){
+        toast.error(err)
+      }
+    }
     function handleUploadChange(e){
       setSelectedFile({
         ...selectedFile,
@@ -88,7 +116,6 @@ function jobRegistrationForm(data){
     }
     
     function dateHandler(eventDate){
-      eventDate.preventDefault()
         const date  = new Date();
         let currDate = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()
         if(Date.parse(eventDate) < Date.parse(currDate)){
@@ -146,18 +173,55 @@ function jobRegistrationForm(data){
     }
    
   }
+  function sendEditedData(){
+    setLoading(true)
+    console.log('edit')
+    let imgup = new imageData('event');
+    if(selectedFile.name!=''){
+      console.log('uploading')
+      const uploading = imgup.uploadImage(selectedFile,formData.eventName).then(async(sn)=>{
+          var eventimg = sn
+          let edata = new eventData()
+          const savingData = await edata.updateData(formData.eventuniqueid,formData.eventName,formData.createDateStart,formData.createDateEnd,formData.createJob0,formData.createJob1,formData.createLoc,formData.createDescription,formData.createWageType,formData.createWageTypeVal,eventimg)
+      }).then(()=>{
+        setLoading(false)
+        window.location.replace('/dashboard/myJobs')
+      })
+      const firstToast=  toast.promise(uploading,{
+        loading:'Saving your progress',
+        success:'Event data saved successfully',
+        error: 'An error has occurred. Please try again.'
+        })
+    }
+    else{
+       console.log('not uploading')
+        let eventimg = selectedFile.src
+        const savingEditedData = edata.updateData(formData.eventuniqueid,formData.eventName,formData.createDateStart,formData.createDateEnd,formData.createJob0,formData.createJob1,formData.createLoc,formData.createDescription,formData.createWageType,formData.createWageTypeVal,eventimg).then(()=>{
+              setLoading(false)
+              window.location.replace('/dashboard/myJobs')
+        })
+        toast.promise(
+          savingEditedData, {
+            loading:'Saving your progress',
+            success:'Event data saved successfully',
+            error: 'An error has occurred. Please try again.'
+          }
+        )
+    }
+  }
 
-  function fetchButton(state,formData){
+  function fetchButton(state,mode){
     if(state){
-      return( <button type='button' class=" w-48 text-center rounded-md bg-pink-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-pink-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 " > 
+      return( <button type='button' class=" w-48 text-center rounded-lg bg-pink-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-pink-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 " > 
        {spinnerButton()}
-       Saving Event Data </button>)
+       {(mode =='add' )?  "Saving new event..." : "Saving changes..." }
+  </button>)
    }
    else{return(
    <button type='button'
-     className="w-48 text-center rounded-md bg-pink-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-pink-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-    onClick={()=>sendData()}>
-    Confirm Event 
+     className="w-48 text-center rounded-lg bg-pink-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-pink-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+    onClick={()=>{mode=='add'? sendData(): sendEditedData()}}>
+      {(mode =='add' )?  "Confirm Event" : "Save Changes" }
    </button>)
    }
   }
@@ -173,7 +237,6 @@ function jobRegistrationForm(data){
       try{
         var jsonRes = new Array()
         citiesData.map((v,k)=>{
-          console.log(v)
           jsonRes.push(v.name)
         })
         setSelectOptions(jsonRes)
@@ -203,6 +266,7 @@ function jobRegistrationForm(data){
         console.log()
       }
     }
+    
     getPositionOptions()
     getOptions()
   },[])  
@@ -225,10 +289,13 @@ function jobRegistrationForm(data){
   },[changeList])
     return(
         <>
+        
         <form>
+       
           <div className='ml-24 grid grid-flow-col auto-cols-max '>
-
+       
           <div className="ml-12 mx-auto ml-8 py-12 border border-white bg-white rounded-lg w-[50rem]"> 
+          
           <div className='text-start ml-4 mb-6'>
           <label className="block text-gray-700 text-xl font-semibold mb-2" for="eventCreatorName">Event Organizer: </label>
           <input className="appearance-none block w-96 bg-gray-50 disabled:bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="eventCreatorName" value={udata.getName()} disabled></input>
@@ -238,8 +305,8 @@ function jobRegistrationForm(data){
           <div className='grid grid-cols-4 gap-4'>
             
             <div className='col-span-3'>
-            <label className="block text-gray-700 text-xl font-semibold mb-2 ml-4" for="eventName"> Event Name </label>
-          <input className="appearance-none block w-96 bg-gray-50 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white ml-4" id='eventName' name="eventName" type='text' placeholder={formData.eventName} defaultValue={formData.eventName} onChange={handleStateChange} />
+            <label className="block text-gray-700 text-xl font-semibold mb-2 ml-4" for="eventName"> Event Name: <span className='text-xl font-semibold text-red-500'>&#42;</span></label>
+          <input className="appearance-none block w-96 bg-gray-50 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white ml-4" id='eventName' name="eventName" type='text' placeholder={formData.eventName}onChange={handleStateChange} />
             </div>
               <div>
               <button className=' mt-8 -ml-36 bg-pink-500 px-6 py-3 text-medium font-bold border border-pink text-white rounded-full' onClick={()=>document.getElementById('descripModal').showModal()}> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 inline mr-2">
@@ -267,7 +334,7 @@ Add description</button>
           <label className="ml-20 mb-2 block text-gray-700 tracking-wide text-xl font-semibold " for="eventWorkPos"> Position</label>
           <div className='ml-20'>
              <select id="eventWorkPos" name='jobCreate1' className='rounded py-3 px-9 w-48 bg-gray-50 border border-pink-500 focus:ring-pink-500 focus:border-pink-500'  onChange={handleStateChange}>
-             <option defaultChecked>{(formData.createJob0=='')? 'Select Position': formData.createJob0}</option>              {jobList.map((d)=>{
+             <option defaultChecked>{(formData.createJob1=='')? 'Select Position': formData.createJob1}</option>              {jobList.map((d)=>{
                 return(
                   <option value={d}>{d}</option>
                 )
@@ -279,7 +346,7 @@ Add description</button>
           
           <div className='grid grid-cols-4 gap-4 mt-8'>
           <div className=''>
-          <label className="ml-4 mt-4 mb-2 block text-gray-700 br-gray-40 tracking-wide text-xl font-semibold ">Job Wage</label>
+          <label className="ml-4 mt-4 mb-2 block text-gray-700 br-gray-40 tracking-wide text-xl font-semibold ">Job Wage: <span className='text-xl font-semibold text-red-500'>&#42;</span></label>
               <div>
               <input type='radio' className='py-4 accent-pink-500 bg-gray-50 ml-4 mb-4' id='jobWType' name='createWageType' value='hourly' onClick={()=>fieldHandler('jobWageSum','jobWageHourly')}  onChange={handleStateChange}></input>
             <label className="ml-3 mb-6" for='jobWType'>Hourly Rate:</label>
@@ -308,7 +375,7 @@ Add description</button>
           <div className='mt- grid grid-flow-col auto-cols-max'>
           <label className='ml-8 mt-2  text-gray-700 text-lg font-normal'>City:</label>
              <select id="eventWork" name='createLoc' className='ml-10 rounded py-3 px-9 bg-gray-50 border border-pink-500 focus:ring-pink-500 focus:border-pink-500'  onChange={handleStateChange}>
-             <option defaultChecked>{(formData.createLoc=='')? 'Select Position': formData.createJob0}</option>              {selectOptions.map((d)=>{
+             <option defaultChecked>{(formData.createLoc=='')? 'Select Position': formData.createLoc}</option>              {selectOptions.map((d)=>{
                 return(
                   <option value={d}>{d}</option>
                 )
@@ -319,14 +386,14 @@ Add description</button>
           </div>
           <div className='ml-4 mb-8 grid grid-flow-col auto-cols-max '>
             <div>
-          <label className="mt-4 -ml-48 mb-4 block text-gray-700 tracking-wide text-xl font-semibold mb-4" for="eventDate"> Event Date</label>
+          <label className="mt-4 -ml-48 mb-4 block text-gray-700 tracking-wide text-xl font-semibold mb-4" for="eventDate"> Event Date: <span className='text-xl font-semibold text-red-500'>&#42;</span></label>
           <label className='ml-4 text-gray-700 text-lg font-normal'> Start date:</label>
-          <input type='date' id='eventDate' name='createDateStart' className=' ml-12 rounded py-3 px-4  bg-gray-50 border border-pink-500 focus:ring-pink-500 focus:border-pink-500 ' onChange={dateHandler} placeholder="Select a date" required/>      
+          <input type='date' id='eventDate0' name='createDateStart' className=' ml-12 rounded py-3 px-4  bg-gray-50 border border-pink-500 focus:ring-pink-500 focus:border-pink-500 ' onChange={handleStateChange} placeholder="Select a date" required/>      
           </div>
           <div className='mt-[3.72rem] ml-8'>
             
           <label className='ml-4 mb-2 text-gray-700 text-lg font-normal'> End date:</label>
-          <input type='date' name='createDateEnd' className=' ml-4 rounded py-3 px-4  bg-gray-50 border border-pink-500 focus:ring-pink-500 focus:border-pink-500 ' onChange={modifiedHandleStateChange} placeholder="Select a date" required/>
+          <input type='date' name='createDateEnd' className=' ml-4 rounded py-3 px-4  bg-gray-50 border border-pink-500 focus:ring-pink-500 focus:border-pink-500 ' onChange={modifiedHandleStateChange} placeholder="Select a date" disabled={formData.createDateStart==''} required/>
           </div>
         
           </div>
@@ -345,7 +412,7 @@ Add description</button>
 
           </div>
                
-          <button type='button' className="mx-auto mt-4 text-white bg-pink-500 hover:bg-pink-800 focus:ring-4 focus:ring-pink-300 font-semibold rounded-full text-xl tracking-wide px-8 py-2 me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 focus:outline-none dark:focus:ring-pink-800" onClick={()=>document.getElementById('confirmModal').showModal()}>Next</button>
+          <button type='button' className="mx-auto mt-2 text-white bg-pink-500 hover:bg-pink-800 focus:ring-4 focus:ring-pink-300 font-semibold rounded-full text-xl tracking-wide px-8 py-2 me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 focus:outline-none dark:focus:ring-pink-800" onClick={checkInput}>Next</button>
       </form>
 
       <dialog id="descripModal" className="modal modal-bottom sm:modal-middle">
@@ -369,12 +436,13 @@ Add description</button>
                     </div>
                     </dialog>
                     
-      <dialog id="confirmModal" className="modal modal-bottom sm:modal-middle">
+      <dialog id={formData.eventName} className="modal modal-bottom sm:modal-middle">
+
                     <div className="modal-box bg-white">
                    <div className='text-center'>
                   <form method='dialog'>
                   <div className='border border-white bg-white'>
-                  <h3 className="font-bold text-lg text-center ">Confirm Details:</h3>
+                  <h3 className="font-bold text-lg text-center ">{mode}:</h3>
                   <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
 
                     <ul>
@@ -389,7 +457,7 @@ Add description</button>
                   <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
 
                   <div className='mx-auto mt-4 '>
-                  {fetchButton(loading,formData)}
+                  {fetchButton(loading,mode)}
 
                   </div>
                   </form>

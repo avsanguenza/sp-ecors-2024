@@ -151,11 +151,13 @@ function checkUser(){
               <Menu.Button className="ml-5 relative flex rounded-full text-white bg-base text-sm focus:outline-none  focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                 <span className="absolute -inset-1.5" />
                 <span className="sr-only">Open user menu</span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                {(accInfo.getUserType=='Admin')? <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
 <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-</svg>
-
+</svg>: <img src={accInfo.photoURL} className='w-12 h-12 rounded-full'></img>}
+                <span className='mt-3 px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75'>{accInfo.getName()}</span>
               </Menu.Button>
+              <p className='text-start ml-20 -mt-1 text-xs text-white font-medium tracing-wide'>{accInfo.getUserType()}</p>
+
             </div>
             <Transition
               as={Fragment}
@@ -279,7 +281,7 @@ function navBarContent(type){
         <>
         
         <li className="nav-item">
-          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="/dashboard" >
+          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="/events" >
             <i className="fab fa-twitter text-lg leading-lg text-white opacity-75" /> <span className="ml-2" onClick={()=>titleName='Events'}>Events</span>
           </a>
         </li>
@@ -317,7 +319,7 @@ function navBarContent(type){
      return(
       <>
       <li className="nav-item">
-          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="/dashboard" >
+          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="/events" >
             <i className="fab fa-twitter text-lg leading-lg text-white opacity-75" /> <span className="ml-2">Events</span>
           </a>
         </li>

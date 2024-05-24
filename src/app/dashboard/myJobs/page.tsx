@@ -7,7 +7,6 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from "next/navigation";
 
 import {eventData,eventFormData} from '@/firebase/data/event'
-import editForm from './editJobForm';
 import userData from '../user';
 import jobAppList from './jobApplications';
 import NavBar from '@/app/navBar';
@@ -32,24 +31,8 @@ export default function Page(){
   const[activeIndex, setActiveIndex] = useState(0);
   const [data,setData] = useState([])
   const [appFormData, setAppFormData] = useState([])
-  const [eKeys, setEKeys] = useState([]);
-  const [isOpen, setIsOpen] = useState(false)
 
-  function closeModal(){
-     setIsOpen(false)
-  }
-  
-  function openModal(){
-    setIsOpen(true)
-  }
-
-  function infoMsg(disabledState){
-    return(
-         <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
-  <span class="font-medium">Info alert!</span> Change a few things up and try submitting again.
-</div>
-    )
-  }
+ 
   //currUser(); //DISABLED BECAUSE TESTING
   var obj = localStorage.getItem('currentUser')
   var accInfo = JSON.parse(obj)
@@ -183,16 +166,6 @@ function viewAppForm(eventid){
     openAppModal()
   })
 }
-function editDialog(uid,title, eDate, eLoc, eDescrip,eWageWT, eWageTVal){
-  setDialogTitle(title)
-  setDate(eDate)
-  setLocation(eLoc)
-  setDesc(eDescrip)
-  setEventWT(eWageWT)
-  setEventWTVal(eWageTVal)
-  setEventUID(uid)
-  openModal()
-}
 
 function update(uid){ 
   checkHandler()
@@ -201,7 +174,7 @@ function update(uid){
  // window.location.replace('/dashboard/myJobs')
 }
 const checkHandler = () =>{
-  setIsChecked(!isChecked)
+  //setIsChecked(!isChecked)
 }
 
 function tableHeaders(){
@@ -271,33 +244,63 @@ function fetchButton(state){
 }
 function actualEditDialog(d){
   return(
-     <dialog id={d.eventid} className="modal modal-top ">
-                    <div className="modal-box bg-white w-11/12 w-full mx-auto">
+     <dialog id={d.eventid} className="modal modal-top overflow-y-auto rounded-lg">
+                    <div className="modal-box bg-white w-10/12 mx-auto  ">
                    <div className='text-center'>
                   <form method='dialog'>
                   <div className='border border-white bg-white'>
-                    Edit Event
+                  <p className='text-start ml-20 text-4xl font-bold py-4  ml-6'>  Editing Event : {d.eventName}</p>
                   </div>
-                  <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+                  <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700 overflow-y-visible"/>
+                  
                      <EditPage data={d}/>
                   <div className='mx-auto'>
-                  {
-                  //fetchButton(loading)
-                  }
-
+                 
                   </div>
                   </form>
                    </div>
                     <div className="modal-action">
-                    <form method="dialog">
+                    <form method="dialog" className='' >
                     <button className="btn absolute top-0 right-0 rounded-lg">X </button>
                     </form>
                     </div>
                     </div>
+                    <form method="dialog" className="modal-backdrop">
+    <button>close</button>
+  </form>
                     </dialog>
   )
 }
 
+function viewPositionRequests(d){
+  return(
+    <dialog id={d.eventid+'app'} className="modal modal-top ">
+    <div className="modal-box bg-white w-10/12 mx-auto">
+   <div className='text-center'>
+  <form method='dialog'>
+  <div className='border border-white bg-white'>
+  <p className='text-start ml-20 text-4xl font-bold py-4  ml-6'>  Job Application Requests : {d.eventName}</p>
+  </div>
+  <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+  
+     {jobAppList(eventAppData,d.eventuid)}
+  <div className='mx-auto'>
+ 
+  </div>
+  </form>
+   </div>
+    <div className="modal-action">
+    <form method="dialog">
+    <button className="btn absolute top-0 right-0 rounded-lg">X </button>
+    </form>
+    </div>
+    </div>
+    <form method="dialog" className="modal-backdrop">
+    <button>close</button>
+  </form>
+    </dialog>
+  )
+}
   return(
     <div>
       
@@ -343,10 +346,11 @@ function actualEditDialog(d){
               </td>
               <td class="px-6 py-4 space-x-2" >
                 
-              <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-pink-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800" onClick={()=>viewAppForm(d.eventid)}>View Applications</button>  |  
+              <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-pink-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800" onClick={()=>document.getElementById(d.eventid+'app').showModal()}>View Applications</button>  |  
               <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={()=>document.getElementById(d.eventid).showModal()}> Edit</button>
             
               </td>
+              {viewPositionRequests(d)}
               {actualEditDialog(d)}
           </tr>
             )
@@ -356,39 +360,6 @@ function actualEditDialog(d){
           </Panel>
         </tbody>
     </table>
-  
-
-    <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={()=>closeModal()}>
-
-        <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom='opacity-100' leaveTo='opacity-0'>
-          <div className='fixed inset-0 bg-black/25'/>
-        </Transition.Child>
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className='flex min-h-full items-center justify-center p-8 text-center'>
-            
-            <Transition.Child as={Fragment} enter='ease-out duration-300' enterFrom='opacity-0 scale-95' enterTo='opacity-100 scale-100' leave='ease-in duration-200' leaveFrom='opacity-100 scale-100' leaveTo='opacity-0 scale-95'>
-
-
-              <Dialog.Panel className='w-full max-w-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>      
-                <div className="text-center">
-                <Dialog.Title as="h3">{dialogTitle}</Dialog.Title>
-                </div>
-                <div className='mt-8 text-center space-x-2'>
-                
-                  {
-                    editForm(eventUID,dialogTitle,date,location,desc,eventWT,eventWTVal)
-
-                  }
-                  
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </div>
-        </Dialog>
-
-    </Transition>
 
     <Transition appear show={isAppOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={()=>closeAppModal()}>
@@ -466,6 +437,7 @@ function skeleton(){
             </tr>
   )
 }
+
 function EditInactiveIcon(props) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 pr-2">

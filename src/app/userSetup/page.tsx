@@ -105,6 +105,25 @@ function workExpHandler(){
   return(
   <form>
   <div id= "jobExperienceForm">
+      
+    <div className='text-start ml-4 mb-6'>
+          <label className="block text-gray-700 text-xl font-semibold mb-2" for="eventCreatorName">Contact Email address: </label>
+          <input className="appearance-none block w-96 bg-gray-50 disabled:bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="eventAppEmail" name='eventAppEmail' ></input>
+          </div>
+          <div className='text-start ml-4 mb-6'>
+          <label className="block text-gray-700 text-xl font-semibold mb-2" for="eventCreatorName">Contact Information: </label>
+          <input className="appearance-none block w-96 bg-gray-50 disabled:bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="eventAppEmail" name='eventAppPhone' type='number'></input>
+          </div>
+          <div className='text-start ml-4 mb-6'>
+          <label className="block text-gray-700 text-xl font-semibold mb-2" for="eventCreatorName">Cover Letter: </label>
+      <input class='bg-white border text-gray-900 border-pink-500 rounded-lg px-3 py-4 text-slate-500 file:bg-pink-500 
+        file:block-mb-2 file:mr-4 file:py-2 file:px-4
+        file:rounded-full file:border-0
+        file:text-sm file:font-semibold
+        file:bg-pink-500 file:text-white
+        hover:file:bg-pink-700' id="file_input" type="file" accept=".doc,.docx,.pdf" />
+        </div>
+  <p class="text-sm text-gray-500 dark:text-gray-300" id="file_input" >DOCX or PDF (2MB)</p>
     <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
     <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name"> Email address </label>
     <input className="appearance-none block w-full bg-gray-100 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="emailAddress"
@@ -112,10 +131,6 @@ function workExpHandler(){
      defaultValue={userEntryData.emailAddress} name="emailAddress"
      onChange={handleInputChange} 
      disabled={isDisabled} required></input>
-    </div>
-    <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">
-    <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name">  Main service you offer</label>
-      {workExpHandler()}
     </div>
     <div>
     <div className="mx-auto md:w-1/2 px-3 mb-6 md:mb-0">

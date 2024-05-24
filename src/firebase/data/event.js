@@ -1,5 +1,5 @@
 import firebase_app from "../config";
-import {getFirestore,doc, getDocs, setDoc, query,collection, addDoc, updateDoc, getCountFromServer} from 'firebase/firestore';
+import {getFirestore,doc, getDocs,getDoc, setDoc, query,collection, addDoc, updateDoc, getCountFromServer} from 'firebase/firestore';
 import {where} from 'firebase/firestore';
 import userData from "@/app/dashboard/user";
 const firebase_app_init = firebase_app;
@@ -138,10 +138,9 @@ export  class eventData extends appData{
         })
     }
 
-    async updateData(uid, eventCName, eventNameInput, eventDateInfoStart,eventDateInfoEnd,createJob0, createJob1,eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal,eventimg){
-        const docRef = doc(this.db,"events",eventUID)
+    async updateData(uid, eventNameInput, eventDateInfoStart,eventDateInfoEnd,createJob0, createJob1,eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal,eventimg){
+        const docRef = doc(this.db,"events",uid)
         await updateDoc(docRef,{
-            eventCreatorName: eventCName,
             eventName: eventNameInput,
             eventDateStart: eventDateInfoStart,
             eventDateEnd: eventDateInfoEnd,
@@ -180,6 +179,8 @@ export  class eventData extends appData{
             'eventLocation': this.eventLocation,
             'eventWageType' : this.wageType,
             'eventWageTypeVal' : this.wageTypeVal,
+            'createJobCat': this.eventJobCat,
+            'createJobPos': this.eventJobPos,
             //eventDate' :  this.eventDate,
             'eventDateStart': this.eventDateStart,
             'eventDateEnd': this.eventDateEnd,
@@ -239,19 +240,31 @@ export class eventFormData extends appData{
     }
 
     async setData(phoneNum,emailAdd,appFile){
-      try{
+              const docSnap = (await getDoc( doc(this.db,'event-application',this.eventUID))).exists()
+        if(!docSnap){
+            await setDoc(doc(this.db,'event-application',this.eventUID),{
+                isAccepting:true
+            })
+            
+        }
         const docRef = doc(this.db,'event-application',this.eventUID);
         const colRef = collection(docRef,'entries')
-        await addDoc(colRef,{
+
+       await addDoc(colRef,{
             userid: this.uid,
             phoneNumber: phoneNum,
-            emailAddress: emailAdd,
+           emailAddress: emailAdd,
             applicantFile: appFile,
-            applicationStatus:'pending'
+           applicationStatus:'pending'
         })
-      }catch(err){
-        console.log("setData: "+ err)
-      }
+   
+    }
+    async checkDoesExist(){
+        const colRef = collection(this.db,'event-application')
+        const qRef = query(collection(this.db,'event-application'),where('isAccepting','==',true))
+        const snap = (await getDocs(qRef)).empty
+        return snap
+
     }
     async getData(){
         //const docRef = doc(this.db, 'event-application',this.eventUID)
@@ -279,14 +292,35 @@ export class eventFormData extends appData{
             [attrName]: value
         })
     }
+    async getUserApplicationsFromEvents(currenteid){
+        const snapshot = await getDocs(collection(this.db,'event-application/'+currenteid+'/entries'))
+        snapshot.forEach((doc)=>{
+            var data={
+                'eventuid': tempData.id,
+                'eventName': tempData.data().eventName,
+                'eventCreatorName': tempData.data().eventCreatorName,
+                'eventLocation' :tempData.data().eventLocation,
+                'eventWageType': tempData.data().eventWageType,
+                'eventWageTypeVal': tempData.data().eventWageTypeValue,
 
-    async getSpecificData(uid,arg0,qOp,arg1){
+                'applicationStatus': doc.data().applicationStatus,
+                'emailAddress': doc.data().emailAddress,
+                'phoneNumber': doc.data().phoneNumber
+
+            }
+            if(!this.applicantFileObj.includes(data)){
+              this.applicantFileObj.push(data)
+            }
+        })
+    }
+
+    async getSpecificData(arg0,qOp,arg1){
     
         const col0Ref = query(collection(this.db,'events')) 
         const snapshot0 = await getDocs(col0Ref)
         snapshot0.forEach(async (d)=>{
           var tempData = d
-          const colRef = collection(this.db,'event-application/'+uid+"/entries")
+          const colRef = collection(this.db,'event-application/'+tempData.id+"/entries")
           const qColRef = query(colRef,where(arg0,qOp,arg1))
           const snapshot = await getDocs(qColRef)
           snapshot.forEach((doc)=>{

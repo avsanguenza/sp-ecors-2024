@@ -1,22 +1,27 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import jobRegistrationForm from "../createJob/forms";
-function EditPage(data){
-    const [formData, setFormData] = useState(
-        {eventName:data.eventName,
-        createDateStart:data.createDateStart,
-        createDateEnd:data.createDateEnd,
-        createJob0:data.createJob0,
-        createJob1:data.createJob1, 
-        createLoc0:data.createLoc0,
-        createLoc:data.createLoc,
-        createWageType:data.createWageType,
-        createWageTypeVal:data.createWageTypeVal,
-        createDescription:data.createDescription})
+function EditPage({data}){
+    const [formData, setFormData] = useState({
+        eventid : data['eventid'],
+        eventName:data['eventName'],
+        createDateStart:data['eventDateStart'],
+        createDateEnd:data['eventDateEnd'],
+        createJob0:data['createJobCat'],
+        createJob1:data['createJobPos'], 
+        createLoc0:data['createLoc0'],
+        createLoc:data['eventLocation'], 
+        createWageType:data['eventWageType'],
+        createWageTypeVal:data['eventWageTypeVal'],createDescription:data['eventDescription'],
+        eventImageURL : data['eventImageURL']
+    })
     return(
         <>
-        {jobRegistrationForm(formData)}
+       
+       <div className="-mt-12">
+       {jobRegistrationForm(formData,'edit')}
+       </div>
         </>
     )
 }
