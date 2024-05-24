@@ -1,6 +1,7 @@
 import { eventData } from "@/firebase/data/event"
 import { userData } from "@/firebase/data/userDB"
-import { eventNames } from "process"
+import userInfoContainer from "@/assets/userInfoContainer"
+import eventInfoContainer from "@/assets/eventInfoContainer"
 import toast from "react-hot-toast"
 export default async function Results(type,data,query){
     
@@ -24,9 +25,9 @@ function events(results){
 {results.map((d)=>{
       if(results.length>0){
           return(
-          <tr onClick={()=>alert(d.eventName)}>
+          <tr onClick={()=>document.getElementById(d.eventid).showModal()} className="hover:bg-gray-50">
           <td>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 ">
               <div className="avatar">
                 <div className="mask mask-squircle w-12 h-12">
                   <img src={d.eventImageURL} alt="Avatar Tailwind CSS Component" />
@@ -43,15 +44,19 @@ function events(results){
             <br/>
           </td>
           <th>
-            {d.eventWageType}
+            {returnWageType(d.eventWageType)}
           </th>
           <th>
             {d.eventWageTypeVal}
           </th>
           <th>
           </th>
+          {eventInfoContainer(d)}
+
         </tr>
+        
       )
+      
       }
   })}
 </>
@@ -64,7 +69,7 @@ function people(results){
 {results.map((d)=>{
       if(results.length>0){
           return(
-          <tr>
+          <tr onClick={()=>document.getElementById(d.uid).showModal()} className="hover:bg-gray-50">
           <td>
             <div className="flex items-center gap-3">
               <div className="avatar">
@@ -91,6 +96,7 @@ function people(results){
           <th>
           
           </th>
+          {userInfoContainer(d)}
         </tr>
       )
       }
@@ -122,7 +128,6 @@ try{
        await new Promise ((resolve)=> setTimeout(resolve,2000));
       let Uobj = u.userDataObj
        Uobj.forEach((v)=>{
-     //   var temp = JSON.parse(v)
      var temp = v.displayName
         if(v.displayName.includes(query)){
             tempResults.push(v)
@@ -136,7 +141,6 @@ try{
 } catch(err){
 toast.error('An error has occured please try again.')
 }
-//await new Promise ((resolve)=> setTimeout(resolve,2000));
 return tempResults
 }
 
@@ -155,3 +159,13 @@ function returnRole(role){
   }
 }
 
+function returnWageType(role){
+  if(role=='hourly'){
+    return(<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Hourly</span>)
+  } else{
+    return(
+      <span class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">Fixed</span>
+
+    )
+  }
+}

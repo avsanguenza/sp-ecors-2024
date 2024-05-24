@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from "react";
-import navBar from "../navBar";
+import NavBar from "../navBar";
 import { Suspense } from "react";
 import Loading from "./loading";
 import MessageListLoading from "./messageListLoading";
@@ -52,8 +52,8 @@ useEffect(()=>{
 
   return(
         <>
-        {navBar()}
-        
+        <NavBar>
+                  
         
         <div class="grid grid-rows-6 grid-flow-col gap-4 h-dvh">
   <div class="row-start-1 row-end-7 col-span-1 bg-white">
@@ -82,6 +82,7 @@ useEffect(()=>{
         </form>
   </div>
 </div>
+        </NavBar>
         </>
     )
 }

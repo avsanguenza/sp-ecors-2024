@@ -3,7 +3,9 @@ import { useEffect,useState} from "react";
 import NavBar from "../navBar";
 import { userData } from "@/firebase/data/userDB";
 import { eventData } from "@/firebase/data/event";
-function peoplePage(){
+import userInfoContainer from "@/assets/userInfoContainer";
+
+export default function peoplePage(){
 const [orgData, orgSetData] = useState([])
 const [concessData, setConcessData] = useState([])
     useEffect(()=>{
@@ -41,7 +43,10 @@ const [concessData, setConcessData] = useState([])
 
   <input type="radio" name="my_tabs_1" role="tab" className="tab" aria-label="Concessioanires"  />
   <div role="tabpanel" className="tab-content p-10">
-    {rollData(concessData)}
+  <div className="grid grid-cols-5 gap-3">
+  {rollData(concessData)}
+
+  </div>
   </div>
 </div>
             </NavBar>
@@ -51,7 +56,6 @@ const [concessData, setConcessData] = useState([])
             )
             }
 
-        export default peoplePage;
 
 function rollData(data){
     return(
@@ -67,53 +71,11 @@ function rollData(data){
   </a>
   <h2 className="mt-2">{(d.isOrganizer==true)? 'Event Organizer': 'Event Concessionaire'}</h2>
 
-  {infoModal(d.uid,d.displayName,d.userImage)}
+  {userInfoContainer(d)}
 
   </div>
         )
     })}
         </>
-    )
-}
-
-export function infoModal(uid, name, image){
-return(
-    <dialog id={uid} class="modal">
-    <div class="modal-box">
-    <form method='dialog'>
-    <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-    </form>
-    <h5 class="font-bold text-2xl mb-4">User Details</h5>
-    <div className="flex items-start">
-    <img src={image} className="h-12 w-12 rounded-full"></img>
-    <h3 class="font-regular text-lg ml-4 mt-3">{name}</h3>
-    <h2 className="text-lg font-medium ml-8 mt-3">Member Since:</h2>
-    </div>
-    <hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
-    <p class="py-4 font-bold text-2xl mb-4">Events</p>
-    </div>
-
-    <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-    
-    </form>
-
-</dialog>
-)
-}
-
-function getUserCreatedEvents(uid){
-    const [data, setData] = useState([])
-    useEffect(()=>{
-        const getCreatedEvents = async()=>{
-            let user = new userData()
-            await user.getData('events','isConcess','==',true).then(()=>{
-            setData(user.userDataObj)
-            })
-        }
-        getCreatedEvents()
-    },[])
-    return(
-        data
     )
 }

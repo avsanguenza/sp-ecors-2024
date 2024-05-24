@@ -11,21 +11,8 @@ import editForm from './editJobForm';
 import userData from '../user';
 import jobAppList from './jobApplications';
 import NavBar from '@/app/navBar';
-
+import EditPage from './editJobPosted/editPage';
 const auth = getAuth(firebase_app);
-
-
-const navigation = [
-    { name: 'Browse Work', href: '/dashboard', current: false },
-    { name: 'My Jobs', href: '/dashboard/myJobs', current: true },
-    { name: 'Profile', href: '#', current: false },
-    { name: '', href: '#', current: false },
-  ]
-  
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
 
 function currUser(){
   const router = useRouter()
@@ -153,6 +140,8 @@ function eventDataTabs(data, appFormData){
   const [eventUID, setEventUID] = useState('')
   const [eventAppData, setEventAppData] = useState([])
   const [isChecked, setIsChecked] = useState()
+  
+  const[loading, setLoading] = useState(false)
   var edata = new eventData();
   var udata = new userData();
   
@@ -266,6 +255,49 @@ function returnCheckID(eventuid){
   return ("checkbox-"+eventuid)
 }
 
+function fetchButton(state){
+  if(state){
+    return( <button type='button' class=" w-48 text-center rounded-md bg-pink-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-pink-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 " > 
+     {spinnerButton()}
+     Saving Event Data </button>)
+ }
+ else{return(
+ <button type='button'
+   className="w-48 text-center rounded-md bg-pink-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-pink-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+  >
+  Confirm Event 
+ </button>)
+ }
+}
+function actualEditDialog(d){
+  return(
+     <dialog id={d.eventid} className="modal modal-top ">
+                    <div className="modal-box bg-white w-11/12 w-full mx-auto">
+                   <div className='text-center'>
+                  <form method='dialog'>
+                  <div className='border border-white bg-white'>
+                    Edit Event
+                  </div>
+                  <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+                     <EditPage data={d}/>
+                  <div className='mx-auto'>
+                  {
+                  //fetchButton(loading)
+                  }
+
+                  </div>
+                  </form>
+                   </div>
+                    <div className="modal-action">
+                    <form method="dialog">
+                    <button className="btn absolute top-0 right-0 rounded-lg">X </button>
+                    </form>
+                    </div>
+                    </div>
+                    </dialog>
+  )
+}
+
   return(
     <div>
       
@@ -312,9 +344,10 @@ function returnCheckID(eventuid){
               <td class="px-6 py-4 space-x-2" >
                 
               <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-pink-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800" onClick={()=>viewAppForm(d.eventid)}>View Applications</button>  |  
-              <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={()=>editDialog(d.eventid,d.eventName,d.eventDate, d.eventLocation, d.description,d.eventWageType,d.eventWageTypeVal )}> Edit</button>
+              <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={()=>document.getElementById(d.eventid).showModal()}> Edit</button>
             
               </td>
+              {actualEditDialog(d)}
           </tr>
             )
            })
@@ -391,6 +424,12 @@ function returnCheckID(eventuid){
 </div>
 
     </div>
+  )
+}
+
+const spinnerButton = ()=>{
+  return(
+      <svg aria-hidden="true" class="w-4 h-4 mt-1 me-2 text-gray-200 animate-spin dark:text-gray-600 inline fill-white" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/></svg>
   )
 }
 

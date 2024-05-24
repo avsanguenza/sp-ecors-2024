@@ -1,22 +1,23 @@
 'use client'
 
-import navBar from "@/app/navBar"
+import NavBar from "@/app/navBar"
 import { useEffect, useState } from "react"
 import userData from "../user"
 import { imageData } from "@/firebase/data/storage"
 import { select } from "@material-tailwind/react"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
+import toast, { Toaster } from "react-hot-toast"
 let udata = new userData()
 udata.parseData();
 export default function Page(){
 
  return(
         <>
-        {navBar()}
-        {settingTabs()}
-        {
-        //settingsInterface()
-        }
+            <NavBar>
+            <Toaster/>
+            {settingTabs()}
+
+            </NavBar>     
         </>
  )
 }
@@ -67,23 +68,18 @@ function settingsInterface(){
         setLoading(true)
         const folderName ='user'
         let imgup = new imageData(folderName);
-        await imgup.uploadImage(selectedFile,selectedFile.name).then((res)=>{
+        const process= imgup.uploadImage(selectedFile,selectedFile.name).then((res)=>{
             udata.setNewProfile(userChange.firstName,userChange.lastName,res).then(()=>{
                 setLoading(false)
     
             })
         })
-     
-    }   
-    async function handleUploadSubmit(){
-        const folderName ='user'
-        let imgup = new imageData(folderName);
-        
-        await imgup.uploadImage(selectedFile,selectedFile.name).then((res)=>{
-           // await new Promise ((resolve)=> setTimeout(resolve,2000));
-            return res
+        toast.promise(process,{
+            loading:'Saving your changes',
+            success: 'Changes saved successfully',
+            error: 'An error has occured. Please try again.'
         })
-    }
+    }   
     const handleFormChange =  (e )=>
         {
         const {name,value} = e.target
@@ -118,10 +114,6 @@ function settingsInterface(){
    <label for="imgprev" class="font-medium relative text-sm text-gray-500 scale-100 ">Profile Picture</label>
    <img src={(udata.photoURL != null) ? udata.photoURL:selectedFile.src} className="mt-6 mx-auto w-24 h-24 rounded-full border border-pink-500 mb-4" id='imgprev'></img> 
 
-  
-   {
-    //alert here
-}
    <input id="file_input" type="file" className='bg-white border text-gray-900 border-pink-300 rounded-lg px-3 py-4 text-slate-500 file:bg-pink-500 
         file:block-mb-2 file:mr-4 file:py-2 file:px-4
         file:rounded-full file:border-0

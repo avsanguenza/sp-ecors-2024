@@ -42,7 +42,7 @@ export  class eventData extends appData{
       this.eventDataObj = new Array()
     }
 
-    async setData(uid, eventCName, eventNameInput, eventDateInfoStart,eventDateInfoEnd, eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal,eventimg){
+    async setData(uid, eventCName, eventNameInput, eventDateInfoStart,eventDateInfoEnd,createJob0, createJob1,eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal,eventimg){
         const docRef = doc(collection(this.db,"events"))
         await setDoc(docRef,{
             userid: uid,
@@ -50,6 +50,8 @@ export  class eventData extends appData{
             eventName: eventNameInput,
             eventDateStart: eventDateInfoStart,
             eventDateEnd: eventDateInfoEnd,
+            createJobCat : createJob0,
+            createJobPos: createJob1,
             eventLocation:eventLocInfo,
             description:eventDescriptionInput,
             eventWageType:eventWType,
@@ -69,8 +71,12 @@ export  class eventData extends appData{
         this.eventCreatorName=doc.data().eventCreatorName;        
         this.eventUID = doc.id;
         this.eventImageURL = doc.data().eventImage
-        this.eventDate = doc.data().eventDate;
+       // this.eventDate = doc.data().eventDate;
       //  this.eventKeys.push(doc.id);
+        this.eventDateStart = doc.data().eventDateStart,
+        this.eventDateEnd = doc.data().eventDateEnd,
+        this.eventJobCat = doc.data().createJobCat;
+        this.eventJobPos = doc.data().createJobPos;
         this.eventLocation=doc.data().eventLocation;
         this.wageType = doc.data().eventWageType;
         this.wageTypeVal = doc.data().eventWageTypeValue;  
@@ -89,17 +95,19 @@ export  class eventData extends appData{
         const qsnapshot = await getDocs(q);
         qsnapshot.forEach((doc)=>{
             this.eventName= doc.data().eventName;
-            this.eventCreatorName=doc.data().eventCreatorName;        
-            this.eventUID = doc.id;
-            this.eventImageURL = doc.data().eventImage
-            this.eventDate = doc.data().eventDate;
-          //  this.eventKeys.push(doc.id);
-            this.eventLocation=doc.data().eventLocation;
-            this.wageType = doc.data().eventWageType;
-            this.wageTypeVal = doc.data().eventWageTypeValue;  
-            this.description = doc.data().description;
-            this.eventImageURL = doc.data().eventImage;
-            this.eventStatus = doc.data().isOpen;
+        this.eventCreatorName=doc.data().eventCreatorName;        
+        this.eventUID = doc.id;
+        this.eventImageURL = doc.data().eventImage
+        this.eventDateStart = doc.data().eventDateStart,
+        this.eventDateEnd = doc.data().eventDateEnd,
+        this.eventJobCat = doc.data().createJobCat;
+        this.eventJobPos = doc.data().createJobPos;
+        this.eventLocation=doc.data().eventLocation;
+        this.wageType = doc.data().eventWageType;
+        this.wageTypeVal = doc.data().eventWageTypeValue;  
+        this.description = doc.data().description;
+        this.eventImageURL = doc.data().eventImage;
+        this.eventStatus = doc.data().isOpen;
             this.dataToJSON()
              })
      }
@@ -130,15 +138,20 @@ export  class eventData extends appData{
         })
     }
 
-    async updateData(eventUID, eventNameInput, eventDateInfo, eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal){
+    async updateData(uid, eventCName, eventNameInput, eventDateInfoStart,eventDateInfoEnd,createJob0, createJob1,eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal,eventimg){
         const docRef = doc(this.db,"events",eventUID)
         await updateDoc(docRef,{
+            eventCreatorName: eventCName,
             eventName: eventNameInput,
-            eventDate: eventDateInfo,
+            eventDateStart: eventDateInfoStart,
+            eventDateEnd: eventDateInfoEnd,
+            createJobCat : createJob0,
+            createJobPos: createJob1,
             eventLocation:eventLocInfo,
             description:eventDescriptionInput,
             eventWageType:eventWType,
-            eventWageTypeValue:eventWTypeVal
+            eventWageTypeValue:eventWTypeVal,
+            eventImage:eventimg,
           //  isOpen: true
         }).then(()=>{
             return true
@@ -167,7 +180,9 @@ export  class eventData extends appData{
             'eventLocation': this.eventLocation,
             'eventWageType' : this.wageType,
             'eventWageTypeVal' : this.wageTypeVal,
-            'eventDate' :  this.eventDate,
+            //eventDate' :  this.eventDate,
+            'eventDateStart': this.eventDateStart,
+            'eventDateEnd': this.eventDateEnd,
             'eventDescription' : this.description,
             'eventImageURL': this.eventImageURL,
             'isOpen' : this.eventStatus

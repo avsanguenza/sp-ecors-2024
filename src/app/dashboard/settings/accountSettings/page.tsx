@@ -1,6 +1,6 @@
 'use client'
 
-import navBar from "@/app/navBar"
+import NavBar from "@/app/navBar"
 import { useState } from "react"
 import userData from "../../user"
 import { Transition,Dialog } from "@headlessui/react"
@@ -11,11 +11,11 @@ export default function Page(){
 
  return(
         <>
-        {navBar()}
-        {settingTabs()}
-        {
-        //settingsInterface()
-        }
+       
+       <NavBar>
+       {settingTabs()}
+       </NavBar>
+      
         </>
  )
 }

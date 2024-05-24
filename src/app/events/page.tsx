@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import NavBar from "../navBar"
 import { eventData } from "@/firebase/data/event"
+import eventInfoContainer from "@/assets/eventInfoContainer"
 let edata = new eventData()
 export default function eventsPage(){
     const [data, setData] = useState([])
@@ -29,9 +30,8 @@ export default function eventsPage(){
     data.map((d)=>{
       return(
         <Panel isActive={loading ===true}>
-           <div class="mt-10   max-w-sm p-6 text-center bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-            <img className="h-auto max-w-full rounded-lg" src={d.eventImageURL} onClick={()=>  document.getElementById(d.eventName).showModal()
-}/>
+           <div class="mt-10   max-w-sm p-6 text-center bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50" onClick={()=>  document.getElementById(d.eventid).showModal()}>
+            <img className="h-auto max-w-full rounded-lg" src={d.eventImageURL} />
 
           <a href="#">
           <h5 class="mt-4 text-2xl text-center font-semibold tracking-tight text-gray-900 dark:text-white">{d.eventName}</h5>
@@ -47,7 +47,7 @@ export default function eventsPage(){
         
           </ul>
           </div>
-          {infoModal(d.eventName,d.eventLocation)}
+          {eventInfoContainer(d)}
 
         </Panel>
       )

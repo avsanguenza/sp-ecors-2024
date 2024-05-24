@@ -24,7 +24,7 @@ export default async function signUp(type,name,email, password) { //name,email,p
                 isConcess: isConcessValue,
                 isOrganizer: isOrganizerValue,
                 displayName: auth.currentUser.displayName,
-                userImage: '',
+                userImage: 'https://i.pinimg.com/736x/8d/03/f2/8d03f2be7f0f9b111b2a94558a099ca8.jpg',
                 isAccountActive:true
             })
          

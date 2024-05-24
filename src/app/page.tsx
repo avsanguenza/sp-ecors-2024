@@ -6,6 +6,7 @@ import { eventData } from '@/firebase/data/event';
 import { adminData } from '@/firebase/data/storage';
 import LoadingFeature from './loadingFeature';
 import { CarouselLoadingSkeleton } from './loadingFeature';
+import eventInfoContainer from '@/assets/eventInfoContainer';
 //make loading screen -> loading animation ->navbar 
 //featured events
 let edata = new eventData()
@@ -46,27 +47,26 @@ export default function Page() {
     data.map((d)=>{
       return(
         <Panel isActive={loading ===true}>
-           <div class="mt-10 ml-5  max-w-sm p-6 text-center bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-            <img className="h-auto max-w-full rounded-lg" src={d.eventImageURL} onClick={()=>  document.getElementById(d.eventName).showModal()
-}/>
+        <div class="mt-10   max-w-sm p-6 text-center bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50" onClick={()=>  document.getElementById(d.eventid).showModal()}>
+         <img className="h-auto max-w-full rounded-lg" src={d.eventImageURL} />
 
-          <a href="#">
-          <h5 class="mt-4 text-2xl text-center font-semibold tracking-tight text-gray-900 dark:text-white">{d.eventName}</h5>
-          </a>
-          <h2 className="mt-2">{d.eventLocation}</h2>
-          <hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
+       <a href="#">
+       <h5 class="mt-4 text-2xl text-center font-semibold tracking-tight text-gray-900 dark:text-white">{d.eventName}</h5>
+       </a>
+       <h2 className="mt-2">{d.eventLocation}</h2>
+       <hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
 
-          <ul className="flex items-center w-full me-4">
-          <li className='flex items-start'>
-          <p className='font-medium'>Posted by:</p>
-          <img src={d.eventImageURL} className=' ml-3 h-5 w-5 mt-1 inline rounded-full'/>  
-          <p class=" ml-2 text-left font-normal  dark:text-gray-400">{d.eventCreatorName}</p></li>
-        
-          </ul>
-          </div>
-          {infoModal(d.eventName,d.eventLocation)}
+       <ul className="flex items-center w-full me-4">
+       <li className='flex items-start'>
+       <p className='font-medium'>Posted by:</p>
+       <img src={d.eventImageURL} className=' ml-3 h-5 w-5 mt-1 inline rounded-full'/>  
+       <p class=" ml-2 text-left font-normal  dark:text-gray-400">{d.eventCreatorName}</p></li>
+     
+       </ul>
+       </div>
+       {eventInfoContainer(d)}
 
-        </Panel>
+     </Panel>
       )
     })
   }

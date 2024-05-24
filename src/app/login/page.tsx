@@ -47,10 +47,10 @@ function Page(){
         await new Promise ((resolve)=> setTimeout(resolve,2000));
         setLoading(false)
         toast.success('Login success')
-        await new Promise ((resolve)=> setTimeout(resolve,500));
-
-        router.push("/dashboard")
    
+      }).then(()=>{
+       window.location.replace("/dashboard")
+  
       }).catch((err)=>{
         setLoading(false)
         toast.error('Login failed. Please try again.')
