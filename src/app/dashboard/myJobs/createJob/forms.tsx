@@ -7,10 +7,8 @@ import { Fragment } from 'react';
 import { useRouter } from "next/navigation";
 import { imageData } from '@/firebase/data/storage';
 import toast from 'react-hot-toast';
-import citiesData from './citiesData.json'
-import positionData from './positionCategory.json'
-import { json } from 'stream/consumers';
-import { input } from '@material-tailwind/react';
+import citiesData from '@/assets/citiesData.json'
+import positionData from '@/assets/positionCategory.json'
 
 function jobRegistrationForm(inputData,mode){
   //console.log(inputData)
@@ -34,7 +32,7 @@ function jobRegistrationForm(inputData,mode){
   const [jobList, setJobList] = useState([])
   const [loading,setLoading] = useState(false)
   const [changeList, setChangeList] = useState('')
-  const [selectedFile, setSelectedFile] = useState({src:(inputData.eventImageURL =='' ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp9hZ_fn1p0GQsP8Ehynpd7sNAHWz0CZXiMNLGo0b0RA&s': inputData.eventImageURL),blob:'',name:''})
+  const [selectedFile, setSelectedFile] = useState({src:(inputData.eventImageURL =='' ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp9hZ_fn1p0GQsP8Ehynpd7sNAHWz0CZXiMNLGo0b0RA&s': inputData.eventImageURL),blob:'',name:'',type:''})
     //event instance
 
     let edata = new eventData();
@@ -50,7 +48,7 @@ function jobRegistrationForm(inputData,mode){
           throw 'You cannot set an event into the past... yet.'
         }
       
-        if(name =='jobCreate0'){
+        if(name =='createJob0'){
           setChangeList(value)
         }
        setFormData({
@@ -111,7 +109,8 @@ function jobRegistrationForm(inputData,mode){
         ...selectedFile,
         src: URL.createObjectURL(e.target.files[0]),
         blob: e.target.files[0],
-        name: formData.eventName
+        name: formData.eventName,
+        type:e.target.files[0].name.split(".").pop()
       })
     }
     
@@ -137,28 +136,27 @@ function jobRegistrationForm(inputData,mode){
   function sendData(){
     setLoading(true)
     let imgup = new imageData('event');
+    let edata = new eventData();
+    console.log(formData)
     if(selectedFile.name!=''){
       const uploading =imgup.uploadImage(selectedFile,formData.eventName).then(async(sn)=>{
         var eventimg = sn;
-        let edata = new eventData();
-        const savingData= await edata.setData(udata.getUserUID(),udata.getName(),formData.eventName,formData.createDateStart,formData.createDateEnd,formData.createLoc,formData.createDescription,formData.createWageType,formData.createWageTypeVal,eventimg).then(()=>{
+        const savingData= edata.setData(udata.getUserUID(),udata.getName(),formData.eventName,formData.createDateStart,formData.createDateEnd,formData.createJob0,formData.createJob1,formData.createLoc,formData.createDescription,formData.createWageType,formData.createWageTypeVal,eventimg).then(()=>{
      
             setLoading(false)
             window.location.replace('/dashboard/myJobs')
+        }).catch((e)=>{
+          console.log(e)
         })
-  
+ 
           }) 
           
-          const firstToast=  toast.promise(uploading,{
-                loading:'Saving your progress',
-                success:'Event data saved successfully',
-                error: 'An error has occurred. Please try again.'
-                })
+      
              
     }
     else{
       let eventimg = selectedFile.src
-      const savingData= edata.setData(udata.getUserUID(),udata.getName(),formData.eventName,formData.createDateStart,formData.createDateEnd,formData.createLoc,formData.createDescription,formData.createWageType,formData.createWageTypeVal,eventimg).then(()=>{
+      const savingData= edata.setData(udata.getUserUID(),udata.getName(),formData.eventName,formData.createDateStart,formData.createDateEnd,formData.createJob0,formData.createJob1,formData.createLoc,formData.createDescription,formData.createWageType,formData.createWageTypeVal,eventimg).then(()=>{
         setLoading(false)
         window.location.replace('/dashboard/myJobs')
 
@@ -220,7 +218,7 @@ function jobRegistrationForm(inputData,mode){
    else{return(
    <button type='button'
      className="w-48 text-center rounded-lg bg-pink-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-pink-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-    onClick={()=>{mode=='add'? sendData(): sendEditedData()}}>
+    onClick={()=>{mode=='new'? sendData(): sendEditedData()}}>
       {(mode =='add' )?  "Confirm Event" : "Save Changes" }
    </button>)
    }
@@ -319,7 +317,7 @@ Add description</button>
           <div className='mt-8'>
           <label className="ml-4 mb-2 block text-gray-700 tracking-wide text-xl font-semibold " for="eventWork"> Category:</label>
           <div className='ml-4'>
-             <select id="eventWorkCategory" name='jobCreate0'className='rounded py-3 px-9 w-48 bg-gray-50 border border-pink-500 focus:ring-pink-500 focus:border-pink-500'  onChange={handleStateChange}>
+             <select id="eventWorkCategory" name='createJob0'className='rounded py-3 px-9 w-48 bg-gray-50 border border-pink-500 focus:ring-pink-500 focus:border-pink-500'  onChange={handleStateChange}>
               <option defaultChecked>{(formData.createJob0=='')? 'Select Position': formData.createJob0}</option>
               {jobCategory.map((d)=>{
              
@@ -333,7 +331,7 @@ Add description</button>
           <div className='mt-8 ml-8'>
           <label className="ml-20 mb-2 block text-gray-700 tracking-wide text-xl font-semibold " for="eventWorkPos"> Position</label>
           <div className='ml-20'>
-             <select id="eventWorkPos" name='jobCreate1' className='rounded py-3 px-9 w-48 bg-gray-50 border border-pink-500 focus:ring-pink-500 focus:border-pink-500'  onChange={handleStateChange}>
+             <select id="eventWorkPos" name='createJob1' className='rounded py-3 px-9 w-48 bg-gray-50 border border-pink-500 focus:ring-pink-500 focus:border-pink-500'  onChange={handleStateChange}>
              <option defaultChecked>{(formData.createJob1=='')? 'Select Position': formData.createJob1}</option>              {jobList.map((d)=>{
                 return(
                   <option value={d}>{d}</option>
@@ -442,16 +440,17 @@ Add description</button>
                    <div className='text-center'>
                   <form method='dialog'>
                   <div className='border border-white bg-white'>
-                  <h3 className="font-bold text-lg text-center ">{mode}:</h3>
+                  <h3 className="font-bold text-lg text-center ">Confirming your input:</h3>
                   <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+                  <img src={selectedFile.src} className="rounded-lg w-auto   h-48 mx-auto mb-2"></img>
 
                     <ul>
                       <li className='text-lg font-semibold'> Event Organizer: <text className='text-lg font-normal'>{udata.getName()}</text></li>
                       <li className='text-lg font-semibold'> Event Name: <text className='text-lg font-normal'>{formData.eventName}</text></li>
-                      <li className='text-lg font-semibold'> Event Location:{formData.createLoc} <text className='text-lg font-normal'></text></li>
-                      <li className='text-lg font-semibold'> Event Date:{formData.createDateStart} ~ {formData.createDateEnd} <text className='text-lg font-normal'></text></li>
-                      <li className='text-lg font-semibold'> Wage Type:{formData.createWageType} <text className='text-lg font-normal'></text></li>
-                      <li className='text-lg font-semibold'> Wage Value:{formData.createWageTypeVal} <text className='text-lg font-normal'></text></li>
+                      <li className='text-lg font-semibold'> Event Location:<text className='text-lg font-normal'>{formData.createLoc} </text></li>
+                      <li className='text-lg font-semibold'> Event Date: <text className='text-lg font-normal'>{formData.createDateStart} ~ {formData.createDateEnd} </text></li>
+                      <li className='text-lg font-semibold'> Wage Type: {returnWageType(formData.createWageType)} <text className='text-lg font-normal'></text></li>
+                      <li className='text-lg font-semibold'> Wage Value:  <text className='text-lg font-normal'>&#8369; {formData.createWageTypeVal}</text> </li>
                     </ul>
                   </div>
                   <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
@@ -474,3 +473,14 @@ Add description</button>
 }
 
 export default jobRegistrationForm;
+
+function returnWageType(role){
+  if(role=='hourly'){
+    return(<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">Hourly</span>)
+  } else{
+    return(
+      <span class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">Fixed</span>
+
+    )
+  }
+}

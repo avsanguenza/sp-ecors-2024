@@ -15,6 +15,7 @@ export default class userData{
         this.uid='';
         this.userType=''
         this.photoURL =''
+//        this.userAddress = anotherudbc.address
     }
     parseData(){
         //parsedata here
@@ -23,6 +24,10 @@ export default class userData{
         this.uid = accInfo.uid
         this.userType = accInfo.accountType;
         this.email = accInfo.email
+        this.userProvince = accInfo.userProvince;
+        this.userCity = accInfo.userCity
+        this.userCat = accInfo.userCat,
+        this.userJob = accInfo.userJob,
         this.photoURL =accInfo.photoURL
     }
     checkUser(){
@@ -46,24 +51,37 @@ export default class userData{
         const docSnap=  await getDoc(docRef)
         this.photoURL = docSnap.data().userImage
     }  
-    async setNewProfile(firstName, lastName,pURL){
+    async setNewProfile(firstName, lastName, billAddress,aProvince,aCity,userPos,userJob,pURL){
+        let img = (pURL=='')? this.photoURL : pURL
         let tempString= firstName+" "+lastName
       await updateProfile(auth.currentUser,{
             displayName: tempString,
-            photoURL: pURL
+            photoURL: img
         }).then((f)=>{
-            console.log(f)
           let udbc = new userDBClass(auth.currentUser)
           udbc.setAccValues().then(async()=>{
             this.parseData()
             await udbc.updateAtrribute('displayName',tempString,auth.currentUser.uid).then(async()=>{
-                await udbc.updateAtrribute('userImage',pURL,auth.currentUser.uid)
+                await udbc.updateAtrribute('userImage',img,auth.currentUser.uid).then(async()=>{
+                    await udbc.updateAtrribute('address',billAddress,auth.currentUser.uid).then(async()=>{
+                        await udbc.updateAtrribute('userProvince',aProvince, auth.currentUser.uid).then(async()=>{
+                            await udbc.updateAtrribute('userCity',aCity,auth.currentUser.uid).then(async()=>{
+                                await udbc.updateAtrribute('userCategory',userPos,auth.currentUser.uid).then(async()=>{
+                                        await udbc.updateAtrribute('userJob',userJob,auth.currentUser.uid)
+                                })
+                            })
+                        })
+                    })
+                })
             })
           })
           
+        }).then(async()=>{
+            var val = auth.currentUser.metadata.creationTime
+            await udbc.updateAtrribute('creationDate',val,auth.currentUser.uid)
         })
         await new Promise ((resolve)=> setTimeout(resolve,2000));
-      window.location.reload()
+   //   window.location.reload()
         }
     async setnewEmail(email){
      await updateEmail(this.auth.currentUser, email).then(()=>{

@@ -142,10 +142,10 @@ function searchBodyHeaderUser(){
     <thead>
     <tr>
       <th>User</th>
-      <th>Type</th>
+      <th>Location</th>
       <th>Profession</th>
-      <th>Preferred Type of Wage</th>
       <th></th>
+    
     </tr>
   </thead>
   )

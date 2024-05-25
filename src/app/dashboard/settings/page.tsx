@@ -7,8 +7,15 @@ import { imageData } from "@/firebase/data/storage"
 import { select } from "@material-tailwind/react"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import toast, { Toaster } from "react-hot-toast"
+import provinces from '@/assets/provinces.json'
+import cities from '@/assets/cities.json'
+import categoryJSON from '@/assets/positionCategory.json'
+import userDBClass from "@/firebase/data/userDB"
+import { userInfo } from "os"
+
 let udata = new userData()
 udata.parseData();
+let udbc = new userDBClass(udata.auth)
 export default function Page(){
 
  return(
@@ -46,10 +53,11 @@ function settingTabs(){
         <div class="p-6 bg-gray-50 text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 rounded-lg w-full">
         <h3 class="text-4xl font-bold text-gray-900 dark:text-white mb-[2rem]">Profile Settings</h3>       
         <hr class="h-px my-full bg-gray-200 border-0 dark:bg-gray-700 mb-5"/>
-        
-        <p className="mt-8 text-center mr-[22rem] mb-3 text-2xl font-semibold text-gray-800">Edit profile</p>
-        <div className="mt-2 h-[30rem] w-[30rem] mx-auto border border-gray-300 rounded-lg p-4 ">
+        <div className="mt-2 h-[50rem] w-[35rem] mx-auto border border-gray-300 rounded-lg p-4 auto-cols">
+         <div>
          {settingsInterface()}
+         </div>
+         
         </div>
         </div>
         </div>
@@ -58,36 +66,65 @@ function settingTabs(){
     )
 }
 function settingsInterface(){
-    const [userChange, setUserChange]= useState({firstName:'',  lastName:'',email:''})
-    const [loading,setLoading] = useState(false)
-    
-    const [selectedFile, setSelectedFile] = useState({src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp9hZ_fn1p0GQsP8Ehynpd7sNAHWz0CZXiMNLGo0b0RA&s',blob:'',name:'',type:''})
 
+    const [userChange, setUserChange]= useState({firstName:'',  lastName:'',email:'',address:'',userProvince:'',userCity:'',userPos:'', userJob:''})
+    const [loading,setLoading] = useState(false)
+    const [aProvince, setAProvince] = useState('')
+    const [aCities, setACities]= useState([])
+    const [selectedFile, setSelectedFile] = useState({src:(udata.photoURL==''? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp9hZ_fn1p0GQsP8Ehynpd7sNAHWz0CZXiMNLGo0b0RA&s': udata.photoURL),blob:'',name:'',type:''})
+    const [job,setJob] = useState([])
+    const [category,setCategory] = useState([])
+    const [subCat, setSubCat] = useState('')
    const handleFormSubmit = async (e)=>{
         e.preventDefault();
         setLoading(true)
         const folderName ='user'
         let imgup = new imageData(folderName);
-        const process= imgup.uploadImage(selectedFile,selectedFile.name).then((res)=>{
-            udata.setNewProfile(userChange.firstName,userChange.lastName,res).then(()=>{
+        let process
+       if(selectedFile.name!=''){
+       process = imgup.uploadImage(selectedFile,selectedFile.name).then((res)=>{
+           process= udata.setNewProfile(userChange.firstName.trim(),userChange.lastName.trim(),userChange.address.trim(),userChange.userProvince,userChange.userCity,userChange.userPos,userChange.userJob,res).then(()=>{
                 setLoading(false)
     
             })
         })
+       }
+       else{
+            process = udata.setNewProfile(userChange.firstName.trim(),userChange.lastName.trim(),userChange.address.trim(),userChange.userProvince,userChange.userCity,userChange.userPos,userChange.userJob,'').then(()=>{
+                setLoading(false)
+            })
+       }
+       
         toast.promise(process,{
             loading:'Saving your changes',
             success: 'Changes saved successfully',
             error: 'An error has occured. Please try again.'
         })
+  
     }   
     const handleFormChange =  (e )=>
         {
         const {name,value} = e.target
+        if(name=='userProvince'){
+            setAProvince(value)
+        }
+        if(name=='userPos'){
+            setSubCat(value)
+        }
         setUserChange({
           ...userChange,
           [name]:value,
         })  
         }
+    function getNormalName(data){
+            var temp=''
+            provinces.map((v,k)=>{
+              if(v.key==data){
+                temp= v.name
+              }
+            })
+            return temp
+          }
     const handleUploadChange = (e)=>{
         setSelectedFile({
             ...selectedFile,
@@ -99,19 +136,72 @@ function settingsInterface(){
          
     }
     useEffect(()=>{
-        var[x,y] = udata.getName().split(' ',2)
+        let userInfoData = new userData()
+        userInfoData.parseData()
+        var name = userInfoData.getName().split(' ')
+        var surName = name.at(name.length-1)
+        var frontName = ''
+        name.forEach(d=>{
+            if (d!=surName){
+                frontName+=" "+d
+            }
+        })
+      
         setUserChange({
             ...userChange,
-            ['firstName']: x,
-            ['lastName']: y,
-            ['email'] : udata.email
+            ['firstName']: frontName,
+            ['lastName']: surName,
+            ['email'] : userInfoData.email,
+            ['address']: userInfoData.userAddress,
+            ['userProvince']: userInfoData.userProvince,
+            ['userCity']: userInfoData.userCity,
+            ['userPos']: userInfoData.userCat,
+            ['userJob']: userInfoData.userJob
+
           })  
     },[])
+    useEffect(()=>{
+        let tempCities = new Array()
+     cities.map((v,k)=>{
+        if(v.province == aProvince){
+            tempCities.push(v)
+        }
+     })
+     setACities(tempCities)
+    },[aProvince])
+
+useEffect(()=>{
+    let tempArray = new Array()
+    categoryJSON.map((v,k)=>{
+        if(!tempArray.includes(v.category)){
+            tempArray.push(v.category)
+        }
+    })
+    setCategory(tempArray)
+},[])
+
+  useEffect(()=>{
+   //)
+   const getJobList = async ()=>{
+    try{
+      var jsonJobRes = new Array()
+    categoryJSON.map((v,k)=>{
+      if(v.category==subCat){
+        jsonJobRes.push(v.job)
+      }
+    })
+    setJob(jsonJobRes)
+    }catch(err){
+      console.log(err)
+    }
+   }
+   getJobList()
+  },[subCat])
     return(
       <div className="ml-4 mr-4 h-lvh">
 <form class="max-w-md mx-auto" onSubmit={handleFormSubmit}>
    <div className="relative z-0  w-full mb-5 group">
-   <label for="imgprev" class="font-medium relative text-sm text-gray-500 scale-100 ">Profile Picture</label>
+   <label for="imgprev" class="font-medium text-sm relative text-sm text-gray-500 scale-100 ">Profile Picture</label>
    <img src={(udata.photoURL != null) ? udata.photoURL:selectedFile.src} className="mt-6 mx-auto w-24 h-24 rounded-full border border-pink-500 mb-4" id='imgprev'></img> 
 
    <input id="file_input" type="file" className='bg-white border text-gray-900 border-pink-300 rounded-lg px-3 py-4 text-slate-500 file:bg-pink-500 
@@ -120,8 +210,9 @@ function settingsInterface(){
         file:text-sm file:font-semibold
         file:bg-pink-500 file:text-white
         hover:file:bg-pink-700'  accept='image/png,image/jpeg' onChange={handleUploadChange}/>
-   </div>
-  <div class="relative z-0 w-full mb-5 group">
+        <hr class="mt-4 h-px my-full bg-gray-200 border-0 dark:bg-gray-900 mb-6"/>
+
+        <div class="relative z-0 w-full mb-5 group">
       <input type="email" name="email" id="floating_email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" defaultValue={userChange.email} onClick={(e)=>e.target.value=""} onChange={handleFormChange} required/>
       <label for="email" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email address</label>
   </div>
@@ -135,7 +226,77 @@ function settingsInterface(){
         <label for="floating_last_name" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Last name</label>
     </div>
   </div>
+
+        <hr class="mt-4 h-px my-full bg-gray-200 border-0 dark:bg-gray-900 mb-2"/>
+        
+        <label  class="font-medium text-sm relative text-sm text-gray-500 scale-100 ">Billing Address:</label>
+        <div class=" mt-3 relative z-0 w-full mb-5 group" >
+      <input type="text" name="address" id="floating_email" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" defaultValue={userChange.address} onClick={(e)=>e.target.value=""} onChange={handleFormChange} required/>
+      <label for="address0" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">House no./ Street Name / Barangay</label>
+  </div>
+        <div className="grid grid-cols-2 gap-1 mt-2 text-center mt-1 mb-2">
+        
+       <div className="text-start">
+       <label for='userProvince' className="font-medium relative text-sm text-gray-500 scale-100 mr-4">Province:</label>
+       <select id='userPos' name='userProvince' className="rounded py-3 px-9 w-48 bg-gray-50 border border-pink-500 focus:ring-pink-500 focus:border-pink-500 text-xs" defaultValue={userChange.address} onChange={handleFormChange}>
+       <option defaultChecked>{userChange.userProvince==''? 'Select City': getNormalName( userChange.userProvince)}</option>        {
+            provinces.map((v,k)=>{
+                return(
+                    <option value={v.key}>{v.name}</option>
+                )
+            })
+        }
+       </select>
+       
+        </div> 
+        <div className="text-start">
+        <label for='userCity' className="font-medium relative text-sm text-gray-500 scale-100 mr-4" >City</label>
+       <select name='userPos' id='userPos' className="rounded py-3 px-9 w-48 bg-gray-50 border border-pink-500 focus:ring-pink-500 focus:border-pink-500 text-xs text-center " onChange={handleFormChange}>
+       <option defaultChecked>{userChange.userCity==''? 'Select City': userChange.userCity}</option>
+       {
+        aCities.map((v,k)=>{
+            return(
+                <option value={v.name}>{v.name}</option>
+            )
+        })
+       }
+       </select>
+        </div>
+        </div>
+   </div>
+
+  
   <hr class="h-px my-full bg-gray-200 border-0 dark:bg-gray-900 mb-4"/>
+
+  <div className="grid grid-cols-2 gap-1 mt-2 text-center mt-1 mb-2">
+        
+        <div className="text-start">
+        <label for='userPos' className="font-medium relative text-sm text-gray-500 scale-100 mr-4">Category:</label>
+        <select id='userJob' name='userPos' className="rounded py-3 px-9 w-48 bg-gray-50 border border-pink-500 focus:ring-pink-500 focus:border-pink-500 text-xs" defaultValue={userChange.userPos} onChange={handleFormChange}>
+        <option defaultChecked>{userChange.userPos==''? 'Select Category': userChange.userPos}</option>         {
+           category.map((v,k)=>{
+                 return(
+                     <option value={v}>{v}</option>
+                 )
+             })
+         }
+        </select>
+        
+         </div> 
+         <div className="text-start">
+         <label for='userCity' className="font-medium relative text-sm text-gray-500 scale-100 mr-4" >Sub-Category</label>
+        <select name='userJob' id='userJob' className="rounded py-3 px-9 w-48 bg-gray-50 border border-pink-500 focus:ring-pink-500 focus:border-pink-500 text-xs text-center " defaultValue={userChange.userJob} onChange={handleFormChange}>
+        <option defaultChecked>{userChange.userJob==''? 'Select Job': userChange.userJob}</option>        {
+         job.map((v,k)=>{
+             return(
+                 <option value={v}>{v}</option>
+             )
+         })
+        }
+        </select>
+         </div>
+         </div>
+  
   {fetchButton(loading)}
 </form>
 

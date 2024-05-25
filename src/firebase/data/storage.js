@@ -1,7 +1,7 @@
 import { getDoc } from "firebase/firestore";
 import { storage } from "../config";
 import { ref,uploadBytesResumable,getDownloadURL, getStorage, uploadString,getMetadata,listAll } from "firebase/storage";
-
+import toast from "react-hot-toast";
 
 export default class storageData{
     constructor(){
@@ -23,11 +23,13 @@ export class imageData extends storageData{
         //fix the storage
       // type: e.target.files[0].name.split(".").pop(),
      //  this.metadata = this.getMetadata(this.getMetadata(file.type))
-        const imageRef = ref(this.storage, this.imageFolder+fileName,this.metadata)
+        const imageRef = ref(this.storage, this.imageFolder+fileName,this.getMetadata(file.type))
          return uploadBytesResumable(imageRef, file.blob).then((snapshot)=>{
             return getDownloadURL(snapshot.ref).then((sn)=>{
                 return sn
             })
+        }).catch((err)=>{
+            toast.error(err)
         }) 
         
     }

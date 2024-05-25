@@ -79,22 +79,20 @@ function people(results){
               </div>
               <div>
                 <div className="font-bold">{d.displayName}</div>
-                <div className="text-sm opacity-50">{d.eventLocation}</div>
+                <div className="text-sm mt-1">  {returnRole(d.isOrganizer)}</div>
               </div>
             </div>
           </td>
           <td>
-           {returnRole(d.isOrganizer)}
+           {d.userProvince+", "+d.userCity}
             <br/>
           </td>
           <th>
-              here
+            {returnProfBadge(d.userCat)}
           </th>
           <th>
-            here
-          </th>
-          <th>
-          
+          <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:ring-4 focus:ring-pink-500 focus:outline-pink-500 font-medium rounded-full text-sm px-4 py-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"> Details</button>
+
           </th>
           {userInfoContainer(d)}
         </tr>
@@ -156,6 +154,40 @@ function returnRole(role){
       <span class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">Concessionaire</span>
 
     )
+  }
+}
+
+function returnProfBadge(prof){
+  switch(prof){
+    case 'Arts':
+    return(
+      <span class="bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">{prof}</span>
+
+    )
+    case 'Consumer Goods': 
+    return(
+      <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">{prof}</span>
+
+    )
+    case 'Entertainment': 
+    return(
+      <span class="bg-indigo-100 text-indigo-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300">{prof}</span>
+
+    )
+    case 'Media and Communication':
+      return(
+        <span class="bg-purple-100 text-purple-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300">{prof}</span>
+
+      )
+    case 'Recreation and Travel': 
+    return(
+      <span class="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{prof}t</span>
+    )
+    case 'Transportation and Logistics': return(
+      <span class="bg-gray-100 text-gray-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">{prof}</span>
+
+    ) 
+    default: break;
   }
 }
 
