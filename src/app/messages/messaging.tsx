@@ -7,14 +7,18 @@ async function ChatBubbles(messageHistory,sender0,sender1){
         <>
         {
             msgHistory.map((d)=>{
-               if(d.senderID == sender_end){
+              const {message} = d
+              const {timeSent} = d
+              const {senderID} = d
+              console.log(message)
+              if(senderID == sender_end){
                 return(
-                    sender0Bubble(d.message,d.timeSent)
+                    sender0Bubble(message,timeSent)
                 )
                }
                else{
                 return(
-                  sender1Bubble(d.message,d.timeSent)
+                  sender1Bubble(message,timeSent)
                 )
                }
             })

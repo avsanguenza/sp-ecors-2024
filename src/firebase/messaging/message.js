@@ -23,16 +23,16 @@ export default class Messages{
         if(!await this.checkExistingConvo()){
             const qRef = query(collection(this.db,'messaging'),or(where('sender0','==',this.sender0uid),where('sender1','==',this.sender0uid)))
             const snapshot = await getDocs(qRef).then(async(sn)=>{
-                sn.forEach(async(s)=>{
-                    console.log(s.data().sender0,s.data().sender1)
+                
+                sn.docs.forEach(async(s)=>{
                     if(s.data().sender1 == this.sender1uid || s.data().sender0==this.sender1uid){
-                        console.log(s.id)
+                //        console.log(s.id)
                         const q0 = query(collection(this.db,'messaging/'+s.id+'/chat'),orderBy('timeSent'),limit(10))
                         await new Promise ((resolve)=> setTimeout(resolve,2000));
                         var convoRef = await getDocs(q0)
                 //        console.log(convoRef.docs)
                          convoRef.forEach((c)=>{
-                        console.log(c.data().message)
+                  //      console.log(c.data().message)
                     //console.log(c.data().message)
                     var data={
                             'message' :c.data().message,
@@ -41,7 +41,10 @@ export default class Messages{
                     }
                   //  console.log(data)
                     this.messageHistory.push(data)
-               //     console.log(this.messageHistory)
+                 /* this.messageHistory.forEach((d)=>{
+                    const {message} =d
+                    console.log(d)
+                  })*/
                 })
             //    this.updateMessageListener()
 

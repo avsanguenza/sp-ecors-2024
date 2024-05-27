@@ -21,7 +21,6 @@ function messagePage(){ //sender0, sender1; sender0 - active user
     const [sender1, setSender1] = useState({uid:'', name:''})
     const [messageHistory, setMessageHistory] = useState([])
     const [messageList, setMessageList] = useState([])
-    var msg = new Messages(udata.getUserUID(),udata.getName(),sender1.uid,sender1.name)
 
     const handleMessageSend= async (e)=>{
       e.preventDefault()
@@ -44,15 +43,18 @@ useEffect(()=>{
 useEffect(()=>{
 // console.log(sender1)
   var newMsg = new Messages(udata.getUserUID(),udata.getName(),sender1.uid,sender1.name)
-  newMsg.getData().then(async()=>{
-    await new Promise ((resolve)=> setTimeout(resolve,1000));
-    setMessageHistory(newMsg.messageHistory)    
-  })
-},[sender1])
+  const waitMessage = async()=>{
+    await newMsg.getData().then(async()=>{
+      await new Promise ((resolve)=> setTimeout(resolve,2000));
+      setMessageHistory(newMsg.messageHistory)    
+    })
+  }
+  waitMessage()
+},[sender1.name])
 
 useEffect(()=>{  
-  msg.fetchUserMessage().then(async()=>{
-    await new Promise ((resolve)=> setTimeout(resolve,2000));
+  var msg = new Messages(udata.getUserUID(),udata.getName(),sender1.uid,sender1.name)
+  msg.fetchUserMessage().then(()=>{
     setMessageList(msg.userConvos)
   })
 },[])
@@ -100,12 +102,24 @@ function convoButton(name,time,uid){
 
                   {
         messageList.map((d)=>{
-          var s1 = (d.sender1 == udata.getUserUID()) ?   d.sender0 : d.sender1
-          var sName1 = (s1 ==udata.getUserUID()) ?   d.sender1Name: d.sender0Name
-            return(
-                convoButton(sName1,d.timeSent,s1)
-                //listDesign(d.sender1,d.timeSent)
-            )
+          var viewer = udata.getUserUID()
+          console.log(viewer,d.sender0)
+          if(viewer == d.sender0 ){
+            var currs1 = (d.sender0 == udata.getUserUID()) ?   d.sender1 : d.sender0
+            var sName1 = (currs1 ==udata.getUserUID()) ?   d.sender0Name: d.sender1Name
+              return(
+                  convoButton(sName1,d.timeSent,currs1)
+                  //listDesign(d.sender1,d.timeSent)
+              )
+          }else{
+            var currs1 = (d.sender0 == udata.getUserUID()) ?   d.sender0 : d.sender1
+            var sName1 = (currs1 ==udata.getUserUID()) ?   d.sender0Name: d.sender1Name
+              return(
+                  convoButton(sName1,d.timeSent,currs1)
+                  //listDesign(d.sender1,d.timeSent)
+              )
+          }
+    
         })
     }
             </Suspense>
@@ -114,9 +128,9 @@ function convoButton(name,time,uid){
   <div className="grid grid-rows-subgrid row-span-4 col-span-2 bg-white">
     <div className="row-end-1 bg-white px-5 py-8 font-semibold text-3xl"> {sender1.name} </div>
     <div id='messageWindow'className=" ml-4 row-start-2 row-end-5 bg-white overflow-y-auto">
-    <Suspense fallback={<Loading/>}>{
+<Suspense fallback={<Loading/>}>{
     ChatBubbles(messageHistory,udata.getUserUID(),sender1.uid)
-  }</Suspense>
+}</Suspense>
   </div>
   </div>
   <div class="row-start-5 row-end-6 col-span-2 bg-white ">
