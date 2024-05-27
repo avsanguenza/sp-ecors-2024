@@ -109,14 +109,13 @@ function convoButton(name,time,uid){
             var sName1 = (currs1 ==udata.getUserUID()) ?   d.sender0Name: d.sender1Name
               return(
                   convoButton(sName1,d.timeSent,currs1)
-                  //listDesign(d.sender1,d.timeSent)
+            
               )
           }else{
             var currs1 = (d.sender0 == udata.getUserUID()) ?   d.sender0 : d.sender1
             var sName1 = (currs1 ==udata.getUserUID()) ?   d.sender0Name: d.sender1Name
               return(
                   convoButton(sName1,d.timeSent,currs1)
-                  //listDesign(d.sender1,d.timeSent)
               )
           }
     
