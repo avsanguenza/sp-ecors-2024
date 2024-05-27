@@ -2,13 +2,36 @@ import { useEffect, useState } from "react"
 import { eventFormData } from "@/firebase/data/event";
 import messagePage from "@/app/messages/page";
 import userData from "../user";
+import { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 let udata  = new userData();
 udata.parseData()
 function jobAppList(eventAppData,eventuid){
+
+function updateDialog(d){
+    return(
+        <dialog id={d.applicantID} class="modal modal-top">
+        <div class="modal-box w-auto">
+        <form method='dialog'>
+        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+        </form>
+        <div className='border border-white bg-white'>
+        <p className='text-start ml-20 text-4xl font-bold py-4  ml-6'>Action Confirmation</p>
+        </div>
+        </div>
+        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+    
+    </dialog>
+    )
+}
 function updateState(docid, userid,value){
+    console.log(docid,userid,value,eventuid)
     let efdata = new eventFormData(userid,eventuid);
     efdata.updateAttribute(docid,'applicationStatus', value).then(()=>{
-        alert('updated')
+        var str = (value==true) ? 'Accepted' :'Rejected'
+       toast.success('Proposal '+ str)
+    }).catch((err)=>{
+        console.log(err)
     })
 }
 function tableHeader(){
@@ -17,9 +40,6 @@ function tableHeader(){
         <tr>
         <th scope="col" class="px-6 py-3">
         Applicant Name
-        </th>
-        <th scope="col" class="px-6 py-3">
-        Position
         </th>
         <th scope="col" class="px-6 py-3">
         Email Address
@@ -45,18 +65,17 @@ function messageButton(appID,appName){
 }
 function allTable(eventAppData){
 return(
+  <>
+  <Toaster/>
     <table class="w-full text-sm text-left text-center rounded-full text-gray-500 dark:text-gray-400">
     {tableHeader()}
     {
         eventAppData.map((d)=>{
             return(
                <>
-                 <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                 <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 hover:opacity-90">
                 <th>
                     {d.applicantName}
-                </th>
-                <th>
-                    {"pos"}
                 </th>
                 <th>
                     {d.applicantEmail}
@@ -78,17 +97,40 @@ Message Applicant </button>
 </svg>
   View Proposal
 </button>
-                <button type="button" class="text-white bg-green-500 hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800" onClick={()=>updateState(d.docid,d.applicantID,true)}>Accept</button>  |  
+                <button type="button" class="text-white bg-green-500 hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800" onClick={()=> updateState(d.docid,d.applicantID,true)}>Accept</button>  |  
               <button type="button" class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-blue-800"onClick={()=>updateState(d.docid,d.applicantID,false)}> Reject</button>
             
                 </th>
+                {userDetails(d)}
+                {updateDialog(d)}
                 </tr>
+
                </>
             )
         })
     }
     </table>
+   
+  </>
 )
+}
+function userDetails(d){
+    return(
+        <dialog id={d.applicantID} class="modal">
+        <div class="modal-box w-96">
+        <form method='dialog'>
+        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+        </form>
+        
+        </div>
+    
+        <form method="dialog" class="modal-backdrop">
+        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+        
+        </form>
+    
+    </dialog>
+    )
 }
 function conditionalTable(eventAppData,condition){
     return(

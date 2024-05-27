@@ -17,7 +17,7 @@ const [userEntryData,setUserEntryData] = useState({eventID:'',applicantID:'',ema
       let dataup = new fileData(folderName)
       let e = new eventFormData(udata.getUserUID(),d.eventid)
       const uploadApp = dataup.uploadFile(selectedFile).then((sn)=>{
-        e.setData(userEntryData.phoneNumber,userEntryData.emailAddress,sn).then(()=>{
+        e.setData(udata.getName(),udata.photoURL,userEntryData.phoneNumber,userEntryData.emailAddress,sn).then(()=>{
           //await
           setLoading(false)
         window.location.replace('')
@@ -93,14 +93,16 @@ const [userEntryData,setUserEntryData] = useState({eventID:'',applicantID:'',ema
        <div className='text-center'>
       <form method='dialog'>
       <div className='border border-white bg-white'>
-      <h3 className="font-bold text-lg text-center "></h3>
+      <h3 className="font-bold text-lg text-center ">Application Confirmation</h3>
       <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
 
         <ul>
-          <li className='text-lg font-semibold'> Contact Email Address: <text className='text-lg font-normal'>{udata.getName()}</text></li>
-          <li className='text-lg font-semibold'> Contact Information: <text className='text-lg font-normal'>{}</text></li>
-          <li className='text-lg font-semibold'> Event Location: <text className='text-lg font-normal'></text></li>
-          <li className='text-lg font-semibold'> Wage Value:<text className='text-lg font-normal'></text></li>
+          <li className='text-lg font-semibold'> Event Name <text className='text-lg font-normal'>{d.eventName}</text></li>
+          <li className='text-lg font-semibold'> Event Date:<text className='text-lg font-normal'>{d.eventDateStart} to {d.eventDateEnd} </text></li>
+          <li className='text-lg font-semibold'> Event Location:<text className='text-lg font-normal'>{d.eventLocation} </text></li>
+          <li className='text-lg font-semibold'> Contact Email Address: <text className='text-lg font-normal'>{userEntryData.emailAddress}</text></li>
+          <li className='text-lg font-semibold'> Phone Number: <text className='text-lg font-normal'>{userEntryData.phoneNumber}</text></li>
+        
         </ul>
       </div>
       <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>

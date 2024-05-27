@@ -24,7 +24,7 @@ function listDesign(name,time){
     return(
         
       <>
-             <div className="bg-gray-200 rounded lg px-4 py-3" >
+             <div className="bg-white rounded lg px-4 py-3" >
                   <div class="flex items-center grid-rows">
                   <img className="bg-left rounded-full h-16 w-16  " src="https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"/>
                   <div className="ml-3">
@@ -40,9 +40,10 @@ function listDesign(name,time){
     )
   }
 
-  function fetchMessage(uid){
+  function fetchMessage(uid,name){
     console.log(uid)
     sessionStorage.setItem('sender1uid',uid)
+    sessionStorage.setItem('sender1Name', name)
     window.location.replace('/messages')
   }
   
@@ -50,11 +51,11 @@ function listDesign(name,time){
     return(
         <>
        <div>
-       <button className='bg-gray-200  w-fullrounded lg px-4 py-5' onClick={()=>fetchMessage(uid)}>
+       <button className='border border-gray-50 w-full rounded-lg px-3 py-5 hover:bg-gray-100' onClick={()=>fetchMessage(uid,name)}>
        <div class="flex items-center grid-rows">
-                  <img className="bg-left rounded-full h-16 w-16  " src="https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"/>
+                  <img className="bg-left rounded-full h-10 w-10  " src="https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"/>
                   <div className="ml-3">
-                  <strong>{name}</strong>
+                  <span className="-mt-4 text-xl font-medium">{name}</span>
                   <p>{time} </p>
                 
                   </div>

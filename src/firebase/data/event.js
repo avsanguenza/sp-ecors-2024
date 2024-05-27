@@ -239,7 +239,7 @@ export class eventFormData extends appData{
         this.applicantFileObj = new Array()
     }
 
-    async setData(phoneNum,emailAdd,appFile){
+    async setData(displayName, photoURL, phoneNum,emailAdd,appFile){
               const docSnap = (await getDoc( doc(this.db,'event-application',this.eventUID))).exists()
         if(!docSnap){
             await setDoc(doc(this.db,'event-application',this.eventUID),{
@@ -252,9 +252,12 @@ export class eventFormData extends appData{
 
        await addDoc(colRef,{
             userid: this.uid,
+            displayName: displayName,
+            photoURL:photoURL,
             phoneNumber: phoneNum,
            emailAddress: emailAdd,
             applicantFile: appFile,
+            isPresent : true,
            applicationStatus:'pending'
         })
    
@@ -276,10 +279,10 @@ export class eventFormData extends appData{
           this.docid = doc.id
             this.applicantID = doc.data().userid;
             this.applicantEmail = doc.data().emailAddress;
+            this.applicantName = doc.data().applicantName,
             this.applicantPhone = doc.data().phoneNumber;
             this.applicantFile = doc.data().applicantFile;
             this.applicationStatus = doc.data().applicationStatus;
-            //add for file later-> downloadlink!
             this.dataToJSON();
         })
 
@@ -296,6 +299,7 @@ export class eventFormData extends appData{
         const snapshot = await getDocs(collection(this.db,'event-application/'+currenteid+'/entries'))
         snapshot.forEach((doc)=>{
             var data={
+                'applicantFormID':doc.id,
                 'eventuid': tempData.id,
                 'eventName': tempData.data().eventName,
                 'eventCreatorName': tempData.data().eventCreatorName,
@@ -325,6 +329,7 @@ export class eventFormData extends appData{
           const snapshot = await getDocs(qColRef)
           snapshot.forEach((doc)=>{
               var data={
+                'applicantFormID':doc.id,
                   'eventuid': tempData.id,
                   'eventName': tempData.data().eventName,
                   'eventCreatorName': tempData.data().eventCreatorName,
@@ -338,7 +343,7 @@ export class eventFormData extends appData{
 
               }
             //  console.log(data)
-              if(!this.applicantFileObj.includes(data)){
+              if(!this.applicantFileObj.includes(data)&& doc.data().isPresent!=false){
                 this.applicantFileObj.push(data)
               }
           })
@@ -352,7 +357,7 @@ export class eventFormData extends appData{
         'docid': this.docid,
         'eventid' : this.eventUID,
         'applicantID' : this.applicantID,
-        'applicantName': this.applicantID,
+        'applicantName': this.applicantName,
         'applicantEmail': this.applicantEmail,
         'applicantPhone' : this.applicantPhone,
         'applicationStatus':this.applicationStatus,

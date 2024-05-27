@@ -163,7 +163,8 @@ function viewAppForm(eventid){
   }).then((res)=>{
     setEventAppData(res)
     setEventUID(eventid)
-    openAppModal()
+    document.getElementById(eventid+'app').showModal()
+    //openAppModal()
   })
 }
 
@@ -283,7 +284,7 @@ function viewPositionRequests(d){
   </div>
   <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
   
-     {jobAppList(eventAppData,d.eventuid)}
+     {jobAppList(eventAppData,d.eventid)}
   <div className='mx-auto'>
  
   </div>
@@ -346,7 +347,7 @@ function viewPositionRequests(d){
               </td>
               <td class="px-6 py-4 space-x-2" >
                 
-              <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-pink-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800" onClick={()=>document.getElementById(d.eventid+'app').showModal()}>View Applications</button>  |  
+              <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:outline-none focus:ring-4 focus:ring-pink-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800" onClick={()=>viewAppForm(d.eventid)}>View Applications</button>  |  
               <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={()=>document.getElementById(d.eventid).showModal()}> Edit</button>
             
               </td>

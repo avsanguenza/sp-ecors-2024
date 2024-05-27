@@ -80,12 +80,12 @@ function footer(){
   return(
     
 
-<footer class="bg-pink-500 rounded-lg shadow m-4 dark:bg-gray-800">
+<footer className={setClass("bg-pink-500 rounded-lg shadow m-4 dark:bg-gray-800 z-999")}>
   <div className='sm:absolute left-0 ml-16 md:flex'> 
   <span class=" text-sm text-white dark:text-gray-400 py-4">© 2024 Alyssa Fatima V. Sanguenza 
     </span>
   </div>
-    <div class="w-full mx-auto max-w-screen-xl p-4 md:flex items-end md:justify-between">
+    <div class="w-full mx-auto p-4 md:flex items-end md:justify-end -ml-16">
 
     <ul class="flex items-end mt-3 text-sm font-medium text-white sm:mt-0">
         <li>
@@ -151,7 +151,7 @@ function checkUser(){
               <Menu.Button className="ml-5 relative flex rounded-full text-white bg-base text-sm focus:outline-none  focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                 <span className="absolute -inset-1.5" />
                 <span className="sr-only">Open user menu</span>
-                {(accInfo.getUserType=='Admin')? <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                {(accInfo.getUserType()=='Admin')? <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12 inline">
 <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
 </svg>: <img src={accInfo.photoURL} className='w-12 h-12 rounded-full'></img>}
                 <span className='mt-3 px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75'>{accInfo.getName()}</span>

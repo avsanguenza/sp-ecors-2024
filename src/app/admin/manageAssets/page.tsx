@@ -69,7 +69,7 @@ function carousel(imageData){
     </form>
     <h3 className="font-bold text-lg text-center">Update Image</h3>
    {
-    editImageAssets('image1')
+    editImageAssets(imageData,'image1')
 
    }
   </div>
@@ -87,7 +87,7 @@ function carousel(imageData){
     </form>
     <h3 className="font-bold text-lg text-center">Update Image </h3>
    {
-    editImageAssets('image2')
+    editImageAssets(imageData,'image2')
 
    }
   </div>
@@ -110,7 +110,7 @@ function assetWindow(data,imageData){
             <h2 className="text-center mt-5 mb-4"> Edit Assets</h2>
             {carousel(imageData)}
             </div>
-            <div className="bg-gray-100 rounded-lg" >
+            <div className="bg-gray-100 rounded-lg overflow-y-auto" >
             <h2 className="text-center mt-5 mb-4"> Edit Featured Events</h2>
             {featureEvents(data)}
             </div>
@@ -158,6 +158,9 @@ function editImageAssets(imageData,targetName){
         }
     return(
     <form class="text-center max-w-md mx-auto" onSubmit={handleFormSubmit}>
+            <h3 className="font-bold text-lg text-center ">Edit carousel image:</h3>
+            <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+
     <img className="h-auto max-w-full rounded-lg" src={imageData[0]}/>
     <input id="file_input" type="file" className='mt-5 mb-5 bg-white border text-gray-900 border-pink-300 rounded-lg px-3 py-4 text-slate-500 file:bg-pink-500 
         file:block-mb-2 file:mr-4 file:py-2 file:px-4
@@ -165,6 +168,8 @@ function editImageAssets(imageData,targetName){
         file:text-sm file:font-semibold
         file:bg-pink-500 file:text-white
         hover:file:bg-pink-700'  accept='image/png,image/jpeg' onChange={handleUploadChange}/>
+            <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+
        {fetchButton(loading)}
     </form>
    )
@@ -202,9 +207,6 @@ function tableHeaders(){
             Event Organizer
           </th>
           <th scope="col" className="px-6 py-3">
-             Event Date
-          </th>
-          <th scope="col" className="px-6 py-3">
             Event Location
           </th>
           <th scope="col" className="px-6 py-3">
@@ -226,23 +228,71 @@ function dataTableBody(data){
              <th className='px-5'> {d.eventuid}</th>
              <th className='px-5'> {d.eventName}</th>
              <th className='px-5'> {d.eventCreatorName}</th>
-             <th className='px-5'> {d.eventDate}</th>
              <th className='px-5'> {d.eventLocation}</th>
              <th className='px-5'> 
              
-           {featureButton(d.isFeatured,d.eventuid)}
+           {featureButton(d,d.isFeatured,d.eventuid)}
              </th>
              </tr>
+             {confirmDialog(d)}
            </>
         )
        })
     )
 }
+function confirmButton(value){
+  return(
+  <>
+    <button type="button" class="text-white bg-gray-500 focus:outline-none focus:ring-4  font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800" >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 inline mr-2">
+  <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+</svg>
 
-function featureButton(featured,uid){
+   Cancel</button> 
+    <button type="button" class="text-white bg-yellow-500 focus:outline-none focus:ring-4 focus:ring-yellow-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800" onClick={()=>updateFeature(uid,value)} >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 inline mr-2">
+<path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
+</svg>
+   Confirm</button> 
+  </>
+  )
+}
+function confirmDialog(d){
+  return(
+      <dialog id={d.eventName+'confirm'} className="modal modal-bottom sm:modal-middle">
+      <div className="modal-box bg-white">
+     <div className='text-center'>
+    <form method='dialog'>
+    <div className='border border-white bg-white'>
+    <h3 className="font-bold text-lg text-center ">Feature {d.isFeatured? 'Removal':'Confirmation'}</h3>
+    <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+
+      <ul>
+        <li className='text-lg font-semibold'> Event Name <text className='text-lg font-normal'>{d.eventName}</text></li>
+        <li className='text-lg font-semibold'> Event Organizer:<text className='text-lg font-normal'>{d.eventCreatorName} </text></li>
+        <li className='text-lg font-semibold'> Event Location:<text className='text-lg font-normal'>{d.eventLocation} </text></li>
+      </ul>
+    </div>
+    <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+
+    <div className='mx-auto mt-4 '>
+    {confirmButton(!d.isFeatured)}
+    </div>
+    </form>
+     </div>
+      <div className="modal-action">
+      <form method="dialog">
+      <button className="btn absolute top-0 right-0 rounded-lg">X </button>
+      </form>
+      </div>
+      </div>
+      </dialog>
+  )
+  }
+function featureButton(d,featured,uid){
     if(featured){
         return(
-            <button type="button" class="text-white bg-gray-500 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-grayw600 dark:hover:bg-gray-700 dark:focus:ring-gray-800" onClick={()=>updateFeature(uid,false)}>
+            <button type="button" class="text-white bg-gray-500 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-grayw600 dark:hover:bg-gray-700 dark:focus:ring-gray-800" onClick={()=>document.getElementById(d.eventName+'confirm').showModal()}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 inline mr-2">
   <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm3 10.5a.75.75 0 0 0 0-1.5H9a.75.75 0 0 0 0 1.5h6Z" clip-rule="evenodd" />
 </svg>
@@ -252,7 +302,7 @@ function featureButton(featured,uid){
     }
     else{
         return(
-            <button type="button" class="text-white bg-yellow-500 focus:outline-none focus:ring-4 focus:ring-yellow-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800" onClick={()=>updateFeature(uid,true)} >
+            <button type="button" class="text-white bg-yellow-500 focus:outline-none focus:ring-4 focus:ring-yellow-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800" onClick={()=>document.getElementById(d.eventName+'confirm').showModal()} >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 inline mr-2">
  <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
 </svg>
