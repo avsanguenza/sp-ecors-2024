@@ -1,6 +1,6 @@
 
 async function ChatBubbles(messageHistory,sender0,sender1){
-    var msgHistory =  messageHistory
+    var msgHistory = await messageHistory
     var sender_end = sender0
     var sender_star = sender1
     return (

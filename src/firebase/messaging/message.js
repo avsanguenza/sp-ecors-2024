@@ -1,5 +1,5 @@
 import firebase_app from "../config";
-import {getFirestore,doc, getDocs, setDoc, query,collection, addDoc, updateDoc,serverTimestamp, getDoc, orderBy, onSnapshot,or} from 'firebase/firestore';
+import {getFirestore,doc, getDocs, setDoc, query,collection, addDoc, updateDoc,serverTimestamp, getDoc, orderBy, onSnapshot,or, limit} from 'firebase/firestore';
 import {where} from 'firebase/firestore';
 import userData from "@/app/dashboard/user";
 const firebase_app_init = firebase_app;
@@ -18,11 +18,37 @@ export default class Messages{
     }
 
     async getData(){
+        console.log('Getting data.... '+this.sender0Name+"  "+this.sender1Name)
         //FORMAT OF DB-> messaging (db) / convo id {check send0, send1} / messages / messageID {SORT} 
         if(!await this.checkExistingConvo()){
             const qRef = query(collection(this.db,'messaging'),or(where('sender0','==',this.sender0uid),where('sender1','==',this.sender0uid)))
             const snapshot = await getDocs(qRef).then(async(sn)=>{
-                var convoid= sn.docs[0].id
+                sn.forEach(async(s)=>{
+                    console.log(s.data().sender0,s.data().sender1)
+                    if(s.data().sender1 == this.sender1uid || s.data().sender0==this.sender1uid){
+                        console.log(s.id)
+                        const q0 = query(collection(this.db,'messaging/'+s.id+'/chat'),orderBy('timeSent'),limit(10))
+                        await new Promise ((resolve)=> setTimeout(resolve,2000));
+                        var convoRef = await getDocs(q0)
+                //        console.log(convoRef.docs)
+                         convoRef.forEach((c)=>{
+                        console.log(c.data().message)
+                    //console.log(c.data().message)
+                    var data={
+                            'message' :c.data().message,
+                            'senderID' :c.data().msgSenderID,
+                            'timeSent' : c.data().timeSent
+                    }
+                  //  console.log(data)
+                    this.messageHistory.push(data)
+               //     console.log(this.messageHistory)
+                })
+            //    this.updateMessageListener()
+
+                    }
+                    //var convoid = sn.id
+                })
+           /*     var convoid= sn.docs[0].id
                 const q0 = query(collection(this.db,'messaging/'+convoid+'/chat'),orderBy('timeSent'))
                 await new Promise ((resolve)=> setTimeout(resolve,2000));
                 var convoRef = await getDocs(q0)
@@ -36,13 +62,14 @@ export default class Messages{
                     }
                   //  console.log(data)
                     this.messageHistory.push(data)
+                    console.log(this.messageHistory)
                 })
                 this.updateMessageListener()
                // var convoRef = await getDocs(collection(this.db,'messaging/'+convoid+'/chat'))
                // convoRef.forEach((c)=>{
               //      console.log(c.id)
             //    })
-               
+             */  
             })
         
            }

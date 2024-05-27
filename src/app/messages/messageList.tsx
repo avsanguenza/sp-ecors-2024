@@ -41,10 +41,9 @@ function listDesign(name,time){
   }
 
   function fetchMessage(uid,name){
-    console.log(uid)
     sessionStorage.setItem('sender1uid',uid)
-    sessionStorage.setItem('sender1Name', name)
-    window.location.replace('/messages')
+    sessionStorage.setItem('sender1name', name)
+   // window.location.replace('/messages')
   }
   
   function convoButton(name,time,uid){

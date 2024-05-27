@@ -18,9 +18,9 @@ function messagePage(){ //sender0, sender1; sender0 - active user
     let udata = new userData()
     udata.parseData()
     const [sender0, setSender0] = useState({uid:udata.getUserUID(), name:udata.getName()})
-    const [sender1, setSender1] = useState({uid:sessionStorage.getItem('sender1uid'), name:sessionStorage.getItem('sender1name')})
+    const [sender1, setSender1] = useState({uid:'', name:''})
     const [messageHistory, setMessageHistory] = useState([])
-    const [messageHist, setMessageHist] = useState([])
+    const [messageList, setMessageList] = useState([])
     var msg = new Messages(udata.getUserUID(),udata.getName(),sender1.uid,sender1.name)
 
     const handleMessageSend= async (e)=>{
@@ -39,17 +39,52 @@ function messagePage(){ //sender0, sender1; sender0 - active user
   window.location.reload()
   }
 useEffect(()=>{
-    msg.getData().then(()=>{
-      setMessageHistory(msg.messageHistory)    
-    })
-},[])
+},[sender1.uid])
+
+useEffect(()=>{
+// console.log(sender1)
+  var newMsg = new Messages(udata.getUserUID(),udata.getName(),sender1.uid,sender1.name)
+  newMsg.getData().then(async()=>{
+    await new Promise ((resolve)=> setTimeout(resolve,1000));
+    setMessageHistory(newMsg.messageHistory)    
+  })
+},[sender1])
 
 useEffect(()=>{  
   msg.fetchUserMessage().then(async()=>{
     await new Promise ((resolve)=> setTimeout(resolve,2000));
-    setMessageHist(msg.userConvos)
+    setMessageList(msg.userConvos)
   })
 },[])
+function fetchMessage(senderuid,sendername){
+  //sessionStorage.setItem('sender1uid',uid)
+  //sessionStorage.setItem('sender1name', name)
+ // window.location.replace('/messages')
+ setSender1({
+  ...sender1,
+  uid:senderuid,
+  name:sendername
+ })
+}
+function convoButton(name,time,uid){
+  return(
+      <>
+     <div>
+     <button className='border border-gray-50 w-full rounded-lg px-3 py-5 hover:bg-gray-100' onClick={()=>fetchMessage(uid,name)}>
+     <div class="flex items-center grid-rows">
+                <img className="bg-left rounded-full h-10 w-10  " src="https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"/>
+                <div className="ml-3">
+                <span className="-mt-4 text-xl font-medium">{name}</span>
+                <p>{time} </p>
+              
+                </div>
+                </div>
+              
+      </button>
+     </div>
+      </>
+  )
+}
 
   return(
         <>
@@ -61,15 +96,27 @@ useEffect(()=>{
             <div class="row-start-1 row-end-7 col-span-1 bg-transparent space-y-2">
             <h2 className="ml-7 px-2 py-4 text-3xl font-bold">Messages</h2> 
             <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
-            <Suspense fallback={<MessageListLoading/>} >{messagePreviewList(messageHist,udata.getUserUID())}</Suspense>
+            <Suspense fallback={<MessageListLoading/>} >
+
+                  {
+        messageList.map((d)=>{
+          var s1 = (d.sender1 == udata.getUserUID()) ?   d.sender0 : d.sender1
+          var sName1 = (s1 ==udata.getUserUID()) ?   d.sender1Name: d.sender0Name
+            return(
+                convoButton(sName1,d.timeSent,s1)
+                //listDesign(d.sender1,d.timeSent)
+            )
+        })
+    }
+            </Suspense>
 
             </div>
   <div className="grid grid-rows-subgrid row-span-4 col-span-2 bg-white">
-    <div className="row-end-1 bg-white px-5 py-8 font-semibold text-3xl"> {(udata.getUserUID() == sender0.uid) ? sender1.name: sender0.name}  </div>
+    <div className="row-end-1 bg-white px-5 py-8 font-semibold text-3xl"> {sender1.name} </div>
     <div id='messageWindow'className=" ml-4 row-start-2 row-end-5 bg-white overflow-y-auto">
     <Suspense fallback={<Loading/>}>{
     ChatBubbles(messageHistory,udata.getUserUID(),sender1.uid)
-    }</Suspense>
+  }</Suspense>
   </div>
   </div>
   <div class="row-start-5 row-end-6 col-span-2 bg-white ">
