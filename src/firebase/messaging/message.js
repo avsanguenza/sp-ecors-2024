@@ -20,7 +20,6 @@ export default class Messages{
     async getData(){
         console.log('Getting data.... '+this.sender0Name+"  "+this.sender1Name)
         //FORMAT OF DB-> messaging (db) / convo id {check send0, send1} / messages / messageID {SORT} 
-        if(!await this.checkExistingConvo()){
             const qRef = query(collection(this.db,'messaging'),or(where('sender0','==',this.sender0uid),where('sender1','==',this.sender0uid)))
             const snapshot = await getDocs(qRef).then(async(sn)=>{
                 
@@ -46,6 +45,9 @@ export default class Messages{
                     console.log(d)
                   })*/
                 })
+                console.log(this.messageHistory)
+               // this.updateMessageListener()
+
             //    this.updateMessageListener()
 
                     }
@@ -74,16 +76,17 @@ export default class Messages{
             //    })
              */  
             })
-        
-           }
+    
+           
     }
 
-    async checkExistingConvo(){
-        const colRef = collection(this.db,'messaging')
-        const qRef = query(collection(this.db,'messaging'),or(where('sender0','==',this.sender0uid),where('sender1','==',this.sender0uid)))
-        const snapshot = (await getDocs(qRef)).empty
-       // console.log((await snapshot).docs[0].id)
-        return snapshot
+    async checkExistingConvo(){   
+        const qRef = query(collection(this.db,'messaging'),(where('sender0','==',this.sender0uid),where('sender1','==',this.sender1uid)))
+        const snapshot0 = (await getDocs(qRef)).empty
+        const qRef1 =  query(collection(this.db,'messaging'),(where('sender1','==',this.sender1uid),where('sender0','==',this.sender1uid)))
+        const snapshot1 = (await getDocs(qRef1)).empty
+        const res = (snapshot0 == snapshot1)
+        return res
     }
     async updateAttribute(docid,attrName,value){
         const docRef = doc(this.db,'messaging',docid)
@@ -148,7 +151,9 @@ export default class Messages{
       if(await this.checkExistingConvo(this.sender0uid,this.sender1uid)){
         await addDoc(tRef,{
             sender0:this.sender0uid,
+            sender0Name: this.sender0Name,
             sender1:this.sender1uid,
+            sender1Name: this.sender1Name,
             lastUpdates: serverTimestamp()
         }).then(async (snap)=>{
            // console.log(snap)

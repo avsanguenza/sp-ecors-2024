@@ -11,6 +11,8 @@ import userData from '../user';
 import jobAppList from './jobApplications';
 import NavBar from '@/app/navBar';
 import EditPage from './editJobPosted/editPage';
+import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 const auth = getAuth(firebase_app);
 
 function currUser(){
@@ -79,7 +81,7 @@ export default function Page(){
         } 
       
       </NavBar>
-    
+    <Toaster/>
 </>
     );
 
@@ -168,10 +170,17 @@ function viewAppForm(eventid){
   })
 }
 
-function update(uid){ 
+function update(uid,value){ 
   checkHandler()
-  console.log(isChecked)
-  // edata.updateStatus(uid, isChecked)
+  //console.log(isChecked)
+  const stat= edata.updateAttribute(uid,'isOpen',!value)
+  toast.promise(stat,{
+    loading:'Updating event',
+    success:'Event successfully updated!',
+    error:'An error has occured please try again later.'
+  }).then(()=>{
+    window.location.replace('/dashboard/myJobs')
+  })
  // window.location.replace('/dashboard/myJobs')
 }
 const checkHandler = () =>{
@@ -320,7 +329,7 @@ function viewPositionRequests(d){
               <th className='px-5'>
                             
               <label class="inline-flex items-center cursor-pointer">
-              <input type="checkbox" id={returnCheckID(d.eventid)} value="" class="sr-only peer" defaultChecked={d.isOpen} onClick={()=>update(d.eventid)}/>
+              <input type="checkbox" id={d.eventid+'check'} value="" class="sr-only peer" defaultChecked={d.isOpen} onChange={()=>update(d.eventid,d.isOpen)}/>
               <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
               <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300"/>
               </label>

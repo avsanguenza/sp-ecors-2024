@@ -20,6 +20,17 @@ const Admin = [
 const User = [
 
 ]
+
+const publicUser = [
+  'events',
+  '',
+  'people',
+  'login',
+  'search',
+  'signupPrompt',
+  'signup'
+]
+
 var titleName=''
   export  const metadata :Metadata={
     title: titleName, 
@@ -32,7 +43,7 @@ function NavBar ({children}){
     useEffect(()=>{
 
         document.title = title
-        isUserSupposedToBeHere(accInfo.userType)
+        isUserSupposedToBeHere(accInfo.userType,accInfo.auth.currentUser)
       })
     
    
@@ -255,13 +266,16 @@ function setClass(string){
   }
  
 
-export function isUserSupposedToBeHere(user){
-const loc = window.location.pathname.split("/")[1]
-  if(user=='Admin'){
-    if(!Admin.includes(loc)){
-    //  toast.error('Access denied.')
-      window.location.replace('/')
-    }
+export function isUserSupposedToBeHere(user,auth){
+const loc = window.location.pathname
+  if(loc.includes('dashboard') && user==null){
+    window.location.replace('/')
+  }
+  if(loc.includes('admin') && user==null){
+    window.location.replace('/')
+  }
+  if(loc.includes('messages') && user==null){
+    window.location.replace('/')
   }
 }
 export function useTitle(title){

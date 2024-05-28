@@ -82,6 +82,7 @@ export  class eventData extends appData{
         this.wageTypeVal = doc.data().eventWageTypeValue;  
         this.description = doc.data().description;
         this.eventImageURL = doc.data().eventImage;
+        this.eventCreatorID = doc.data().userid
         this.eventStatus = doc.data().isOpen;
         this.dataToJSON()
          })
@@ -186,6 +187,7 @@ export  class eventData extends appData{
             'eventDateEnd': this.eventDateEnd,
             'eventDescription' : this.description,
             'eventImageURL': this.eventImageURL,
+            'userid' : this.eventCreatorID,
             'isOpen' : this.eventStatus
         }
         const dataobj = JSON.stringify(data)
@@ -252,7 +254,7 @@ export class eventFormData extends appData{
 
        await addDoc(colRef,{
             userid: this.uid,
-            displayName: displayName,
+            applicantName: displayName,
             photoURL:photoURL,
             phoneNumber: phoneNum,
            emailAddress: emailAdd,
@@ -278,6 +280,7 @@ export class eventFormData extends appData{
           //  console.log(doc.data())
           this.docid = doc.id
             this.applicantID = doc.data().userid;
+            this.applicantUserID = doc.data().userid,
             this.applicantEmail = doc.data().emailAddress;
             this.applicantName = doc.data().applicantName,
             this.applicantPhone = doc.data().phoneNumber;
@@ -300,6 +303,7 @@ export class eventFormData extends appData{
         snapshot.forEach((doc)=>{
             var data={
                 'applicantFormID':doc.id,
+                'applicantID' :doc.data().userid,
                 'eventuid': tempData.id,
                 'eventName': tempData.data().eventName,
                 'eventCreatorName': tempData.data().eventCreatorName,

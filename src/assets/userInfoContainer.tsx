@@ -1,7 +1,39 @@
 import userData from "@/app/dashboard/user";
+import { useEffect,useState } from "react";
+import { eventData, eventFormData } from "@/firebase/data/event";
 let udata = new userData();
 udata.parseData()
-function userInfoContainer(d){
+function UserInfoContainer({d}){
+  let edata = new eventData()
+  //let efdata = new eventFormData(udata.getUserUID,'')
+  const [userExp, setUserExp] = useState([])
+  const {isOrganizer } = d
+  console.log(isOrganizer.toString())
+  useEffect(()=>{
+    const {uid } = d
+    if(isOrganizer){
+    try{  edata.getData('events','userid','==',uid).then(()=>{
+      var temp = edata.dataobjMap
+      var newArray = new Array()
+      temp.forEach((v,k)=>{
+        var tempRes = JSON.parse(v)
+        newArray.push(tempRes)
+      })
+      setUserExp(newArray)
+    })}catch(err){
+      console.log(err)
+    }
+    }
+    else{
+      let efdata = new eventFormData(udata.getUserUID,'')
+      efdata.getSpecificData('userid','==',uid).then(async()=>{
+        await new Promise ((resolve)=> setTimeout(resolve,2000));
+            var tempData = efdata.applicantFileObj
+          
+          setUserExp(tempData)
+      })
+    }
+  },[])
     return(
         <dialog id={d.uid} class="modal">
         <div class="modal-box">
@@ -12,10 +44,13 @@ function userInfoContainer(d){
         <div className="flex items-start">
         <img src={d.userImage} className="h-12 w-12 rounded-full"></img>
         <h3 class="font-regular text-lg ml-4 mt-3">{d.displayName}</h3>
-        <h2 className="text-lg font-medium ml-8 mt-3">Member Since:</h2>
+        <h2 className="text-lg font-medium ml-8 mt-3">Member Since:  {d.creationDate}</h2>
         </div>
         <hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
-        <p class="py-4 font-bold text-2xl mb-4">Events</p>
+        <p class="py-4 font-bold text-2xl mb-4">Recent Events Participated</p>
+        {userExp.map((d)=>{
+         return( <p className="font-medium text-xl mb-1">{d.eventName} - {d.eventDateStart}</p>)
+        })}
         <div className="text-center">
           <hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
 
@@ -37,4 +72,4 @@ function userInfoContainer(d){
     </dialog>
     )
 }
-export default userInfoContainer;
+export default UserInfoContainer;

@@ -63,7 +63,7 @@ function Page() {
        try{
         const result= await signUp(accType,name,email, password).then(() =>{
 
-          var udbc = new userDBClass(auth.currentUser?.uid,auth.currentUser?.displayName);
+          var udbc = new userDBClass(auth.currentUser);
            udbc.setAccValues()
            }
     

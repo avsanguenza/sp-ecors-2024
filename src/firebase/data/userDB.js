@@ -48,6 +48,7 @@ export default class userDBClass{
    catch(err){
   }
 }
+
 async updateAtrribute(attrName, value,uid){
   const docRef = doc(this.db,"users",uid)
   await setDoc(docRef,{

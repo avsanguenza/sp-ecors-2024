@@ -5,7 +5,9 @@ import { useState } from "react"
 import userData from "../../user"
 import { Transition,Dialog } from "@headlessui/react"
 import { Fragment } from "react"
+import toast from "react-hot-toast"
 let udata = new userData()
+
 udata.parseData();
 export default function Page(){
 
@@ -22,11 +24,33 @@ export default function Page(){
 function settingTabs(){
 
     const [isAppOpen, setAppOpen] = useState(false)
+    const [newCred, setNewCred] = useState({p0:'',p1:'',p2:''})
     function closeAppModal(){
         setAppOpen(false)
     }
     function openAppModal(){
         setAppOpen(true)
+    }
+
+    const handleInput = (e)=>{
+      const {name, value} = e.target
+
+      setNewCred({
+      ... newCred,
+       [ name]:value,
+      })
+    }
+    
+    const updatePassword = ()=>{
+    try{const message= udata.changePassword(newCred.p0,newCred.p1,newCred.p2)
+    toast.promise(message,{
+      loading: 'Updating password',
+      success: 'Password successfully updated',
+      error:'An error has occurred. Please try again later.'
+    }
+    )}catch(err){
+      toast.error(err)
+    }
     }
     return(
         
@@ -58,20 +82,20 @@ function settingTabs(){
           
         <form>
         <label for='currpw' className="block mb-2">Current Password:</label>
-        <input type="password" name="currpw" id="floating_email" class="mb-4 block py-2.5 px-0 w-96 text-sm text-gray-900 bg-transparent border border-gray-500 rounded-lg appearance-none dark:text-white dark:border-gray-600 dark:focus:border-pink-500 focus:outline-none focus:ring-0 focus:border-pink-600 peer" />
+        <input type="password" name="p0" id="floating_email" class="mb-4 block py-2.5 px-0 w-96 text-sm text-gray-900 bg-transparent border border-gray-500 rounded-lg appearance-none dark:text-white dark:border-gray-600 dark:focus:border-pink-500 focus:outline-none focus:ring-0 focus:border-pink-600 peer" onChange={handleInput} />
         <div className="inline-block space-y-2">
         <div>
         <label for='pw' className="mr-2">New Password: </label>
 
-          <input type="password" name="pw" id="floating_email" class="ml-6 py-2 px-0 w-59 text-sm text-gray-900 bg-transparent border border-gray-500 rounded-lg appearance-none dark:text-white dark:border-gray-600 dark:focus:border-pink-500 focus:outline-none focus:ring-0 focus:border-pink-600 peer" /></div>
+          <input type="password" name="pw1" id="floating_email" class="ml-6 py-2 px-0 w-59 text-sm text-gray-900 bg-transparent border border-gray-500 rounded-lg appearance-none dark:text-white dark:border-gray-600 dark:focus:border-pink-500 focus:outline-none focus:ring-0 focus:border-pink-600 peer"  onChange={handleInput}/></div>
       <div>
       <label for='pw2 ' className="mr-2">Confirm password: </label>
 
-        <input type="password" name="pw2" id="floating_email" class="py-2 px-0 w-59 text-sm text-gray-900 bg-transparent border border-gray-500 rounded-lg appearance-none dark:text-white dark:border-gray-600 dark:focus:border-pink-500 focus:outline-none focus:ring-0 focus:border-pink-600 peer" />
+        <input type="password" name="pw2" id="floating_email" class="py-2 px-0 w-59 text-sm text-gray-900 bg-transparent border border-gray-500 rounded-lg appearance-none dark:text-white dark:border-gray-600 dark:focus:border-pink-500 focus:outline-none focus:ring-0 focus:border-pink-600 peer" onChange={handleInput}/>
 
       </div>
         </div>
-        <button type="button" class="text-center text-white bg-gray-500 hover:bg-gray-700 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex  text-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2 mt-10" >
+        <button type="button" class="text-center text-white bg-gray-500 hover:bg-gray-700 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex  text-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2 mt-10" onClick={()=>updatePassword()}>
       
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-4">
   <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -83,7 +107,7 @@ function settingTabs(){
         </div>
         <hr class="mt-4 h-px my-full bg-gray-200 border-0 dark:bg-gray-700"/>
 
-        <div className="text-center mt-10">
+        {/**<div className="text-center mt-10">
         <p className="mt-8 text-center mr-[13rem] mb-3 text-2xl font-semibold text-gray-800">Account Deactivation</p>
         <div className="mt-2 max-w-md mx-auto border border-gray-300 rounded-lg p-4 ">
 
@@ -97,10 +121,11 @@ Deactivate Account
         </div>
      
         </div>
+        */}
         </div>
         
         </div>
-
+     
         <Transition appear show={isAppOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={()=>closeAppModal()}>
 

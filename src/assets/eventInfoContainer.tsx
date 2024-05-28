@@ -3,6 +3,8 @@ import EventAppDialog from '@/app/events/eventApp/eventAppDialog'
 let udata = new userData
 udata.parseData()
 function eventInfoContainer(d){
+  
+
   function eventAppFormDialog(d){
     document.getElementById('closebtn').click()
     document.getElementById(d.eventid+'eventapp').showModal()
@@ -35,7 +37,7 @@ function eventInfoContainer(d){
           <div className="text-center">
           <hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
 
-          <button className="bg-pink-500 hover:bg:pink-700 text-white font-bold text-medium px-3 py-2 rounded-full" hidden={udata.name==null} onClick={()=>(udata.getUserType()=='User')? eventAppFormDialog(d): alert(false)}> 
+          <button className="bg-pink-500 hover:bg:pink-700 text-white font-bold text-medium px-3 py-2 rounded-full" hidden={udata.name==null} onClick={()=>(udata.getUserType()=='User')? eventAppFormDialog(d): messageButton(d.userid, d.eventCreatorName)}> 
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-2 inline">
   <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
   <path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z" />
@@ -88,3 +90,12 @@ function returnWageType(role){
       )
     }
   }
+
+  function messageButton(appID,appName){
+    sessionStorage.setItem('sender0uid',udata.getUserUID())
+    sessionStorage.setItem('sender0name',udata.getName())
+    sessionStorage.setItem('sender1uid',appID)
+    sessionStorage.setItem('sender1name',appName)
+    window.location.replace('/messages')
+   // messagePage(udata.getUserUID(),udata.getName(),appID,appName)
+}

@@ -18,24 +18,27 @@ function messagePage(){ //sender0, sender1; sender0 - active user
     let udata = new userData()
     udata.parseData()
     const [sender0, setSender0] = useState({uid:udata.getUserUID(), name:udata.getName()})
-    const [sender1, setSender1] = useState({uid:'', name:''})
+    const [sender1, setSender1] = useState({uid:sessionStorage.getItem('sender1uid'), name:sessionStorage.getItem('sender1name')})
     const [messageHistory, setMessageHistory] = useState([])
     const [messageList, setMessageList] = useState([])
+    var n_msg = new Messages(udata.getUserUID(),udata.getName(),sender1.uid,sender1.name)
 
     const handleMessageSend= async (e)=>{
       e.preventDefault()
-      msg.newMessage=''
-   if (await msg.checkExistingConvo()){
-    await  msg.createT(document.getElementById('chatMsg').value)
+      var n_msg = new Messages(udata.getUserUID(),udata.getName(),sender1.uid,sender1.name)
+      n_msg.newMessage=''
+   if (await n_msg.checkExistingConvo()){
+    await  n_msg.createT(document.getElementById('chatMsg').value)
     }
     else{
-      await   msg.updateConvo(document.getElementById('chatMsg').value).then(()=>{
-         msg.updateMessageListener()
+      await  n_msg.updateConvo(document.getElementById('chatMsg').value).then(()=>{
+         n_msg.updateMessageListener()
       })
       }
 
   document.getElementById('chatMsg').value=''
-  window.location.reload()
+  sessionStorage.removeItem('sender1name')
+ //window.location.reload()
   }
 useEffect(()=>{
 },[sender1.uid])

@@ -1,8 +1,9 @@
-import { getAuth,onAuthStateChanged,sendPasswordResetEmail,updatePassword,updateProfile } from "firebase/auth";
+import { getAuth,onAuthStateChanged,sendPasswordResetEmail,updatePassword,updateProfile, EmailAuthProvider,reauthenticateWithCredential } from "firebase/auth";
 import { imageData } from "@/firebase/data/storage";
 import firebase_app from "@/firebase/config";
 import userDBClass from "@/firebase/data/userDB";
 import { getFirestore,doc,getDoc } from "firebase/firestore";
+
 const auth = getAuth(firebase_app);
 let udbc = new  userDBClass(auth)
 const dbInstance = getFirestore(firebase_app);
@@ -91,17 +92,23 @@ export default class userData{
       })
     }
     
-    async changePassword(p1,p2){
-        if(! p1 === p2){
-            //eror
-        }
-        else{
-            await updatePassword(auth.currentUser, p1).then(()=>{
-                return true
-            }).catch((err)=>{
-                console.log(err)
-            })
-        }
+    async changePassword(p0,p1,p2){
+        let eap = new EmailAuthProvider()
+        console.log(auth.currentUser.metadata)
+        var user = auth.currentUser
+        const result = updatePassword(user,p1).then((r)=>{
+            console.log(r)
+        })
+   /*    const credential = EmailAuthProvider.credential(auth.currentUser.email,p0)
+       const result = await reauthenticateWithCredential(
+        auth.currentUser,
+        credential
+       ).then(async(res)=>{
+        console.log(res)
+        var temp = res.user
+          await updatePassword(temp, p1)
+       })*/
+       return result
     }
 
     async setPhoto(){

@@ -6,7 +6,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import firebase_app from '@/firebase/config';
-import navBar from '../navBar';
+import NavBar from '../navBar';
 const auth = getAuth(firebase_app);
 
 const navigation = [
@@ -41,7 +41,9 @@ export default function Page(){
     currUser();
     return (
      <>
-       {navBar()}
+       <NavBar>
+        {window.location.replace('/admin/manageUsers')}
+       </NavBar>
      </>
 
     );

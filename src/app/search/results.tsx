@@ -1,22 +1,17 @@
 import { eventData } from "@/firebase/data/event"
 import { userData } from "@/firebase/data/userDB"
-import userInfoContainer from "@/assets/userInfoContainer"
+import UserInfoContainer from "@/assets/userInfoContainer"
 import eventInfoContainer from "@/assets/eventInfoContainer"
 import toast from "react-hot-toast"
 export default async function Results(type,data,query){
     
     let results = await getEventResults(type,data,query)
-  
-if(type=='Events'){  
-   return(
-      events(results)
-    )
-}
-else{
   return(
-    people(results)
+    (type=='Events')? events(results) : people(results)
+
+      
   )
-}
+
 }
 
 function events(results){
@@ -94,7 +89,7 @@ function people(results){
           <button type="button" class="text-white bg-pink-500 hover:bg-pink-700 focus:ring-4 focus:ring-pink-500 focus:outline-pink-500 font-medium rounded-full text-sm px-4 py-2 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"> Details</button>
 
           </th>
-          {userInfoContainer(d)}
+          <UserInfoContainer d={d}/>
         </tr>
       )
       }

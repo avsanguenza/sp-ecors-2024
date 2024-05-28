@@ -3,7 +3,7 @@ import { useEffect,useState} from "react";
 import NavBar from "../navBar";
 import { userData } from "@/firebase/data/userDB";
 import { eventData } from "@/firebase/data/event";
-import userInfoContainer from "@/assets/userInfoContainer";
+import UserInfoContainer from "@/assets/userInfoContainer";
 
 export default function peoplePage(){
 const [orgData, orgSetData] = useState([])
@@ -71,8 +71,7 @@ function rollData(data){
   </a>
   <h2 className="mt-2">{(d.isOrganizer==true)? 'Event Organizer': 'Event Concessionaire'}</h2>
 
-  {userInfoContainer(d)}
-
+ <UserInfoContainer d={d}/>
   </div>
         )
     })}
