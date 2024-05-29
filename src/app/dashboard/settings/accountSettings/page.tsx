@@ -24,7 +24,7 @@ export default function Page(){
 function settingTabs(){
 
     const [isAppOpen, setAppOpen] = useState(false)
-    const [newCred, setNewCred] = useState({p0:'',p1:'',p2:''})
+    const [newCred, setNewCred] = useState({p0:'',pw1:'',pw2:''})
     function closeAppModal(){
         setAppOpen(false)
     }
@@ -42,7 +42,7 @@ function settingTabs(){
     }
     
     const updatePassword = ()=>{
-    try{const message= udata.changePassword(newCred.p0,newCred.p1,newCred.p2)
+    try{const message= udata.changePassword(newCred.p0,newCred.pw1,newCred.pw2)
     toast.promise(message,{
       loading: 'Updating password',
       success: 'Password successfully updated',

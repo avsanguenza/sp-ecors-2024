@@ -1,5 +1,5 @@
 import firebase_app from "../config";
-import {getFirestore,doc, getDocs, setDoc, query,collection, addDoc, updateDoc,serverTimestamp, getDoc, orderBy, onSnapshot,or, limit} from 'firebase/firestore';
+import {getFirestore,doc, getDocs, setDoc, query,collection, addDoc, updateDoc,serverTimestamp, and,getDoc, orderBy, onSnapshot,or, limit} from 'firebase/firestore';
 import {where} from 'firebase/firestore';
 import userData from "@/app/dashboard/user";
 const firebase_app_init = firebase_app;
@@ -26,13 +26,12 @@ export default class Messages{
                 sn.docs.forEach(async(s)=>{
                     if(s.data().sender1 == this.sender1uid || s.data().sender0==this.sender1uid){
                 //        console.log(s.id)
-                        const q0 = query(collection(this.db,'messaging/'+s.id+'/chat'),orderBy('timeSent'),limit(10))
+                        const q0 = query(collection(this.db,'messaging/'+s.id+'/chat'),orderBy('timeSent','desc'),limit(5))
                         await new Promise ((resolve)=> setTimeout(resolve,2000));
                         var convoRef = await getDocs(q0)
-                //        console.log(convoRef.docs)
                          convoRef.forEach((c)=>{
                   //      console.log(c.data().message)
-                    //console.log(c.data().message)
+                  
                     var data={
                             'message' :c.data().message,
                             'senderID' :c.data().msgSenderID,
@@ -96,7 +95,14 @@ export default class Messages{
     }
     async updateConvo (msgData){
        if(!await this.checkExistingConvo()){
-        const qRef = query(collection(this.db,'messaging'),or(where('sender0','==',this.sender0uid),where('sender1','==',this.sender0uid)))
+    //    console.log(this.sender0uid,this.sender1uid)
+        const qRef = query(collection(this.db,'messaging'),and(
+        where('sender0', 'in',
+        [this.sender0uid, this.sender1uid]),
+        where('sender1','in',
+        [this.sender0uid,this.sender1uid])
+        ))
+        console.log((await getDocs(qRef)).empty)
         const snapshot = await getDocs(qRef).then(async(sn)=>{
             var convoid= sn.docs[0].id
             await this.updateAttribute(convoid,'lastUpdates',serverTimestamp()).then(async()=>{

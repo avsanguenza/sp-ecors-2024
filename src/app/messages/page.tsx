@@ -9,12 +9,7 @@ import messagePreviewList from "./messageList";
 import Messages from '@/firebase/messaging/message'
 import userData from "../dashboard/user";
 var messageArray = new Array()
-function messagePage(){ //sender0, sender1; sender0 - active user
-    //when accessing a message, you should check if the currentUser == sender0 or sender1
-    //if it passes, sort out the subcollection by time 
-    //and determine if the accessing user is 0 or 1, then put the messages based on the access
-    //(if sender 0 is the one accessing the message, they should go to chat-end <div> tags)
-    //const [chatData, setChatData] =  useState([])
+function messagePage(){ 
     let udata = new userData()
     udata.parseData()
     const [sender0, setSender0] = useState({uid:udata.getUserUID(), name:udata.getName()})
@@ -28,19 +23,23 @@ function messagePage(){ //sender0, sender1; sender0 - active user
       var n_msg = new Messages(udata.getUserUID(),udata.getName(),sender1.uid,sender1.name)
       n_msg.newMessage=''
    if (await n_msg.checkExistingConvo()){
-    await  n_msg.createT(document.getElementById('chatMsg').value)
+    await  n_msg.createT(document.getElementById('chatMsg').value).then(()=>{
+      sessionStorage.removeItem('sender1name')
+
+    })
     }
     else{
+    ///  console.log(n_msg.sender0uid,n_msg.sender1uid)
       await  n_msg.updateConvo(document.getElementById('chatMsg').value).then(()=>{
          n_msg.updateMessageListener()
       })
       }
 
   document.getElementById('chatMsg').value=''
-  sessionStorage.removeItem('sender1name')
- //window.location.reload()
+
   }
 useEffect(()=>{
+
 },[sender1.uid])
 
 useEffect(()=>{
@@ -48,7 +47,6 @@ useEffect(()=>{
   var newMsg = new Messages(udata.getUserUID(),udata.getName(),sender1.uid,sender1.name)
   const waitMessage = async()=>{
     await newMsg.getData().then(async()=>{
-      await new Promise ((resolve)=> setTimeout(resolve,2000));
       setMessageHistory(newMsg.messageHistory)    
     })
   }
@@ -62,9 +60,6 @@ useEffect(()=>{
   })
 },[])
 function fetchMessage(senderuid,sendername){
-  //sessionStorage.setItem('sender1uid',uid)
-  //sessionStorage.setItem('sender1name', name)
- // window.location.replace('/messages')
  setSender1({
   ...sender1,
   uid:senderuid,
@@ -152,23 +147,4 @@ function convoButton(name,time,uid){
     )
 }
 export default messagePage;
-
-function messageList(list){
-  return(
-    <>
-            <div className="bg-gray-200 rounded lg px-4 py-3" >
-                <div class="flex items-center grid-rows">
-                <img className="bg-left rounded-full h-16 w-16  " src="https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"/>
-                <div className="ml-3">
-                <strong>Client name</strong>
-                <p>Message </p>
-              
-                </div>
-                </div>
-              
-            
-            </div>
-    </>
-  )
-}
-
+                                                        

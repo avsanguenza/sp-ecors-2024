@@ -1,8 +1,10 @@
-import { getAuth,onAuthStateChanged,sendPasswordResetEmail,updatePassword,updateProfile, EmailAuthProvider,reauthenticateWithCredential } from "firebase/auth";
+import { getAuth,onAuthStateChanged,sendPasswordResetEmail,updatePassword,updateProfile, EmailAuthProvider,reauthenticateWithCredential, signInWithCredential } from "firebase/auth";
 import { imageData } from "@/firebase/data/storage";
 import firebase_app from "@/firebase/config";
 import userDBClass from "@/firebase/data/userDB";
 import { getFirestore,doc,getDoc } from "firebase/firestore";
+import toast from 'react-hot-toast'
+
 
 const auth = getAuth(firebase_app);
 let udbc = new  userDBClass(auth)
@@ -94,21 +96,21 @@ export default class userData{
     
     async changePassword(p0,p1,p2){
         let eap = new EmailAuthProvider()
-        console.log(auth.currentUser.metadata)
-        var user = auth.currentUser
-        const result = updatePassword(user,p1).then((r)=>{
-            console.log(r)
+      const credential = EmailAuthProvider.credential(auth.currentUser.email,p0)
+      const authp2 = await reauthenticateWithCredential(auth.currentUser,credential).then(async(res)=>{
+        const u = res.user
+        const upassword = await updatePassword(u, p1).then(()=>{
+            window.location.reload()
         })
-   /*    const credential = EmailAuthProvider.credential(auth.currentUser.email,p0)
-       const result = await reauthenticateWithCredential(
-        auth.currentUser,
-        credential
-       ).then(async(res)=>{
-        console.log(res)
-        var temp = res.user
-          await updatePassword(temp, p1)
-       })*/
-       return result
+       
+      })
+ //      const userCred = await reauthenticateWithCredential(
+   //     auth.currentUser,
+    //    credential
+    //   )
+    //   var user = auth.currentUser
+    //   const result = await updatePassword(user,p1)
+       return authp2
     }
 
     async setPhoto(){

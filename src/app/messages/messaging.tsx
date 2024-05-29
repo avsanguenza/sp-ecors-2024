@@ -1,6 +1,8 @@
 
 async function ChatBubbles(messageHistory,sender0,sender1){
-    var msgHistory = await messageHistory
+  await new Promise ((resolve)=> setTimeout(resolve,3000));
+
+    var msgHistory = messageHistory.reverse().sort()
     var sender_end = sender0
     var sender_star = sender1
     return (
