@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import NavBar from "../navBar";
 import { Suspense } from "react";
 import Loading from "./loading";
@@ -8,6 +8,7 @@ import ChatBubbles from "./messaging";
 import messagePreviewList from "./messageList";
 import Messages from '@/firebase/messaging/message'
 import userData from "../dashboard/user";
+import toast from "react-hot-toast";
 var messageArray = new Array()
 function messagePage(){ 
     let udata = new userData()
@@ -16,31 +17,48 @@ function messagePage(){
     const [sender1, setSender1] = useState({uid:sessionStorage.getItem('sender1uid'), name:sessionStorage.getItem('sender1name')})
     const [messageHistory, setMessageHistory] = useState([])
     const [messageList, setMessageList] = useState([])
+    const [messageSig, setMessageSig] = useState(false)
+    const ref = useRef(true)
     var n_msg = new Messages(udata.getUserUID(),udata.getName(),sender1.uid,sender1.name)
 
     const handleMessageSend= async (e)=>{
       e.preventDefault()
       var n_msg = new Messages(udata.getUserUID(),udata.getName(),sender1.uid,sender1.name)
+      console.log(sender1)
+       console.log(n_msg.sender0Name+"  -  "+n_msg.sender1Name)
+       console.log(n_msg.sender0uid+"  -  "+n_msg.sender1uid)
+
       n_msg.newMessage=''
-   if (await n_msg.checkExistingConvo()){
+      console.log(n_msg.checkExistingConvo())
+ try{ 
+   if (await n_msg.checkExistingConvo() && sender1.uid!=null){
     await  n_msg.createT(document.getElementById('chatMsg').value).then(()=>{
       sessionStorage.removeItem('sender1name')
+      setMessageSig(!ref.current)
+      document.getElementById('chatMsg').value=''
 
     })
     }
     else{
-    ///  console.log(n_msg.sender0uid,n_msg.sender1uid)
       await  n_msg.updateConvo(document.getElementById('chatMsg').value).then(()=>{
          n_msg.updateMessageListener()
+      }).then(()=>{
+        console.log('Setting sig as '+!(ref.current))
+        setMessageSig(!ref.current)
+        document.getElementById('chatMsg').value=''
+        
       })
       }
-
-  document.getElementById('chatMsg').value=''
+}catch(err){
+  toast.error(err)
+}
+  
 
   }
 useEffect(()=>{
-
-},[sender1.uid])
+  ref.current = messageSig
+ // console.log(messageSig)
+},[messageSig])
 
 useEffect(()=>{
 // console.log(sender1)
@@ -51,7 +69,7 @@ useEffect(()=>{
     })
   }
   waitMessage()
-},[sender1.name])
+},[sender1.name,messageSig])
 
 useEffect(()=>{  
   var msg = new Messages(udata.getUserUID(),udata.getName(),sender1.uid,sender1.name)
@@ -65,6 +83,8 @@ function fetchMessage(senderuid,sendername){
   uid:senderuid,
   name:sendername
  })
+ console.log(sender1)
+
 }
 function convoButton(name,time,uid){
   return(
@@ -101,7 +121,6 @@ function convoButton(name,time,uid){
                   {
         messageList.map((d)=>{
           var viewer = udata.getUserUID()
-          console.log(viewer,d.sender0)
           if(viewer == d.sender0 ){
             var currs1 = (d.sender0 == udata.getUserUID()) ?   d.sender1 : d.sender0
             var sName1 = (currs1 ==udata.getUserUID()) ?   d.sender0Name: d.sender1Name
@@ -110,8 +129,9 @@ function convoButton(name,time,uid){
             
               )
           }else{
-            var currs1 = (d.sender0 == udata.getUserUID()) ?   d.sender0 : d.sender1
-            var sName1 = (currs1 ==udata.getUserUID()) ?   d.sender0Name: d.sender1Name
+            var currs1 = (d.sender0 == udata.getUserUID()) ?   d.sender1 : d.sender0
+            var sName1 = (d.sender0Name ==udata.getUserUID()) ?   d.sender1Name: d.sender0Name
+            console.log(currs1)
               return(
                   convoButton(sName1,d.timeSent,currs1)
               )

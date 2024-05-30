@@ -12,7 +12,7 @@ async function ChatBubbles(messageHistory,sender0,sender1){
               const {message} = d
               const {timeSent} = d
               const {senderID} = d
-              console.log(message)
+             //S console.log(message)
               if(senderID == sender_end){
                 return(
                     sender0Bubble(message,timeSent)

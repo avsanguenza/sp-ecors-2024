@@ -44,7 +44,7 @@ export default class Messages{
                     console.log(d)
                   })*/
                 })
-                console.log(this.messageHistory)
+             //   console.log(this.messageHistory)
                // this.updateMessageListener()
 
             //    this.updateMessageListener()
@@ -80,12 +80,16 @@ export default class Messages{
     }
 
     async checkExistingConvo(){   
-        const qRef = query(collection(this.db,'messaging'),(where('sender0','==',this.sender0uid),where('sender1','==',this.sender1uid)))
-        const snapshot0 = (await getDocs(qRef)).empty
-        const qRef1 =  query(collection(this.db,'messaging'),(where('sender1','==',this.sender1uid),where('sender0','==',this.sender1uid)))
-        const snapshot1 = (await getDocs(qRef1)).empty
-        const res = (snapshot0 == snapshot1)
-        return res
+        const qRef = query(collection(this.db,'messaging'),and(
+            where('sender0', 'in',
+            [this.sender0uid, this.sender1uid]),
+            where('sender1','in',
+            [this.sender0uid,this.sender1uid])
+            ))
+        const snapshot1 = (await getDocs(qRef)).empty
+        console.log(snapshot1)
+      //  const res = (snapshot0 == snapshot1)
+        return snapshot1
     }
     async updateAttribute(docid,attrName,value){
         const docRef = doc(this.db,'messaging',docid)
@@ -102,7 +106,6 @@ export default class Messages{
         where('sender1','in',
         [this.sender0uid,this.sender1uid])
         ))
-        console.log((await getDocs(qRef)).empty)
         const snapshot = await getDocs(qRef).then(async(sn)=>{
             var convoid= sn.docs[0].id
             await this.updateAttribute(convoid,'lastUpdates',serverTimestamp()).then(async()=>{
@@ -154,27 +157,32 @@ export default class Messages{
            }
     async createT(msgData){
         const tRef = collection(this.db,'messaging')
-      if(await this.checkExistingConvo(this.sender0uid,this.sender1uid)){
-        await addDoc(tRef,{
-            sender0:this.sender0uid,
-            sender0Name: this.sender0Name,
-            sender1:this.sender1uid,
-            sender1Name: this.sender1Name,
-            lastUpdates: serverTimestamp()
-        }).then(async (snap)=>{
-           // console.log(snap)
-           // console.log(snap.path)
-           var docRef = await addDoc(
-            collection(this.db,'messaging',snap.id,'chat'),{
-                msgSenderID: this.sender0uid,
-                message: msgData,
-                timeSent: serverTimestamp()
-              //  title:'Test',
-            }
-           )
+        try{
+            if(await this.checkExistingConvo(this.sender0uid,this.sender1uid)){
+                await addDoc(tRef,{
+                    sender0:this.sender0uid,
+                    sender0Name: this.sender0Name,
+                    sender1:this.sender1uid,
+                    sender1Name: this.sender1Name,
+                    lastUpdates: serverTimestamp()
+                }).then(async (snap)=>{
+                   // console.log(snap)
+                   // console.log(snap.path)
+                   var docRef = await addDoc(
+                    collection(this.db,'messaging',snap.id,'chat'),{
+                        msgSenderID: this.sender0uid,
+                        message: msgData,
+                        timeSent: serverTimestamp()
+                      //  title:'Test',
+                    }
+                   )
+                
         
-
-    })
-      }
+            })
+              }
+        }catch(err){
+            console.log(err)
+        }
+     
 }
 }
