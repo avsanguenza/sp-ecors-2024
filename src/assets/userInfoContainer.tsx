@@ -49,8 +49,17 @@ function UserInfoContainer({d}){
         <hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
         <p class="py-4 font-bold text-2xl mb-4">Recent Events Participated</p>
         {userExp.map((d)=>{
-         return( <p className="font-medium text-xl mb-1">{d.eventName} - {d.eventDateStart}</p>)
-        })}
+         if(udata.name==null){
+            if(d.postVisibility=='Public'){
+              return( <p className="font-medium text-xl mb-1">{d.eventName} - {d.eventDateStart}</p>)
+            }
+         }
+         else{
+          return( <p className="font-medium text-xl mb-1">{d.eventName} - {d.eventDateStart}</p>)
+         }
+        })
+        
+        }
         <div className="text-center">
           <hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
 

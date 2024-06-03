@@ -8,6 +8,9 @@ import NavBar from "../navBar";
 import { useState,useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { where } from 'firebase/firestore';
+import userData from '../dashboard/user';
+let u = new userData()
+u.parseData()
 function searchPage({
     searchParams,
   }: {
@@ -85,7 +88,7 @@ function searchPage({
       <NavBar>
           <Toaster/>
         <div className=" grid grid-row-4 grid-col-4 gap-1">
-          <div className="ml-4 row-end-5 col-end-1 h-full  h-[40rem]">
+          <div className="ml-4 row-end-5 col-end-1 h-full  h-[40rem]" hidden={u.name==null}>
             {sideSearchRadio()}
           </div>
           <div className="col-start-1">
@@ -130,8 +133,8 @@ function searchBodyHeaderEvent(){
     <tr>
       <th>Event Name</th>
       <th>Event Organizer</th>
-      <th>Type of Wage</th>
-      <th>Wage</th>
+      <th hidden={u.name==null}>Type of Wage</th>
+      <th hidden={u.name==null}>Wage</th>
       <th></th>
     </tr>
   </thead>

@@ -1,8 +1,13 @@
 import { eventData } from "@/firebase/data/event"
 import { userData } from "@/firebase/data/userDB"
+import userdash from '../dashboard/user'
 import UserInfoContainer from "@/assets/userInfoContainer"
 import eventInfoContainer from "@/assets/eventInfoContainer"
 import toast from "react-hot-toast"
+let uState = new userdash()
+uState.parseData()
+
+
 export default async function Results(type,data,query){
     
     let results = await getEventResults(type,data,query)
@@ -19,38 +24,75 @@ function events(results){
 <>
 {results.map((d)=>{
       if(results.length>0){
+        if(uState.name!=null){
           return(
-          <tr onClick={()=>document.getElementById(d.eventid).showModal()} className="hover:bg-gray-50">
-          <td>
-            <div className="flex items-center gap-3 ">
-              <div className="avatar">
-                <div className="mask mask-squircle w-12 h-12">
-                  <img src={d.eventImageURL} alt="Avatar Tailwind CSS Component" />
+            <tr onClick={()=>document.getElementById(d.eventid).showModal()} className="hover:bg-gray-50">
+            <td>
+              <div className="flex items-center gap-3 ">
+                <div className="avatar">
+                  <div className="mask mask-squircle w-12 h-12">
+                    <img src={d.eventImageURL} alt="Avatar Tailwind CSS Component" />
+                  </div>
+                </div>
+                <div>
+                  <div className="font-bold">{d.eventName}</div>
+                  <div className="text-sm opacity-50">{d.eventLocation}</div>
                 </div>
               </div>
-              <div>
-                <div className="font-bold">{d.eventName}</div>
-                <div className="text-sm opacity-50">{d.eventLocation}</div>
-              </div>
-            </div>
-          </td>
-          <td>
-            {d.eventCreatorName}
-            <br/>
-          </td>
-          <th>
-            {returnWageType(d.eventWageType)}
-          </th>
-          <th>
-            {d.eventWageTypeVal}
-          </th>
-          <th>
-          </th>
-          {eventInfoContainer(d)}
-
-        </tr>
-        
-      )
+            </td>
+            <td>
+              {d.eventCreatorName}
+              <br/>
+            </td>
+            <th hidden={uState.name==null}>
+              {returnWageType(d.eventWageType)}
+            </th>
+            <th hidden={uState.name==null}>
+              {d.eventWageTypeVal}
+            </th>
+            <th>
+            </th>
+            {eventInfoContainer(d)}
+  
+          </tr>
+          
+        )
+        }else{
+          if(d.postVisibility=='Public'){
+            return(
+              <tr onClick={()=>document.getElementById(d.eventid).showModal()} className="hover:bg-gray-50">
+              <td>
+                <div className="flex items-center gap-3 ">
+                  <div className="avatar">
+                    <div className="mask mask-squircle w-12 h-12">
+                      <img src={d.eventImageURL} alt="Avatar Tailwind CSS Component" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-bold">{d.eventName}</div>
+                    <div className="text-sm opacity-50">{d.eventLocation}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                {d.eventCreatorName}
+                <br/>
+              </td>
+              <th hidden={uState.name==null}>
+                {returnWageType(d.eventWageType)}
+              </th>
+              <th hidden={uState.name==null}>
+                {d.eventWageTypeVal}
+              </th>
+              <th>
+              </th>
+              {eventInfoContainer(d)}
+    
+            </tr>
+            
+          )
+          }
+        }
       
       }
   })}
