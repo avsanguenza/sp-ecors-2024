@@ -262,7 +262,7 @@ function actualEditDialog(d){
                   <p className='text-start ml-20 text-4xl font-bold py-4  ml-6'>  Editing Event : {d.eventName}</p>
                   </div>
                   <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700 overflow-y-visible"/>
-                  
+                    
                      <EditPage data={d}/>
                   <div className='mx-auto'>
                  
@@ -323,7 +323,9 @@ function viewPositionRequests(d){
         <tbody id='tablebody'>
           <Panel isActive={activeIndex===0}>
             {
-           data.map((d)=>{       
+  
+           data.map((d)=>{ 
+            //console.log(d)      
             return(
               <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
               <th className='px-5'>

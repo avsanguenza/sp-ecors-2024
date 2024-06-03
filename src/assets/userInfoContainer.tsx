@@ -8,7 +8,7 @@ function UserInfoContainer({d}){
   //let efdata = new eventFormData(udata.getUserUID,'')
   const [userExp, setUserExp] = useState([])
   const {isOrganizer } = d
-  console.log(isOrganizer.toString())
+
   useEffect(()=>{
     const {uid } = d
     if(isOrganizer){

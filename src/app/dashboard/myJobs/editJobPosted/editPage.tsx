@@ -14,7 +14,8 @@ function EditPage({data}){
         createLoc:data['eventLocation'], 
         createWageType:data['eventWageType'],
         createWageTypeVal:data['eventWageTypeVal'],createDescription:data['eventDescription'],
-        eventImageURL : data['eventImageURL']
+        eventImageURL : data['eventImageURL'],
+        postVisibility: data['postVisibility']
     })
     return(
         <>

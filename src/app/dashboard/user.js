@@ -49,8 +49,8 @@ export default class userData{
         return this.userType;
     } 
     
-    async fetchPhotoURL(){
-        const docRef = doc(dbInstance,'users',this.uid)
+    async fetchPhotoURL(uid){
+        const docRef = doc(dbInstance,'users',uid)
         const docSnap=  await getDoc(docRef)
         this.photoURL = docSnap.data().userImage
     }  

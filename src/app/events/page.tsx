@@ -4,13 +4,17 @@ import { useEffect, useState } from "react"
 import NavBar from "../navBar"
 import { eventData } from "@/firebase/data/event"
 import eventInfoContainer from "@/assets/eventInfoContainer"
+import userData from "../dashboard/user"
 let edata = new eventData()
+let udata = new userData
+udata.parseData()
 export default function eventsPage(){
     const [data, setData] = useState([])
     let results = new Array()
     const [loading, setLoading] = useState(false)
    useEffect(()=>{
-    edata.getData('events','isOpen','==',true).then(async()=>{
+    if(udata.name!=null){
+      edata.getData('events','isOpen','==',true).then(async()=>{
         var res = edata.dataobjMap
         res.forEach((v,k)=>{
           var temp = JSON.parse(v)
@@ -19,6 +23,23 @@ export default function eventsPage(){
         setData(results)
         setLoading(true)
    })
+    }
+},[])
+useEffect(()=>{
+ if(udata.name==null){
+  edata.getData('events','isOpen','==',true).then(async()=>{
+    var res = edata.dataobjMap
+    res.forEach((v,k)=>{
+      var temp = JSON.parse(v)
+     if(temp.postVisibility=='Public'){
+      results.push(temp)
+     }
+    })
+    setData(results)
+    setLoading(true)
+})
+ }
+  
 },[])
  return(
     <NavBar>
@@ -43,7 +64,6 @@ export default function eventsPage(){
           <li className='flex items-start'>
           <svg xmlns="http://www.w3.org/2000/svg"  className='w-6 h-6 inline' fill="none" aria-hidden="true" viewBox="0 0 24 24" role="img"><path vector-effect="non-scaling-stroke" stroke="var(--icon-color, #001e00)" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M12 21a9 9 0 100-18 9 9 0 000 18z"></path><path vector-effect="non-scaling-stroke" stroke="var(--icon-color, #001e00)" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M12 11.73a2.97 2.97 0 100-5.94 2.97 2.97 0 000 5.94zm0 1.89c-2.88 0-5.31 2.34-5.31 5.31v.36C8.22 20.37 10.02 21 12 21c1.98 0 3.78-.63 5.31-1.71v-.36c0-2.88-2.43-5.31-5.31-5.31z"></path></svg>
           <p className='font-medium'>:</p>
-          <img src={d.eventImageURL} className=' ml-3 h-5 w-5 mt-1 inline rounded-full'/>  
           <p class=" ml-2 text-left font-normal  dark:text-gray-400">{d.eventCreatorName}</p></li>
         
           </ul>

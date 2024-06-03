@@ -25,9 +25,8 @@ function eventInfoContainer(d){
         <img src={d.eventImageURL} className="rounded-lg w-60 h-96 mx-auto mb-2"></img>
         <svg xmlns="http://www.w3.org/2000/svg"  className='w-6 h-6 inline' fill="none" aria-hidden="true" viewBox="0 0 24 24" role="img"><path vector-effect="non-scaling-stroke" stroke="var(--icon-color, #001e00)" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M12 21a9 9 0 100-18 9 9 0 000 18z"></path><path vector-effect="non-scaling-stroke" stroke="var(--icon-color, #001e00)" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M12 11.73a2.97 2.97 0 100-5.94 2.97 2.97 0 000 5.94zm0 1.89c-2.88 0-5.31 2.34-5.31 5.31v.36C8.22 20.37 10.02 21 12 21c1.98 0 3.78-.63 5.31-1.71v-.36c0-2.88-2.43-5.31-5.31-5.31z"></path></svg>
         <span className='font-bold inline' >:</span>
-          <img src={d.eventImageURL} className=' ml-3 h-5 w-5 mt-1 rounded-full inline'/>  
           <p class=" ml-2 font-normal text-center inline dark:text-gray-400">{d.eventCreatorName}</p>
-          <div>
+          <div hidden={udata.name==null}>
             <p className="font-bold">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 inline" fill="none" aria-hidden="true" viewBox="0 0 24 24" role="img"><path vector-effect="non-scaling-stroke" stroke="var(--icon-color, #001e00)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.17 3H21v7.83L10.83 21 3 13.17 13.17 3z"></path><path vector-effect="non-scaling-stroke" stroke="var(--icon-color, #001e00)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.63 11.51a1.86 1.86 0 00.3 2.56 1.86 1.86 0 002.56.3 1.51 1.51 0 00.27-1.68c-.25-.54-.87-1.56-1.08-2.12A1.4 1.4 0 0112 9.12a1.84 1.84 0 012.55.31 1.84 1.84 0 01.33 2.57m-.31-2.57l.81-.81m-6.26 6.26l.81-.81m7.94-7.39a.55.55 0 100-1.1.55.55 0 000 1.1z"></path></svg>: <text className="font-medium mr-2">&#8369; {d.eventWageTypeVal}</text>  {returnWageType(d.eventWageType)}</p>
           </div>     

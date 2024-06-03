@@ -1,3 +1,5 @@
+import userData from "../dashboard/user"
+
 async function messagePreviewList(list,viewer){
     var msgList = list
 
@@ -47,12 +49,15 @@ function listDesign(name,time){
   }
   
   function convoButton(name,time,uid){
+    let udata = new userData()
+    udata.fetchPhotoURL(uid)
+    let imageSource = udata.photoURL
     return(
         <>
        <div>
        <button className='border border-gray-50 w-full rounded-lg px-3 py-5 hover:bg-gray-100' onClick={()=>fetchMessage(uid,name)}>
        <div class="flex items-center grid-rows">
-                  <img className="bg-left rounded-full h-10 w-10  " src="https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"/>
+                  <img className="bg-left rounded-full h-10 w-10  " src={imageSource}/>
                   <div className="ml-3">
                   <span className="-mt-4 text-xl font-medium">{name}</span>
                   <p>{time} </p>

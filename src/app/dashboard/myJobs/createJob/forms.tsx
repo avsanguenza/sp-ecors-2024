@@ -9,6 +9,7 @@ import { imageData } from '@/firebase/data/storage';
 import toast from 'react-hot-toast';
 import citiesData from '@/assets/citiesData.json'
 import positionData from '@/assets/positionCategory.json'
+import { input } from '@material-tailwind/react';
 
 function jobRegistrationForm(inputData,mode){
   //console.log(inputData)
@@ -25,6 +26,7 @@ function jobRegistrationForm(inputData,mode){
     createWageType:inputData.createWageType,
     createWageTypeVal:inputData.createWageTypeVal,
     createDescription:inputData.createDescription,
+    postVisibility: (inputData.postVisibility == null) ? '' : inputData.postVisibility,
     createEventImage: inputData.eventImageURL
   })
   const [selectOptions, setSelectOptions] = useState([])
@@ -141,7 +143,7 @@ function jobRegistrationForm(inputData,mode){
     if(selectedFile.name!=''){
       const uploading =imgup.uploadImage(selectedFile,formData.eventName).then(async(sn)=>{
         var eventimg = sn;
-        const savingData= edata.setData(udata.getUserUID(),udata.getName(),formData.eventName,formData.createDateStart,formData.createDateEnd,formData.createJob0,formData.createJob1,formData.createLoc,formData.createDescription,formData.createWageType,formData.createWageTypeVal,eventimg).then(()=>{
+        const savingData= edata.setData(udata.getUserUID(),udata.getName(),formData.eventName,formData.createDateStart,formData.createDateEnd,formData.createJob0,formData.createJob1,formData.createLoc,formData.createDescription,formData.createWageType,formData.createWageTypeVal,eventimg,formData.postVisibility).then(()=>{
      
             setLoading(false)
             window.location.replace('/dashboard/myJobs')
@@ -156,7 +158,7 @@ function jobRegistrationForm(inputData,mode){
     }
     else{
       let eventimg = selectedFile.src
-      const savingData= edata.setData(udata.getUserUID(),udata.getName(),formData.eventName,formData.createDateStart,formData.createDateEnd,formData.createJob0,formData.createJob1,formData.createLoc,formData.createDescription,formData.createWageType,formData.createWageTypeVal,eventimg).then(()=>{
+      const savingData= edata.setData(udata.getUserUID(),udata.getName(),formData.eventName,formData.createDateStart,formData.createDateEnd,formData.createJob0,formData.createJob1,formData.createLoc,formData.createDescription,formData.createWageType,formData.createWageTypeVal,eventimg,formData.postVisibility).then(()=>{
         setLoading(false)
         window.location.replace('/dashboard/myJobs')
 
@@ -180,7 +182,7 @@ function jobRegistrationForm(inputData,mode){
       const uploading = imgup.uploadImage(selectedFile,formData.eventName).then(async(sn)=>{
           var eventimg = sn
           let edata = new eventData()
-          const savingData = await edata.updateData(formData.eventuniqueid,formData.eventName,formData.createDateStart,formData.createDateEnd,formData.createJob0,formData.createJob1,formData.createLoc,formData.createDescription,formData.createWageType,formData.createWageTypeVal,eventimg)
+          const savingData = await edata.updateData(formData.eventuniqueid,formData.eventName,formData.createDateStart,formData.createDateEnd,formData.createJob0,formData.createJob1,formData.createLoc,formData.createDescription,formData.createWageType,formData.createWageTypeVal,eventimg,formData.postVisibility)
       }).then(()=>{
         setLoading(false)
         window.location.replace('/dashboard/myJobs')
@@ -194,7 +196,7 @@ function jobRegistrationForm(inputData,mode){
     else{
        console.log('not uploading')
         let eventimg = selectedFile.src
-        const savingEditedData = edata.updateData(formData.eventuniqueid,formData.eventName,formData.createDateStart,formData.createDateEnd,formData.createJob0,formData.createJob1,formData.createLoc,formData.createDescription,formData.createWageType,formData.createWageTypeVal,eventimg).then(()=>{
+        const savingEditedData = edata.updateData(formData.eventuniqueid,formData.eventName,formData.createDateStart,formData.createDateEnd,formData.createJob0,formData.createJob1,formData.createLoc,formData.createDescription,formData.createWageType,formData.createWageTypeVal,eventimg, formData.postVisibility).then(()=>{
               setLoading(false)
               window.location.replace('/dashboard/myJobs')
         })
@@ -206,6 +208,55 @@ function jobRegistrationForm(inputData,mode){
           }
         )
     }
+  }
+
+ function getVisibilityChoice(){
+    return(
+      <>
+      {/* You can open the modal using document.getElementById('ID').showModal() method */}
+<dialog id="visibilityModal" className="modal">
+  <div className="modal-box">
+    <form method="dialog">
+      {/* if there is a button in form, it will close the modal */}
+      <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+    </form>
+    <h3 className="font-bold text-center text-lg mb-4">Select Post Visibility:</h3>
+    <ul class="w-full text-lg font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+    <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+        <div class="flex items-center ps-3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12 inline ">
+  <path d="M15.75 8.25a.75.75 0 0 1 .75.75c0 1.12-.492 2.126-1.27 2.812a.75.75 0 1 1-.992-1.124A2.243 2.243 0 0 0 15 9a.75.75 0 0 1 .75-.75Z" />
+  <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM4.575 15.6a8.25 8.25 0 0 0 9.348 4.425 1.966 1.966 0 0 0-1.84-1.275.983.983 0 0 1-.97-.822l-.073-.437c-.094-.565.25-1.11.8-1.267l.99-.282c.427-.123.783-.418.982-.816l.036-.073a1.453 1.453 0 0 1 2.328-.377L16.5 15h.628a2.25 2.25 0 0 1 1.983 1.186 8.25 8.25 0 0 0-6.345-12.4c.044.262.18.503.389.676l1.068.89c.442.369.535 1.01.216 1.49l-.51.766a2.25 2.25 0 0 1-1.161.886l-.143.048a1.107 1.107 0 0 0-.57 1.664c.369.555.169 1.307-.427 1.605L9 13.125l.423 1.059a.956.956 0 0 1-1.652.928l-.679-.906a1.125 1.125 0 0 0-1.906.172L4.575 15.6Z" clip-rule="evenodd" />
+</svg>
+
+            <label for="list-radio-license" class="ml-2 w-full py-3 ms-2 text-lg font-bold text-gray-900 dark:text-gray-300">Public <br></br> <span className='text-sm font-medium'> Everyone can see this event.</span></label>
+
+            <input id="list-radio-license" type="radio" value="Public" name="postVisibility" class="w-8 h-8  mr-8 accent-pink-500 text-pink-600 bg-gray-100 border-gray-300 focus:ring-pink-500 dark:focus:ring-pink-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" defaultChecked={inputData.postVisibility =='Public'} onChange={handleStateChange}/>
+
+        </div>
+    </li>
+    <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+        <div class="flex items-center ps-3">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12 inline">
+  <path d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z" />
+</svg>
+
+            <label for="list-radio-license" class=" ml-2 w-full py-3 ms-2 text-lg font-bold text-gray-900 dark:text-gray-300">Registered Users only <br></br> <span className='text-sm font-medium'> Only registered users can see this event.</span></label>
+            <input id="list-radio-id" type="radio" value="Registered" name="postVisibility" class="mr-8 w-8 h-8 accent-pink-500 text-pink-600 bg-gray-100 border-gray-300 focus:ring-pink-500 dark:focus:ring-pink-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" defaultChecked={inputData.postVisibility=='Registered'} onChange={handleStateChange}/>
+
+        </div>
+    </li>
+</ul>
+      <div className='text-end'>
+      <form method='dialog'>
+      <button className=' mt-4 w-24 text-center rounded-lg bg-pink-500 px-2 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-pink-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'> Save</button>
+      </form>
+
+      </div>
+  </div>
+</dialog>
+      </>
+    )
   }
 
   function fetchButton(state,mode){
@@ -285,6 +336,7 @@ function jobRegistrationForm(inputData,mode){
    }
    getJobList()
   },[changeList])
+
     return(
         <>
         
@@ -293,7 +345,15 @@ function jobRegistrationForm(inputData,mode){
           <div className='ml-24 grid grid-flow-col auto-cols-max '>
        
           <div className="ml-12 mx-auto ml-8 py-12 border border-white bg-white rounded-lg w-[50rem]"> 
-          
+          <div className='text-start ml-4 mb-6'>
+          {getVisibilityChoice()}
+
+          <label className="block text-gray-700 text-xl font-semibold mb-2" for="eventCreatorName">Post Visibility: <span className='text-xl font-semibold text-red-500'>&#42;</span> </label>
+          <select className='text-center rounded py-3 px-15 w-48 bg-gray-50 border border-pink-500 focus:ring-pink-500 focus:border-pink-500' onClick={()=>document.getElementById('visibilityModal').showModal()}>
+            <option defaultChecked>{formData.postVisibility =='' ? 'Select visibility:' : formData.postVisibility}</option>
+           
+          </select>
+          </div>
           <div className='text-start ml-4 mb-6'>
           <label className="block text-gray-700 text-xl font-semibold mb-2" for="eventCreatorName">Event Organizer: </label>
           <input className="appearance-none block w-96 bg-gray-50 disabled:bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="eventCreatorName" value={udata.getName()} disabled></input>
@@ -346,19 +406,19 @@ Add description</button>
           <div className=''>
           <label className="ml-4 mt-4 mb-2 block text-gray-700 br-gray-40 tracking-wide text-xl font-semibold ">Job Wage: <span className='text-xl font-semibold text-red-500'>&#42;</span></label>
               <div>
-              <input type='radio' className='py-4 accent-pink-500 bg-gray-50 ml-4 mb-4' id='jobWType' name='createWageType' value='hourly' onClick={()=>fieldHandler('jobWageSum','jobWageHourly')}  onChange={handleStateChange}></input>
+              <input type='radio' className='w-4 h-4 py-4 accent-pink-500 bg-gray-50 ml-4 mb-4' id='jobWType' name='createWageType' value='hourly' onClick={()=>fieldHandler('jobWageSum','jobWageHourly')}  onChange={handleStateChange} defaultChecked={inputData.createWageType =='hourly'}></input>
             <label className="ml-3 mb-6" for='jobWType'>Hourly Rate:</label>
       
-            <input type="number" min="0" id="jobWageHourly" name ='createWageTypeVal' className="px-4 py-3 text-center bg-gray-50 border border-pink-500 disabled:bg-gray-200 rounded-full ml-8 ring-pink-500" placeholder="&#8369;" onChange={handleStateChange} />
+            <input type="number" min="0" id="jobWageHourly" name ='createWageTypeVal' className="px-4 py-3 text-center bg-gray-50 border border-pink-500 disabled:bg-gray-200 rounded-full ml-8 ring-pink-500" placeholder={inputData.createWageType=='hourly'? "\u{20B1}   "+ inputData.createWageTypeVal: ""} onChange={handleStateChange} />
             </div>  
         
           </div>
           <div className='ml-24 mt-[3.15rem]' >
-            <input type='radio' id='jobWType' className='accent-pink-500 bg-gray-50 ml-4 mb-4' name='createWageType' value='fixed' onClick={()=> fieldHandler('jobWageHourly','jobWageSum') } onChange={handleStateChange}>
+            <input type='radio' id='jobWType' className='w-4 h-4 accent-pink-500 bg-gray-50 ml-4 mb-4' name='createWageType' value='fixed' onClick={()=> fieldHandler('jobWageHourly','jobWageSum') } onChange={handleStateChange} defaultChecked={inputData.createWageType =='fixed'}>
             
             </input>
             <label className="ml-4 mb-4">Fixed:</label>
-            <input type="number" min="0" id="jobWageSum" name ='createWageTypeVal' className="px-4 py-3 text-center bg-gray-50 border border-pink-500 rounded-full ml-8 disabled:bg-gray-200  ring-pink-500"  placeholder="	&#8369;"  onChange={handleStateChange} required />
+            <input type="number" min="0" id="jobWageSum" name ='createWageTypeVal' className="px-4 py-3 text-center bg-gray-50 border border-pink-500 rounded-full ml-8 disabled:bg-gray-200  ring-pink-500"  placeholder={inputData.createWageType=='fixed'? "\u{20B1}   "+ inputData.createWageTypeVal : ''}onChange={handleStateChange }  required />
             </div>
           </div>
          </div>

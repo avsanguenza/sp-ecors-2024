@@ -1,3 +1,5 @@
+import userData from "../dashboard/user";
+
 
 async function ChatBubbles(messageHistory,sender0,sender1){
   await new Promise ((resolve)=> setTimeout(resolve,3000));
@@ -15,12 +17,12 @@ async function ChatBubbles(messageHistory,sender0,sender1){
              //S console.log(message)
               if(senderID == sender_end){
                 return(
-                    sender0Bubble(message,timeSent)
+                    sender0Bubble(message,timeSent,sender0)
                 )
                }
                else{
                 return(
-                  sender1Bubble(message,timeSent)
+                  sender1Bubble(message,timeSent,sender1)
                 )
                }
             })
@@ -32,7 +34,9 @@ async function ChatBubbles(messageHistory,sender0,sender1){
 
 export default ChatBubbles
 
-function sender0Bubble(message,time){
+async function sender0Bubble(message,time,uid){
+  let uphoto = new userData()
+  await uphoto.fetchPhotoURL(uid)
     const date = time.toDate().toDateString() //too fast
     return(
       <div class="chat chat-end">
@@ -42,10 +46,12 @@ function sender0Bubble(message,time){
       }
     </div>
    <div className="inline-flex">
-   <time class="text-xs opacity-50 pr-4">{date} </time>
+   <time class="text-xs opacity-50 mt-4 pr-4">{date} </time>
     <div class="chat-bubble bg-pink-500 text-white ">
     {message}
   </div>
+  <img src={uphoto.photoURL} className="w-10 h-10 ml-4 rounded-full"/>
+
    </div>
     <div class="chat-footer opacity-50">
      {
@@ -57,8 +63,9 @@ function sender0Bubble(message,time){
     )
   }
 
-  function sender1Bubble(message,time){
-
+async function sender1Bubble(message,time,uid){
+  let uphoto = new userData()
+  await uphoto.fetchPhotoURL(uid)
     const date = time.toDate().toDateString() //too fast throw 
     return(
       <div class="chat chat-start">
@@ -68,10 +75,12 @@ function sender0Bubble(message,time){
       }
     </div>
    <div className="inline-flex">
+   <img src={uphoto.photoURL} className="w-10 h-10 mr-4 rounded-full"/>
+
     <div class="chat-bubble bg-grey-500 text-white ">
     {message}
   </div>
-  <time class="ml-3 inline text-xs opacity-50 pr-4">{date} </time>
+  <time class="ml-3 mt-4 inline text-xs opacity-50 pr-4">{date} </time>
 
    </div>
     <div class="chat-footer opacity-50">

@@ -42,7 +42,7 @@ export  class eventData extends appData{
       this.eventDataObj = new Array()
     }
 
-    async setData(uid, eventCName, eventNameInput, eventDateInfoStart,eventDateInfoEnd,createJob0, createJob1,eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal,eventimg){
+    async setData(uid, eventCName, eventNameInput, eventDateInfoStart,eventDateInfoEnd,createJob0, createJob1,eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal,eventimg,eventVisibility){
         const docRef = doc(collection(this.db,"events"))
         await setDoc(docRef,{
             userid: uid,
@@ -58,7 +58,8 @@ export  class eventData extends appData{
             eventWageTypeValue:eventWTypeVal,
             eventImage:eventimg,
             isFeatured: false,
-            isOpen: true
+            isOpen: true,
+            postVisibility: eventVisibility
         })
 
     }
@@ -84,6 +85,7 @@ export  class eventData extends appData{
         this.eventImageURL = doc.data().eventImage;
         this.eventCreatorID = doc.data().userid
         this.eventStatus = doc.data().isOpen;
+        this.postVisibility = doc.data().postVisibility;
         this.dataToJSON()
          })
 
@@ -109,6 +111,7 @@ export  class eventData extends appData{
         this.description = doc.data().description;
         this.eventImageURL = doc.data().eventImage;
         this.eventStatus = doc.data().isOpen;
+        this.postVisibility = doc.data().postVisibility
             this.dataToJSON()
              })
      }
@@ -139,7 +142,7 @@ export  class eventData extends appData{
         })
     }
 
-    async updateData(uid, eventNameInput, eventDateInfoStart,eventDateInfoEnd,createJob0, createJob1,eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal,eventimg){
+    async updateData(uid, eventNameInput, eventDateInfoStart,eventDateInfoEnd,createJob0, createJob1,eventLocInfo, eventDescriptionInput,eventWType, eventWTypeVal,eventimg,eventVisibility){
         const docRef = doc(this.db,"events",uid)
         await updateDoc(docRef,{
             eventName: eventNameInput,
@@ -152,6 +155,7 @@ export  class eventData extends appData{
             eventWageType:eventWType,
             eventWageTypeValue:eventWTypeVal,
             eventImage:eventimg,
+            postVisibility: eventVisibility
           //  isOpen: true
         }).then(()=>{
             return true
@@ -188,7 +192,8 @@ export  class eventData extends appData{
             'eventDescription' : this.description,
             'eventImageURL': this.eventImageURL,
             'userid' : this.eventCreatorID,
-            'isOpen' : this.eventStatus
+            'isOpen' : this.eventStatus,
+            'postVisibility': this.postVisibility
         }
         const dataobj = JSON.stringify(data)
         this.dataobjMap.set(this.eventUID,dataobj)
