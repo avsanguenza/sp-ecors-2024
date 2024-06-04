@@ -326,6 +326,11 @@ function navBarContent(type){
             <span className="ml-2">Manage Assets</span>
           </a>
         </li>
+        <li className="nav-item">
+          <a className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" href="/admin/manageComplaints">
+            <span className="ml-2">Manage Complaints</span>
+          </a>
+        </li>
         </>
       )
     }

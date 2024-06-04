@@ -144,16 +144,25 @@ export class userData{
 }
 }
 
+export class userComplaint{
+  constructor(){
+    this.db = db
+    this.dataObj = new Array()
+  }
 
+  async setComplaint(eventName, eventuid, eventOrganizer, userid, userName, complaint){
+    const docRef = doc(collection(this.db, 'userComplaints'))
+    await setDoc(docRef,{
+      complaintEventUID: eventuid,
+      complaintEventName: eventName,
+      complaintEventCreator : eventOrganizer,
+      complaintUser: userid,
+      complaintText: complaint
+    })
+  }
 
-export function getData(){
-    const unsub = onSnapshot(doc(db,"users",uid),(doc)=>{
-        const userData = doc.data()
-       var value = (doc.data().isOrganizer == true) ? 'eOrganizer' : 'eConcess'
-       this.accTypeValue = value;
-    });
-}
-
-export function getAccTypeValue(){
-  return accTypeValue;
+  async getComplaint(){
+    const q = query(collection(this.db,'userComplaints'))
+    //get complaints view on table
+  }
 }

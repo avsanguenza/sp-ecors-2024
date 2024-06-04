@@ -54,6 +54,11 @@ export default class userData{
         const docSnap=  await getDoc(docRef)
         this.photoURL = docSnap.data().userImage
     }  
+    async fetchName(uid){
+        const docRef = doc(dbInstance,'users',uid)
+        const docSnap = await getDoc(docRef)
+        return docSnap.data().displayName
+    }
     async setNewProfile(firstName, lastName, billAddress,aProvince,aCity,userPos,userJob,pURL){
         let img = (pURL=='')? this.photoURL : pURL
         let tempString= firstName+" "+lastName

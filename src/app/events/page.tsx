@@ -5,6 +5,7 @@ import NavBar from "../navBar"
 import { eventData } from "@/firebase/data/event"
 import eventInfoContainer from "@/assets/eventInfoContainer"
 import userData from "../dashboard/user"
+import EventInfoContainer from "@/assets/eventInfoContainer"
 let edata = new eventData()
 let udata = new userData
 udata.parseData()
@@ -68,7 +69,10 @@ useEffect(()=>{
         
           </ul>
           </div>
-          {eventInfoContainer(d)}
+          {
+          //eventInfoContainer(d)
+          }
+          <EventInfoContainer d={d}/>
 
         </Panel>
       )

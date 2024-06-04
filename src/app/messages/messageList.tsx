@@ -48,10 +48,12 @@ function listDesign(name,time){
    // window.location.replace('/messages')
   }
   
-  function convoButton(name,time,uid){
+  async function convoButton(name,time,uid){
     let udata = new userData()
     udata.fetchPhotoURL(uid)
+    udata.fetchName(uid)
     let imageSource = udata.photoURL
+    let displayName = udata.displayName
     return(
         <>
        <div>
@@ -59,7 +61,7 @@ function listDesign(name,time){
        <div class="flex items-center grid-rows">
                   <img className="bg-left rounded-full h-10 w-10  " src={imageSource}/>
                   <div className="ml-3">
-                  <span className="-mt-4 text-xl font-medium">{name}</span>
+                  <span className="-mt-4 text-xl font-medium">{displayName}</span>
                   <p>{time} </p>
                 
                   </div>

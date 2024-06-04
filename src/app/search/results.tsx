@@ -2,7 +2,7 @@ import { eventData } from "@/firebase/data/event"
 import { userData } from "@/firebase/data/userDB"
 import userdash from '../dashboard/user'
 import UserInfoContainer from "@/assets/userInfoContainer"
-import eventInfoContainer from "@/assets/eventInfoContainer"
+import EventInfoContainer from "@/assets/eventInfoContainer"
 import toast from "react-hot-toast"
 let uState = new userdash()
 uState.parseData()
@@ -52,8 +52,10 @@ function events(results){
             </th>
             <th>
             </th>
-            {eventInfoContainer(d)}
-  
+            {
+            //eventInfoContainer(d)
+            }
+            <EventInfoContainer d={d}/>
           </tr>
           
         )
@@ -86,8 +88,10 @@ function events(results){
               </th>
               <th>
               </th>
-              {eventInfoContainer(d)}
-    
+              {
+              //eventInfoContainer(d)
+              }
+              <EventInfoContainer d={d}/>
             </tr>
             
           )

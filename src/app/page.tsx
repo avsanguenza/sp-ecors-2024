@@ -6,7 +6,7 @@ import { eventData } from '@/firebase/data/event';
 import { adminData } from '@/firebase/data/storage';
 import LoadingFeature from './loadingFeature';
 import { CarouselLoadingSkeleton } from './loadingFeature';
-import eventInfoContainer from '@/assets/eventInfoContainer';
+import EventInfoContainer from '@/assets/eventInfoContainer';
 //make loading screen -> loading animation ->navbar 
 //featured events
 let edata = new eventData()
@@ -64,8 +64,10 @@ export default function Page() {
      
        </ul>
        </div>
-       {eventInfoContainer(d)}
-
+       {
+       //eventInfoContainer(d)
+       }
+        <EventInfoContainer d={d}/>
      </Panel>
       )
     })

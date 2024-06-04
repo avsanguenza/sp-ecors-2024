@@ -83,21 +83,21 @@ function fetchMessage(senderuid,sendername){
   uid:senderuid,
   name:sendername
  })
- console.log(sender1)
 
 }
 async function convoButton(name,time,uid){
   let udata = new userData()
   await udata.fetchPhotoURL(uid)
   let url = udata.photoURL
+  let displayName = await udata.fetchName(uid)
   return(
       <>
      <div>
-     <button className='border border-gray-50 w-full rounded-lg px-3 py-5 hover:bg-gray-100' onClick={()=>fetchMessage(uid,name)}>
+     <button className='border border-gray-50 w-full rounded-lg px-3 py-5 hover:bg-gray-100' onClick={()=>fetchMessage(uid,displayName)}>
      <div class="flex items-center grid-rows">
                 <img className="bg-left rounded-full h-10 w-10  " src={url}/>
                 <div className="ml-3">
-                <span className="-mt-4 text-xl font-medium">{name}</span>
+                <span className="-mt-4 text-xl font-medium">{displayName}</span>
                 <p>{time} </p>
               
                 </div>

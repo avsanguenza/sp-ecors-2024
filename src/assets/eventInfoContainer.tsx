@@ -1,9 +1,53 @@
 import userData from "@/app/dashboard/user"
 import EventAppDialog from '@/app/events/eventApp/eventAppDialog'
-let udata = new userData
+import { userComplaint } from "@/firebase/data/userDB"
+import { useState } from "react"
+import toast from "react-hot-toast"
+let udata = new userData()
 udata.parseData()
-function eventInfoContainer(d){
-  
+
+function EventInfoContainer({d}){
+  function reportDialog(d){
+    const [uComplaint, setUComplaint] = useState({eventName:d.eventName,eventuid:d.eventid, eventCreator: d.eventCreatorName, userComplaint:udata.getUserUID(),userComplaintName: udata.getName(),complaint:''})
+    const handleReport = (e)=>{
+      const {name,value} = e.target
+      setUComplaint({
+        ...uComplaint,
+        [name]: value
+      })
+    }
+    async function sendComplaint(){
+      let uComp = new userComplaint
+      const sendComplaint = uComp.setComplaint(uComplaint.eventName,uComplaint.eventuid,uComplaint.eventCreator,uComplaint.userComplaint,uComplaint.userComplaintName,uComplaint.complaint)
+      toast.promise(sendComplaint,{
+        loading:'Sending report',
+        success:'Report sent successfully',
+        error:'An error has occured. Please try again later.'
+      })
+    }
+    return(
+<dialog id={d['eventid']+'report'} className="modal">
+  <div className="modal-box">
+    <h3 className="font-bold text-lg mb-4">Report this event</h3>
+      <label className="text-start ml-4 mb-2 block text-gray-700 text-xl font-semibold "> Event Name:</label>
+      <input className="appearance-none block w-96 bg-gray-50 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white ml-4 disabled:bg-gray-200" id='eventName' name="eventNameReport" defaultValue={d.eventName} type='text' disabled/>
+      <label className='text-start ml-4 mb-2 block text-gray-700 text-xl font-semibold '> Event Organizer:</label>
+
+      <input className="appearance-none block w-96 bg-gray-50 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white ml-4 disabled:bg-gray-200" id='eventName' name="eventNameReport" defaultValue={d.eventCreatorName} type='text' disabled/>
+      <label className='text-start ml-4 mb-2 block text-gray-700 text-xl font-semibold '> Complaint:</label>
+   <div className="text-start">
+   <textarea id="message" rows="4" name='complaint'className="ml-4 w-96 text-gray-900 bg-gray-50 rounded-lg border border-pink-500 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onChange={handleReport}></textarea>
+   </div>
+      <div className="text-center mt-8">
+        <button className="text-center bg-pink-500 hover:bg:pink-700 text-white font-bold text-medium px-3 py-2 rounded-full" onClick={()=>sendComplaint()}> Submit report</button>
+      </div>
+  </div>
+  <form method="dialog" className="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+    )
+  }
 
   function eventAppFormDialog(d){
     document.getElementById('closebtn').click()
@@ -13,10 +57,19 @@ function eventInfoContainer(d){
        <>
         <dialog id={d.eventid} class="modal">
         <div class="modal-box">
-        <form method='dialog'>
+        {/*<form method='dialog'>
         <button id='closebtn' className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
         </form>
-       
+        */}
+        <details className="dropdown-right text-end mr-4 mb-2 btn-white w-36" hidden={udata.name==null}>
+  <summary className="m-1 btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+  <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
+</svg></summary>
+  <ul className="p-2 shadow menu dropdown-content z-30 rounded-box w-36">
+    <button className="text-center hover:bg-gray-100" onClick={()=> document.getElementById(d.eventid+'report').showModal()}>Report event</button>
+      </ul>
+</details>
+{reportDialog(d)}
           <h2 class="font-bold text-xl text-center">{d.eventName}</h2>
         <div className=" p-3">
         <svg xmlns="http://www.w3.org/2000/svg" className='w-6 h-6 inline'fill="none" aria-hidden="true" viewBox="0 0 24 24" role="img"><path vector-effect="non-scaling-stroke" stroke="var(--icon-color, #001e00)" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M12 10.5a2.1 2.1 0 100-4.2 2.1 2.1 0 000 4.2z"></path><path vector-effect="non-scaling-stroke" stroke="var(--icon-color, #001e00)" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M17.4 8.4C17.4 5.4 15 3 12 3 9 3 6.6 5.4 6.6 8.4c0 1.3.5 2.4 1.2 3.4C9 13.2 12 18 12 18s3-4.8 4.1-6.3c.7-.9 1.3-2.1 1.3-3.3zM16 18c2.4.3 4 .8 4 1.4 0 .9-3.6 1.6-8 1.6s-8-.7-8-1.6c0-.6 1.6-1.1 4-1.4"></path></svg>
@@ -31,7 +84,7 @@ function eventInfoContainer(d){
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 inline" fill="none" aria-hidden="true" viewBox="0 0 24 24" role="img"><path vector-effect="non-scaling-stroke" stroke="var(--icon-color, #001e00)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.17 3H21v7.83L10.83 21 3 13.17 13.17 3z"></path><path vector-effect="non-scaling-stroke" stroke="var(--icon-color, #001e00)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.63 11.51a1.86 1.86 0 00.3 2.56 1.86 1.86 0 002.56.3 1.51 1.51 0 00.27-1.68c-.25-.54-.87-1.56-1.08-2.12A1.4 1.4 0 0112 9.12a1.84 1.84 0 012.55.31 1.84 1.84 0 01.33 2.57m-.31-2.57l.81-.81m-6.26 6.26l.81-.81m7.94-7.39a.55.55 0 100-1.1.55.55 0 000 1.1z"></path></svg>: <text className="font-medium mr-2">&#8369; {d.eventWageTypeVal}</text>  {returnWageType(d.eventWageType)}</p>
           </div>     
           <p className="mt-4 font-bold ">Description:</p>
-          <p className="mb-4">{d.eventDescription.substring(0,150)+'...'}</p>
+          <p className="mb-4">{d['eventDescription'].substring(0,150)+'...'}</p>
 
           <div className="text-center">
           <hr className="h-px my-3 bg-gray-300 border-0 dark:bg-gray-700"></hr>
@@ -76,7 +129,7 @@ function eventInfoContainer(d){
        </>
     )
 }
-export default eventInfoContainer
+export default EventInfoContainer
 
 
 function returnWageType(role){
