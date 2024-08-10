@@ -1,10 +1,6 @@
-//ask join as a what
 'use client'
 
-//join as an event organizer/concessionaire 
 
-//i'm an event organize hiring people for my event 
-//im a concessionaire looking for events to partner with 
 import React from 'react'
 import {useState} from 'react'
 import NavBar from '../navBar'
