@@ -42,8 +42,6 @@ function searchPage({
           document.getElementById('hourly-checkbox').checked=false
       
       }
-    //  console.log(name,value)
-   // document.getElementsByName(name).checked=true 
       var tempCond = where(name,'==',value)
       conditions[1] = tempCond
        setQueryCond(conditions)
